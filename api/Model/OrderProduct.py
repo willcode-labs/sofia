@@ -4,7 +4,7 @@ from api.Model.Order import Order as ModelOrder
 from api.Model.Product import Product as ModelProduct
 
 class OrderProductManager(models.Manager):
-    def create(self,request,model_user,**kwargs):
+    def create(self,request,model_login,**kwargs):
         self.order_id = None
         self.product_id = None
         self.quantity = None
@@ -38,7 +38,7 @@ class OrderProductManager(models.Manager):
 
         return model_order_product
 
-    def update(self,request,model_user,**kwargs):
+    def update(self,request,model_login,**kwargs):
         self.order_id = None
         self.product_id = None
         self.product_id_origin = None
@@ -142,8 +142,8 @@ class OrderProductManager(models.Manager):
         return True
 
 class OrderProduct(models.Model):
-    order = models.ForeignKey(ModelOrder)
-    product = models.ForeignKey(ModelProduct)
+    order = models.ForeignKey(ModelOrder,on_delete=models.CASCADE)
+    product = models.ForeignKey(ModelProduct,on_delete=models.CASCADE)
     quantity = models.IntegerField()
     date_create = models.DateTimeField(auto_now_add=True)
 

@@ -13,17 +13,11 @@ from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
 @BusinessDecoratorAuth(profile=('root','merchant',),client=False)
 def verify(request,model_login,model_login_client):
     try:
-        session_identifier = transaction.savepoint()
-
         business_auth = BusinessAuth(request)
 
         model_login_client = business_auth.verify(model_login)
 
-        transaction.savepoint_commit(session_identifier)
-
     except Exception as error:
-        transaction.savepoint_rollback(session_identifier)
-
         message = 'Erro de verificação do login![27]'
 
         BusinessExceptionLog(request,model_login,model_login_client,
@@ -46,17 +40,11 @@ def verify(request,model_login,model_login_client):
 @BusinessDecoratorAuth(profile=('merchant',),client=False)
 def auth(request,model_login,model_login_client):
     try:
-        session_identifier = transaction.savepoint()
-
         business_auth = BusinessAuth(request)
 
         model_login_client = business_auth.auth(model_login)
 
-        transaction.savepoint_commit(session_identifier)
-
     except Exception as error:
-        transaction.savepoint_rollback(session_identifier)
-
         message = 'Erro de autenticação do login![28]'
 
         BusinessExceptionLog(request,model_login,model_login_client,

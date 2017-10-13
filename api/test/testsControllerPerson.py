@@ -1,10 +1,11 @@
-import uuid,datetime
+import uuid,datetime,json
 from django.test import Client,TestCase,TransactionTestCase
 from django.http import HttpResponseNotAllowed
 from api.apps import ApiConfig
 from api.Model.Person import Person as ModelPerson
 from api.Model.Login import Login as ModelLogin
 from api.Model.Merchant import Merchant as ModelMerchant
+from api.Model.Address import Address as ModelAddress
 
 class TestControllerPerson(TransactionTestCase):
     reset_sequences = True
@@ -91,13 +92,13 @@ class TestControllerPerson(TransactionTestCase):
 
         self.model_login_client.save()
 
-    def test_filter_http_not_allowed(self):
+    def test_person_filter_http_not_allowed(self):
         response = self.client.post('/api/v1/person/filter/')
 
         self.assertEqual(response.status_code,405)
         self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
 
-    def test_filter_without_param(self):
+    def test_person_filter_without_param(self):
         response = self.client.get('/api/v1/person/filter/',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
@@ -124,7 +125,7 @@ class TestControllerPerson(TransactionTestCase):
             }]
         }, response.json())
 
-    def test_filter_with_param_page(self):
+    def test_person_filter_with_param_page(self):
         response = self.client.get('/api/v1/person/filter/?page=1',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
@@ -151,7 +152,7 @@ class TestControllerPerson(TransactionTestCase):
             }]
         }, response.json())
 
-    def test_filter_with_param_page_error(self):
+    def test_person_filter_with_param_page_error(self):
         response = self.client.get('/api/v1/person/filter/?page=2',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
@@ -163,13 +164,13 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Erro na consulta de pessoa![25]',}, response.json())
 
-    def test_getbyid_http_not_allowed(self):
+    def test_person_getbyid_http_not_allowed(self):
         response = self.client.post('/api/v1/person/')
 
         self.assertEqual(response.status_code,405)
         self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
 
-    def test_getbyid_client_missing(self):
+    def test_person_getbyid_client_missing(self):
         response = self.client.get('/api/v1/person/',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
@@ -181,7 +182,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Dados insuficientes![36]',}, response.json())
 
-    def test_getbyid_client_api_key_not_found(self):
+    def test_person_getbyid_client_api_key_not_found(self):
         response = self.client.get('/api/v1/person/',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
@@ -193,7 +194,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Api key do cliente não encontrado![37]',}, response.json())
 
-    def test_getbyid_client_ip_error(self):
+    def test_person_getbyid_client_ip_error(self):
         response = self.client.get('/api/v1/person/',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
@@ -205,7 +206,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Ip de acesso do login de cliente difere de seu ip de origem![38]',}, response.json())
 
-    def test_getbyid_client_not_verified(self):
+    def test_person_getbyid_client_not_verified(self):
         self.model_login_client.verified = False
         self.model_login_client.save()
 
@@ -220,7 +221,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Login de cliente não verificado![39]',}, response.json())
 
-    def test_getbyid_client_not_related(self):
+    def test_person_getbyid_client_not_related(self):
         self.model_login_client.person = self.model_person_root
         self.model_login_client.save()
 
@@ -235,7 +236,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Cliente não relacionado![40]',}, response.json())
 
-    def test_getbyid_client_profile_error(self):
+    def test_person_getbyid_client_profile_error(self):
         self.model_login_client.profile_id = ModelLogin.PROFILE_MERCHANT
         self.model_login_client.save()
 
@@ -250,7 +251,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Perfil de cliente não autorizado![41]',}, response.json())
 
-    def test_getbyid_client_expired(self):
+    def test_person_getbyid_client_expired(self):
         self.model_login_client.date_expired = datetime.datetime.now() + datetime.timedelta(minutes=-1)
         self.model_login_client.save()
 
@@ -266,7 +267,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Api key do cliente expirado![42]',}, response.json())
 
-    def test_getbyid(self):
+    def test_person_getbyid(self):
         response = self.client.get('/api/v1/person/',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
@@ -291,13 +292,13 @@ class TestControllerPerson(TransactionTestCase):
             person_id=self.model_person_client.person_id).exclude(
                 date_expired=self.model_login_client.date_expired).count())
 
-    def test_add_http_not_allowed(self):
+    def test_person_add_http_not_allowed(self):
         response = self.client.get('/api/v1/person/add/')
 
         self.assertEqual(response.status_code,405)
         self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
 
-    def test_add_profile_incorrect(self):
+    def test_person_add_profile_incorrect(self):
         data_post = {}
 
         response = self.client.post('/api/v1/person/add/',data_post,
@@ -311,7 +312,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Perfil não permitido![6]',}, response.json())
 
-    def test_add_profile_unauthorized(self):
+    def test_person_add_profile_unauthorized(self):
         data_post = {}
 
         response = self.client.post('/api/v1/person/add/',data_post,
@@ -325,8 +326,14 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Perfil não autorizado![7]',}, response.json())
 
-    def test_add_data_missing(self):
-        data_post = {}
+    def test_person_add_param_missing(self):
+        data_post = {
+            'name': '',
+            'cpf': '',
+            'email': '',
+            'phone1': '',
+            'phone2': '',
+        }
 
         response = self.client.post('/api/v1/person/add/',data_post,
             REMOTE_ADDR='127.0.0.8',
@@ -339,7 +346,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Dados insuficientes para criação de pessoa![30]',}, response.json())
 
-    def test_add_cpf_exist(self):
+    def test_person_add_cpf_exist(self):
         data_post = {
             'name': 'sofia',
             'cpf': '00000000001',
@@ -358,7 +365,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Já existe uma pessoa cadastrada com este mesmo CPF![32]',}, response.json())
 
-    def test_add_email_exist(self):
+    def test_person_add_email_exist(self):
         data_post = {
             'name': 'sofia',
             'cpf': '00000000011',
@@ -377,7 +384,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Já existe uma pessoa cadastrada com este mesmo E-mail![33]',}, response.json())
 
-    def test_add(self):
+    def test_person_add(self):
         data_post = {
             'name': 'sofia',
             'cpf': '00000000011',
@@ -421,3 +428,234 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(login.verified,False)
         self.assertEqual(login.ip,None)
         self.assertEqual(login.date_expired,None)
+
+    def test_person_address_add_http_not_allowed(self):
+        response = self.client.get('/api/v1/person/address/add/')
+
+        self.assertEqual(response.status_code,405)
+        self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
+
+    def test_person_address_add_param_missing(self):
+        data_post = {
+            'state': '',
+            'city': '',
+            'number': '',
+            'complement': '',
+            'invoice': '',
+            'delivery': '',
+        }
+
+        response = self.client.post('/api/v1/person/address/add/',data_post,
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_merchant.token,
+            HTTP_CLIENT_API_KEY=self.model_login_client.token,
+            HTTP_CLIENT_IP='127.0.0.9')
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Dados insuficientes para criação de endereço![43]',}, response.json())
+
+    def test_person_address_add_param_error(self):
+        data_post = {
+            'state': 'RS',
+            'city': 'Porto Alegre',
+            'number': '3456',
+            'complement': '',
+            'invoice': False,
+            'delivery': True,
+        }
+
+        response = self.client.post('/api/v1/person/address/add/',data_post,
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_merchant.token,
+            HTTP_CLIENT_API_KEY=self.model_login_client.token,
+            HTTP_CLIENT_IP='127.0.0.9')
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Valor incorreto![45]',}, response.json())
+
+    def test_person_address_add_duplicate(self):
+        data_post = {
+            'state': 'RS',
+            'city': 'Porto Alegre',
+            'number': '3456',
+            'complement': '',
+            'invoice': '0',
+            'delivery': '0',
+        }
+
+        response = self.client.post('/api/v1/person/address/add/',data_post,
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_merchant.token,
+            HTTP_CLIENT_API_KEY=self.model_login_client.token,
+            HTTP_CLIENT_IP='127.0.0.9')
+
+        response = self.client.post('/api/v1/person/address/add/',data_post,
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_merchant.token,
+            HTTP_CLIENT_API_KEY=self.model_login_client.token,
+            HTTP_CLIENT_IP='127.0.0.9')
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Endereço duplicado![46]',}, response.json())
+
+    def test_person_address_add(self):
+        data_post = {
+            'state': 'RS',
+            'city': 'Porto Alegre',
+            'number': '57',
+            'complement': '',
+            'invoice': '0',
+            'delivery': '0',
+        }
+
+        response = self.client.post('/api/v1/person/address/add/',data_post,
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_merchant.token,
+            HTTP_CLIENT_API_KEY=self.model_login_client.token,
+            HTTP_CLIENT_IP='127.0.0.9')
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({
+            'address_id': response.json()['address_id'],
+            'person_id': self.model_login_client.person_id,
+            'state': data_post['state'],
+            'city': data_post['city'],
+            'number': data_post['number'],
+            'complement': data_post['complement'],
+            'invoice': True,
+            'delivery': True,
+        }, response.json())
+
+    def test_a_person_address_add_second_register(self):
+        data_post_a = {
+            'state': 'RS',
+            'city': 'Porto Alegre',
+            'number': '57',
+            'complement': '',
+            'invoice': '0',
+            'delivery': '0',
+        }
+
+        response_a = self.client.post('/api/v1/person/address/add/',data_post_a,
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_merchant.token,
+            HTTP_CLIENT_API_KEY=self.model_login_client.token,
+            HTTP_CLIENT_IP='127.0.0.9')
+
+        data_post_b = {
+            'state': 'SP',
+            'city': 'São Paulo',
+            'number': '99',
+            'complement': '',
+            'invoice': '1',
+            'delivery': '0',
+        }
+
+        response_b = self.client.post('/api/v1/person/address/add/',data_post_b,
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_merchant.token,
+            HTTP_CLIENT_API_KEY=self.model_login_client.token,
+            HTTP_CLIENT_IP='127.0.0.9')
+
+        self.assertEqual(response_b.status_code,200)
+        self.assertIsNotNone(response_b.json())
+        self.assertIsInstance(response_b.json(), dict)
+        self.assertEqual({
+            'address_id': response_b.json()['address_id'],
+            'person_id': self.model_login_client.person_id,
+            'state': data_post_b['state'],
+            'city': data_post_b['city'],
+            'number': data_post_b['number'],
+            'complement': data_post_b['complement'],
+            'invoice': True,
+            'delivery': False,
+        }, response_b.json())
+
+        address = ModelAddress.objects.filter(person_id=self.model_login_client.person_id)
+
+        print('#############')
+        print(address.values('invoice','delivery'))
+        print('#############')
+
+        # model_address_a = ModelAddress.objects.get(address_id=response_a.json()['address_id'])
+
+        # self.assertEqual(model_address_a.invoice, False)
+        # self.assertEqual(model_address_a.delivery, True)
+
+    # def test_a_person_address_add_third_register(self):
+    #     data_post_a = {
+    #         'state': 'RS',
+    #         'city': 'Porto Alegre',
+    #         'number': '57',
+    #         'complement': '',
+    #         'invoice': '0',
+    #         'delivery': '0',
+    #     }
+
+    #     response_a = self.client.post('/api/v1/person/address/add/',data_post_a,
+    #         REMOTE_ADDR='127.0.0.8',
+    #         HTTP_API_KEY=self.model_login_merchant.token,
+    #         HTTP_CLIENT_API_KEY=self.model_login_client.token,
+    #         HTTP_CLIENT_IP='127.0.0.9')
+
+    #     data_post_b = {
+    #         'state': 'SP',
+    #         'city': 'São Paulo',
+    #         'number': '99',
+    #         'complement': '',
+    #         'invoice': '0',
+    #         'delivery': '0',
+    #     }
+
+    #     response_b = self.client.post('/api/v1/person/address/add/',data_post_b,
+    #         REMOTE_ADDR='127.0.0.8',
+    #         HTTP_API_KEY=self.model_login_merchant.token,
+    #         HTTP_CLIENT_API_KEY=self.model_login_client.token,
+    #         HTTP_CLIENT_IP='127.0.0.9')
+
+    #     data_post_c = {
+    #         'state': 'SC',
+    #         'city': 'Florianópolis',
+    #         'number': '118',
+    #         'complement': '',
+    #         'invoice': '1',
+    #         'delivery': '0',
+    #     }
+
+    #     response_c = self.client.post('/api/v1/person/address/add/',data_post_c,
+    #         REMOTE_ADDR='127.0.0.8',
+    #         HTTP_API_KEY=self.model_login_merchant.token,
+    #         HTTP_CLIENT_API_KEY=self.model_login_client.token,
+    #         HTTP_CLIENT_IP='127.0.0.9')
+
+    #     self.assertEqual(response_c.status_code,200)
+    #     self.assertIsNotNone(response_c.json())
+    #     self.assertIsInstance(response_c.json(), dict)
+    #     self.assertEqual({
+    #         'address_id': response_c.json()['address_id'],
+    #         'person_id': self.model_login_client.person_id,
+    #         'state': data_post_c['state'],
+    #         'city': data_post_c['city'],
+    #         'number': data_post_c['number'],
+    #         'complement': data_post_c['complement'],
+    #         'invoice': True,
+    #         'delivery': False,
+    #     }, response_c.json())
+
+    #     model_address_a = ModelAddress.objects.get(address_id=response_a.json()['address_id'])
+
+    #     self.assertEqual(model_address_a.invoice, False)
+    #     self.assertEqual(model_address_a.delivery, True)
+
+    #     model_address_b = ModelAddress.objects.get(address_id=response_b.json()['address_id'])
+
+    #     self.assertEqual(model_address_b.invoice, False)
+    #     self.assertEqual(model_address_b.delivery, False)

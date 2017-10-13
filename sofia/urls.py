@@ -14,10 +14,10 @@ urlpatterns = [
 urlpatterns += [
     url(r'^api/v1/person/filter/$', ControllerPerson.filter, name='api_v1_person_filter'),
     url(r'^api/v1/person/$', ControllerPerson.getById, name='api_v1_person_getbyid'),
-    url(r'^api/v1/person/add', ControllerPerson.add, name='api_v1_person_add'),
+    url(r'^api/v1/person/add/$', ControllerPerson.add, name='api_v1_person_add'),
 #     url(r'^api/v1/person/[0-9]{11}/address/[0-9]{11}', ControllerPerson.addressById, name='api_v1_person_address_by_id'),
 #     url(r'^api/v1/person/[0-9]{11}/address/filter', ControllerPerson.addressFilter, name='api_v1_person_address_filter'),
-    # url(r'^api/v1/person/address/add/$', ControllerPerson.addressAdd, name='api_v1_person_address_add'),
+    url(r'^api/v1/person/address/add/$', ControllerPerson.addressAdd, name='api_v1_person_address_add'),
 #     url(r'^api/v1/person/[0-9]{11}/address/[0-9]{11}/update', ControllerPerson.addressUpdate, name='api_v1_person_address_update'),
 #     url(r'^api/v1/person/[0-9]{11}/address/[0-9]{11}/delete', ControllerPerson.addressDelete, name='api_v1_person_address_delete'),
 ]

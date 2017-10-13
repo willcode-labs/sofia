@@ -127,8 +127,6 @@ def add(request,model_login,model_login_client):
     phone2 = request.POST.get('phone2',None)
 
     try:
-        session_identifier = transaction.savepoint()
-
         model_person = ModelPerson.objects.create(request,model_login,
             name=name,
             cpf=cpf,
@@ -138,11 +136,7 @@ def add(request,model_login,model_login_client):
 
         model_login_client = ModelLogin.objects.create(request,model_login,model_person)
 
-        transaction.savepoint_commit(session_identifier)
-
     except Exception as error:
-        transaction.savepoint_rollback(session_identifier)
-
         message = 'Erro na criação de pessoa![29]'
 
         BusinessExceptionLog(request,model_login,model_login_client,
@@ -168,55 +162,49 @@ def add(request,model_login,model_login_client):
 
     return JsonResponse(result,status=200)
 
-# @require_http_methods(['POST'])
-# @csrf_exempt
-# @transaction.atomic
-# @BusinessDecoratorAuth(profile=('merchant',))
-# def addressAdd(request,model_login,model_login_client,person_id):
-#     state = request.GET.get('state',None)
-#     city = request.GET.get('city',None)
-#     number = request.GET.get('number',None)
-#     complement = request.GET.get('complement',None)
-#     invoice = request.GET.get('invoice',None)
-#     delivery = request.GET.get('delivery',None)
+@require_http_methods(['POST'])
+@csrf_exempt
+@transaction.atomic
+@BusinessDecoratorAuth(profile=('merchant',))
+def addressAdd(request,model_login,model_login_client):
+    state = request.POST.get('state',None)
+    city = request.POST.get('city',None)
+    number = request.POST.get('number',None)
+    complement = request.POST.get('complement',None)
+    invoice = request.POST.get('invoice',None)
+    delivery = request.POST.get('delivery',None)
 
-#     try:
-#         session_identifier = transaction.savepoint()
+    try:
+        model_person = ModelPerson.objects.get(person_id=model_login_client.person_id)
 
-#         model_person = ModelPerson.objects.get(person_id=person_id)
+        model_address = ModelAddress.objects.create(request,model_login,model_person,
+            state=state,
+            city=city,
+            number=number,
+            complement=complement,
+            invoice=invoice,
+            delivery=delivery)
 
-#         model_address = ModelAddress.objects.create(request,model_login,model_person,
-#             state=state,
-#             city=city,
-#             number=number,
-#             complement=complement,
-#             invoice=invoice,
-#             delivery=delivery)
+    except Exception as error:
+        BusinessExceptionLog(request,model_login,model_login_client,
+            description='Erro na criação de endereço',
+            message=error,
+            trace=traceback.format_exc())
 
-#         transaction.savepoint_commit(session_identifier)
+        return JsonResponse({'message': str(error)}, status=400)
 
-#     except Exception as error:
-#         transaction.savepoint_rollback(session_identifier)
+    result = {
+        'address_id': model_address.address_id,
+        'person_id': model_person.person_id,
+        'state': model_address.state,
+        'city': model_address.city,
+        'number': model_address.number,
+        'complement': model_address.complement,
+        'invoice': model_address.invoice,
+        'delivery': model_address.delivery,
+    }
 
-#         BusinessExceptionLog(request,model_login,
-#             description='Erro na criação de endereço',
-#             message=error,
-#             trace=traceback.format_exc())
-
-#         return JsonResponse({'message': str(error)}, status=400)
-
-#     result = {
-#         'address_id': model_address.address_id,
-#         'state': model_address.state,
-#         'city': model_address.city,
-#         'number': model_address.number,
-#         'complement': model_address.complement,
-#         'invoice': model_address.invoice,
-#         'delivery': model_address.delivery,
-#         'person_id': model_person.person_id,
-#     }
-
-#     return JsonResponse(result,safe=False,status=200)
+    return JsonResponse(result,status=200)
 #
 # @require_http_methods(['GET'])
 # @csrf_exempt

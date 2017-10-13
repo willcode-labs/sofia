@@ -203,5 +203,25 @@
         "code": 42,
         "message": "Api key do cliente expirado![42]",
         "description": "",
+    },
+    {
+        "code": 43,
+        "message": "Dados insuficientes para criação de endereço![43]",
+        "description": "",
+    },
+    {
+        "code": 44,
+        "message": "Relacionamento entre tipo de pessoas incorreto![44]",
+        "description": "",
+    },
+    {
+        "code": 45,
+        "message": "Valor incorreto![45]",
+        "description": "",
+    },
+    {
+        "code": 46,
+        "message": "Endereço duplicado![46]",
+        "description": "",
     }
 ]

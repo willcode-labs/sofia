@@ -3,7 +3,7 @@ from django.db import models
 from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 
 class ProductManager(models.Manager):
-    def create(self,request,model_user,**kwargs):
+    def create(self,request,model_login,**kwargs):
         self.name = None
         self.description = None
         self.code = None
@@ -61,7 +61,7 @@ class ProductManager(models.Manager):
                 raise Exception('Não foi possivel criar produto!')
 
         except Exception as error:
-            BusinessExceptionLog(request,model_user,
+            BusinessExceptionLog(request,model_login,
                 description='Erro na criação de produto',
                 message=error,
                 trace=traceback.format_exc())
@@ -70,7 +70,7 @@ class ProductManager(models.Manager):
 
         return model_product
 
-    def update(self,request,model_user,**kwargs):
+    def update(self,request,model_login,**kwargs):
         self.product_id = None
         self.name = None
         self.description = None
@@ -152,7 +152,7 @@ class ProductManager(models.Manager):
                 raise Exception('Não foi possivel atualizar produto!')
 
         except Exception as error:
-            BusinessExceptionLog(request,model_user,
+            BusinessExceptionLog(request,model_login,
                 description='Erro na atualização de produto',
                 message=error,
                 trace=traceback.format_exc())
@@ -161,7 +161,7 @@ class ProductManager(models.Manager):
 
         return model_product
 
-    def delete(self,request,model_user,**kwargs):
+    def delete(self,request,model_login,**kwargs):
         self.product_id = None
 
         for key in kwargs:
@@ -183,7 +183,7 @@ class ProductManager(models.Manager):
             model_product.delete()
 
         except Exception as error:
-            BusinessExceptionLog(request,model_user,
+            BusinessExceptionLog(request,model_login,
                 description='Erro na remoção de produto',
                 message=error,
                 trace=traceback.format_exc())
@@ -192,7 +192,7 @@ class ProductManager(models.Manager):
 
         return model_product
 
-    def published(self,request,model_user,**kwargs):
+    def published(self,request,model_login,**kwargs):
         self.product_id = None
 
         for key in kwargs:
@@ -215,7 +215,7 @@ class ProductManager(models.Manager):
             model_product.save()
 
         except Exception as error:
-            BusinessExceptionLog(request,model_user,
+            BusinessExceptionLog(request,model_login,
                 description='Erro na publicação de produto',
                 message=error,
                 trace=traceback.format_exc())
@@ -250,8 +250,9 @@ class Product(models.Model):
     published = models.BooleanField()
     date_create = models.DateTimeField(auto_now_add=True)
 
+    objects = ProductManager()
+
     class Meta:
         db_table = 'product'
         app_label = 'api'
 
-    objects = ProductManager()

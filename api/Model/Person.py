@@ -47,12 +47,12 @@ class PersonManager(models.Manager):
 
 class Person(models.Model):
     person_id = models.AutoField(primary_key=True)
-    parent = models.ForeignKey('self',null=True)
+    parent = models.ForeignKey('self',null=True,on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     cpf = models.CharField(max_length=12)
     email = models.EmailField(max_length=254)
     phone1 = models.CharField(max_length=60)
-    phone2 = models.CharField(max_length=60,null=True,blank=True)
+    phone2 = models.CharField(max_length=60,null=True)
     date_create = models.DateTimeField(auto_now_add=True)
 
     objects = PersonManager()

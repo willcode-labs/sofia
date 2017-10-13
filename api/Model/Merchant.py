@@ -10,7 +10,7 @@ class MerchantManager(models.Manager):
 
 class Merchant(models.Model):
     merchant_id = models.AutoField(primary_key=True)
-    login = models.ForeignKey(ModelLogin)
+    login = models.ForeignKey(ModelLogin,on_delete=models.CASCADE)
     date_expired = models.DateTimeField()
     date_create = models.DateTimeField(auto_now_add=True)
 

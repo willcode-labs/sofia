@@ -15,35 +15,62 @@ class AddressManager(models.Manager):
             setattr(self,key,kwargs[key])
 
         if not self.state or not self.city or not self.number:
-            raise Exception('Dados insuficientes para criação de endereço!')
+            raise Exception('Dados insuficientes para criação de endereço![43]')
+
+        if self.invoice not in ['0','1'] or self.delivery not in ['0','1']:
+            raise Exception('Valor incorreto![45]')
+
+        if self.invoice == '0':
+            self.invoice = False
+
+        else:
+            self.invoice = True
+
+        if self.delivery == '0':
+            self.delivery = False
+
+        else:
+            self.delivery = True
+
+        if model_login.profile_id not in (model_login.PROFILE_MERCHANT,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![44]')
 
         try:
+            model_address_test = Address.objects.filter(
+                    person=model_person,
+                    state=self.state,
+                    number=self.number,
+                    complement=self.complement,)
+
+            if model_address_test.count() >= 1:
+                raise Exception('Endereço duplicado![46]')
+
             if not self.invoice and not self.delivery:
                 model_address_test = Address.objects.filter(
                     person=model_person)
-
-                self.invoice = False
-                self.delivery = False
 
                 if model_address_test.count() == 0:
                     self.invoice = True
                     self.delivery = True
 
-            elif self.invoice == True:
-                model_address_invoice = Address.objects.get(
-                    person=model_person,
-                    invoice=True)
+            else:
+                if self.invoice:
+                    model_address_invoice = Address.objects.filter(
+                        person=model_person,
+                        invoice=True)
 
-                model_address_invoice.invoice = False
-                model_address_invoice.save()
+                    if model_address_invoice.count() >= 1:
+                        model_address_invoice[0].invoice = False
+                        model_address_invoice[0].save()
 
-            elif self.delivery == True:
-                model_address_delivery = Address.objects.get(
-                    person=model_person,
-                    delivery=True)
+                if self.delivery:
+                    model_address_delivery = Address.objects.filter(
+                        person=model_person,
+                        delivery=True)
 
-                model_address_delivery.delivery = False
-                model_address_delivery.save()
+                    if model_address_delivery.count() >= 1:
+                        model_address_delivery[0].delivery = False
+                        model_address_delivery[0].save()
 
             model_address = Address(
                 person=model_person,
@@ -161,11 +188,11 @@ class AddressManager(models.Manager):
 
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)
-    person = models.ForeignKey(ModelPerson)
+    person = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
     state = models.CharField(max_length=2)
     city = models.CharField(max_length=80)
     number = models.IntegerField()
-    complement = models.CharField(max_length=40)
+    complement = models.CharField(max_length=40,null=True)
     invoice = models.BooleanField()
     delivery = models.BooleanField()
     date_create = models.DateTimeField(auto_now_add=True)
