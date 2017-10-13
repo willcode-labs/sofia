@@ -82,7 +82,7 @@ class Auth():
                         ip=None,
                         date_expired=None,)
 
-                    raise Exception('Api key do cliente expirado!')
+                    raise Exception('Api key do cliente expirado![42]')
 
                 date_expired = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
 

@@ -91,7 +91,7 @@ class Login(models.Model):
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=8,null=True)
     verified = models.BooleanField()
-    token = models.CharField(max_length=40)
+    token = models.CharField(max_length=40,null=True)
     ip = models.GenericIPAddressField(protocol='both',null=True)
     date_expired = models.DateTimeField(null=True)
     date_create = models.DateTimeField(auto_now_add=True)

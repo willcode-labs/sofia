@@ -198,5 +198,10 @@
         "code": 41,
         "message": "Perfil de cliente não autorizado![41]",
         "description": "",
+    },
+    {
+        "code": 42,
+        "message": "Api key do cliente expirado![42]",
+        "description": "",
     }
 ]
