@@ -1,0 +1,202 @@
+[
+    {
+        "code": 1,
+        "message": "IP não encontrado![1]",
+        "description": "",
+    },
+    {
+        "code": 2,
+        "message": "Api key não encontrado![2]",
+        "description": "",
+    },
+    {
+        "code": 3,
+        "message": "Api key não autorizado![3]",
+        "description": "",
+    },
+    {
+        "code": 4,
+        "message": "Ip de acesso do login difere de seu ip de origem![4]",
+        "description": "",
+    },
+    {
+        "code": 5,
+        "message": "Login não verificado![5]",
+        "description": "",
+    },
+    {
+        "code": 6,
+        "message": "Perfil não permitido![6]",
+        "description": "",
+    },
+    {
+        "code": 7,
+        "message": "Perfil não autorizado![7]",
+        "description": "",
+    },
+    {
+        "code": 9,
+        "message": "Api key expirado![9]",
+        "description": "",
+    },
+    {
+        "code": 10,
+        "message": "Dados de cliente insuficientes![10]",
+        "description": "",
+    },
+    {
+        "code": 11,
+        "message": "Api key do cliente não encontrado![11]",
+        "description": "",
+    },
+    {
+        "code": 12,
+        "message": "Login de cliente já está verificado![12]",
+        "description": "",
+    },
+    {
+        "code": 13,
+        "message": "Cliente não relacionado![13]",
+        "description": "",
+    },
+    {
+        "code": 14,
+        "message": "Perfil de cliente não autorizado![14]",
+        "description": "",
+    },
+    {
+        "code": 15,
+        "message": "Perfil não configurado![15]",
+        "description": "",
+    },
+    {
+        "code": 16,
+        "message": "Perfil não identificado![16]",
+        "description": "",
+    },
+    {
+        "code": 17,
+        "message": "Não há um registro de controle para este comerciante![17]",
+        "description": "",
+    },
+    {
+        "code": 18,
+        "message": "Comerciante expirado![18]",
+        "description": "",
+    },
+    {
+        "code": 19,
+        "message": "Dados insuficientes![19]",
+        "description": "",
+    },
+    {
+        "code": 20,
+        "message": "Login ou senha inválidos![20]",
+        "description": "",
+    },
+    {
+        "code": 21,
+        "message": "Login não verificado![21]",
+        "description": "",
+    },
+    {
+        "code": 22,
+        "message": "Tipo de login não autorizado![22]",
+        "description": "",
+    },
+    {
+        "code": 23,
+        "message": "Tipo de valor invalido para validação de cliente![23]",
+        "description": "",
+    },
+    {
+        "code": 24,
+        "message": "Erro na consulta de pessoa![24]",
+        "description": "",
+    },
+    {
+        "code": 25,
+        "message": "Erro na consulta de pessoa![25]",
+        "description": "",
+    },
+    {
+        "code": 26,
+        "message": "Erro ao tentar encontrar pessoa![26]",
+        "description": "",
+    },
+    {
+        "code": 27,
+        "message": "Erro de verificação do login![27]",
+        "description": "",
+    },
+    {
+        "code": 28,
+        "message": "Erro de autenticação do login![28]",
+        "description": "",
+    },
+    {
+        "code": 29,
+        "message": "Erro na criação de pessoa![29]",
+        "description": "",
+    },
+    {
+        "code": 30,
+        "message": "Dados insuficientes para criação de pessoa![30]",
+        "description": "",
+    },
+    {
+        "code": 31,
+        "message": "Relacionamento entre tipo de pessoas incorreto![31]",
+        "description": "",
+    },
+    {
+        "code": 32,
+        "message": "Já existe uma pessoa cadastrada com este mesmo CPF![32]",
+        "description": "",
+    },
+    {
+        "code": 33,
+        "message": "Já existe uma pessoa cadastrada com este mesmo E-mail![33]",
+        "description": "",
+    },
+    {
+        "code": 34,
+        "message": "Relacionamento entre tipo de pessoas incorreto![34]",
+        "description": "",
+    },
+    {
+        "code": 35,
+        "message": "Já existe um usuário com este mesmo email![35]",
+        "description": "",
+    },
+    {
+        "code": 36,
+        "message": "Dados insuficientes![36]",
+        "description": "",
+    },
+    {
+        "code": 37,
+        "message": "Api key do cliente não encontrado![37]",
+        "description": "",
+    },
+    {
+        "code": 38,
+        "message": "Ip de acesso do login de cliente difere de seu ip de origem![38]",
+        "description": "",
+    },
+    {
+        "code": 39,
+        "message": "Login de cliente não verificado![39]",
+        "description": "",
+    },
+    {
+        "code": 40,
+        "message": "Cliente não relacionado![40]",
+        "description": "",
+    },
+    {
+        "code": 41,
+        "message": "Perfil de cliente não autorizado![41]",
+        "description": "",
+    }
+]

@@ -1,0 +1,444 @@
+    {
+    "swagger": "2.0",
+    "info": {
+      "description": "Documentação das api's Sofia.",
+      "version": "1.0.0",
+      "title": "Sofia",
+      "contact": {
+        "email": "william.borba@willcode.com.br"
+    }
+    },
+    "host": "127.0.0.1:8000",
+    "basePath": "/api/v1",
+    "tags": [
+    {
+    "name": "login",
+    "description": "Funções específicas para usuário"
+    },
+    {
+    "name": "person",
+    "description": "Funções específicas para pessoa"
+    }
+    ],
+    "schemes": [
+    "http"
+    ],
+    "paths": {
+    "/login/verify": {
+    "post": {
+      "tags": [
+        "login"
+    ],
+      "summary": "Validar usuário",
+      "description": "Validar usuário apos a criação de pessoa.",
+      "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+      "parameters": [
+        {
+          "name": "api-key",
+          "in": "header",
+          "description": "Token de acesso.",
+          "type": "string",
+          "required": true
+      },
+      {
+          "name": "client-api-key",
+          "in": "header",
+          "description": "Token de acesso do cliente.",
+          "type": "string",
+          "required": true
+      },
+      {
+          "name": "client-ip",
+          "in": "header",
+          "description": "IP do cliente.",
+          "type": "string",
+          "required": true
+      },
+    ],
+      "responses": {
+        "200": {
+          "description": "Usuário validado.",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string"
+            },
+            "date_expired": {
+                "type": "string"
+            }
+        }
+    }
+    },
+    "400": {
+    "description": "Erro na verificação de usuário.",
+    "schema": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string"
+    }
+    }
+    }
+    }
+    }
+    }
+    },
+    "/login/auth": {
+    "post": {
+    "tags": [
+    "login"
+    ],
+    "summary": "Autenticar usuário",
+    "description": "Autenticar usuário(somente validado).",
+    "consumes": [
+    "application/x-www-form-urlencoded",
+    "multipart/form-data"
+    ],
+    "parameters": [
+      {
+          "name": "api-key",
+          "in": "header",
+          "description": "Token de acesso.",
+          "type": "string",
+          "required": true
+      },
+      {
+          "name": "username",
+          "in": "formData",
+          "description": "Nome do usuário.",
+          "type": "string",
+          "required": true
+      },
+      {
+          "name": "password",
+          "in": "formData",
+          "description": "Senha do usuário.",
+          "type": "string",
+          "required": true
+      }
+    ],
+    "responses": {
+    "200": {
+      "description": "Usuário autenticado.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+        },
+        "date_expired": {
+            "type": "string"
+        }
+    }
+    }
+    },
+    "400": {
+    "description": "Erro na autenticação de usuário.",
+    "schema": {
+    "type": "object",
+    "properties": {
+    "message": {
+    "type": "string"
+    }
+    }
+    }
+    }
+    }
+    }
+    },
+    "/person/add": {
+    "post": {
+    "tags": [
+    "person"
+    ],
+    "summary": "Cadastrar pessoa",
+    "description": "Cadastro de pessoa.",
+    "consumes": [
+    "application/x-www-form-urlencoded",
+    "multipart/form-data"
+    ],
+    "parameters": [
+      {
+        "name": "api-key",
+        "in": "header",
+        "description": "Token de acesso.",
+        "type": "string",
+        "required": true
+    },
+    {
+        "name": "client-api-key",
+        "in": "header",
+        "description": "Token de acesso do cliente.",
+        "type": "string",
+        "required": true
+    },
+    {
+        "name": "client-ip",
+        "in": "header",
+        "description": "IP do cliente.",
+        "type": "string",
+        "required": true
+    },
+    {
+      "name": "name",
+      "in": "formData",
+      "description": "Nome.",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "cpf",
+      "in": "formData",
+      "description": "CPF.",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "email",
+      "in": "formData",
+      "description": "Email.",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "phone1",
+      "in": "formData",
+      "description": "Telefone 1.",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "phone2",
+      "in": "formData",
+      "description": "Telefone 2.",
+      "type": "string",
+      "required": false
+    }
+    ],
+    "responses": {
+    "200": {
+      "description": "Pessoa cadastrada, usuário criado e email de validação disparado.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+        },
+        "cpf": {
+            "type": "string"
+        },
+        "email": {
+            "type": "string"
+        },
+        "phone1": {
+            "type": "string"
+        },
+        "phone2": {
+            "type": "string"
+        },
+        "user": {
+            "properties": {
+              "username": {
+                "type": "string"
+            },
+            "varified": {
+                "type": "string"
+            }
+        }
+    }
+    }
+    }
+    },
+    "400": {
+    "description": "Erro no cadastro de pessoa.",
+    "schema": {
+    "type": "object",
+    "properties": {
+    "message": {
+    "type": "string"
+    }
+    }
+    }
+    }
+    }
+    }
+    },
+    "/person/filter": {
+    "get": {
+    "tags": [
+    "person"
+    ],
+    "summary": "Lista e filtra pessoas",
+    "description": "Retorna lista de pessoas com filtro.\n\nPerfil de acesso:\nHTTP_API_KEY: merchant\nHTTP_CLIENT_API_KEY: None",
+    "parameters": [
+      {
+        "name": "api-key",
+        "in": "header",
+        "description": "Token de acesso.",
+        "type": "string",
+        "required": true
+    },
+    {
+      "name": "page",
+      "in": "query",
+      "description": "Numero de página.",
+      "type": "integer"
+    },
+    {
+      "name": "limit",
+      "in": "query",
+      "description": "Total de registros por página.",
+      "type": "integer"
+    },
+    {
+      "name": "name",
+      "in": "query",
+      "description": "Nome de pessoa(like)",
+      "type": "integer"
+    }
+    ],
+    "responses": {
+    "200": {
+      "description": "Lista de pessoas.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+      },
+      "num_pages": {
+        "type": "integer"
+    },
+    "has_previous": {
+        "type": "boolean"
+    },
+    "has_next": {
+      "type": "boolean"
+    },
+    "count": {
+      "type": "integer"
+    },
+    "data": {
+    "type": "array",
+    "properties": {
+        "person_id": {
+          "type": "integer"
+      },
+      "name": {
+          "type": "string"
+      },
+      "cpf": {
+          "type": "integer"
+      },
+      "email": {
+          "type": "string"
+      },
+      "phone1": {
+          "type": "string"
+      },
+      "phone2": {
+          "type": "string"
+      }
+    }
+    },
+    }
+    }
+    },
+    "400": {
+    "description": "Erro na listagem de pessoas.",
+    "schema": {
+    "type": "object",
+    "properties": {
+    "message": {
+    "type": "string"
+    }
+    }
+    }
+    }
+    }
+    }
+    },
+    "/person/{person_id}": {
+    "get": {
+    "tags": [
+    "person"
+    ],
+    "summary": "Retorna uma pessoa",
+    "description": "Retorna uma pessoa pelo seu ID.",
+    "parameters": [
+      {
+        "name": "api-key",
+        "in": "header",
+        "description": "Token de acesso.",
+        "type": "string",
+        "required": true
+    },
+    {
+        "name": "client-api-key",
+        "in": "header",
+        "description": "Token de acesso do cliente.",
+        "type": "string",
+        "required": true
+    },
+    {
+        "name": "client-ip",
+        "in": "header",
+        "description": "IP do cliente.",
+        "type": "string",
+        "required": true
+    },
+    {
+      "name": "person_id",
+      "in": "path",
+      "required": true,
+      "description": "Pessoa ID",
+      "type": "integer"
+    }
+    ],
+    "responses": {
+    "200": {
+      "description": "Pessoa",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+        },
+        "cpf": {
+            "type": "string"
+        },
+        "email": {
+            "type": "string"
+        },
+        "phone1": {
+            "type": "string"
+        },
+        "phone2": {
+            "type": "string"
+        }
+    }
+    }
+    },
+    "400": {
+    "description": "Pessoa não encontrada.",
+    "schema": {
+    "type": "object",
+    "properties": {
+    "message": {
+    "type": "string"
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
