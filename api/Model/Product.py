@@ -1,25 +1,23 @@
-import uuid,traceback
 from django.db import models
-from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 
 class ProductManager(models.Manager):
     def create(self,request,model_login,**kwargs):
-        self.name = None
-        self.description = None
-        self.code = None
-        self.compound = None
-        self.unit_weight = None
-        self.weight = None
-        self.width = None
-        self.length = None
-        self.height = None
-        self.origin = None
-        self.gtin = None
+        self.name = request.POST.get('name',None)
+        self.description = request.POST.get('description',None)
+        self.code = request.POST.get('code',None)
+        self.compound = request.POST.get('compound',None)
+        self.unit_weight = request.POST.get('unit_weight',None)
+        self.weight = request.POST.get('weight',None)
+        self.width = request.POST.get('width',None)
+        self.length = request.POST.get('length',None)
+        self.height = request.POST.get('height',None)
+        self.origin = request.POST.get('origin',None)
+        self.gtin = request.POST.get('gtin',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.name or not self.description or not self.code or not self.unit_weight or not self.origin or not self.gtin:
+        if not self.name or not self.description or not self.code or not self.unit_weight or not self.origin:
             raise Exception('Dados insuficientes para criação de produto!')
 
         if self.unit_weight not in dict(Product.UNIT_WEIGHT_LIST).keys():
@@ -239,14 +237,14 @@ class Product(models.Model):
     name = models.CharField(max_length=150)
     description = models.TextField()
     code = models.CharField(max_length=150)
-    compound = models.BooleanField()
+    compound = models.BooleanField(null=True)
     unit_weight = models.IntegerField(choices=UNIT_WEIGHT_LIST)
-    weight = models.FloatField()
-    width = models.FloatField()
-    length = models.FloatField()
-    height = models.FloatField()
+    weight = models.FloatField(null=True)
+    width = models.FloatField(null=True)
+    length = models.FloatField(null=True)
+    height = models.FloatField(null=True)
     origin = models.IntegerField(choices=ORIGIN_LIST)
-    gtin = models.CharField(max_length=150)
+    gtin = models.CharField(max_length=150,null=True)
     published = models.BooleanField()
     date_create = models.DateTimeField(auto_now_add=True)
 
@@ -254,5 +252,6 @@ class Product(models.Model):
 
     class Meta:
         db_table = 'product'
+        ordering = ['-product_id']
         app_label = 'api'
 
