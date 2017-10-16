@@ -243,5 +243,40 @@
         "code": 50,
         "message": "Endereço não encontrado![50]",
         "description": "",
+    },
+    {
+        "code": 51,
+        "message": "Endereço não encontrado![51]",
+        "description": "",
+    },
+    {
+        "code": 52,
+        "message": "Não é possível remover endereço de cobrança ou entrega![52]",
+        "description": "",
+    },
+    {
+        "code": 53,
+        "message": "Não é possível remover endereço de entrega ou cobrança![53]",
+        "description": "",
+    },
+    {
+        "code": 54,
+        "message": "Registro de endereço não encontrado[54]",
+        "description": "",
+    },
+    {
+        "code": 55,
+        "message": "Valor incorreto![55]",
+        "description": "",
+    },
+    {
+        "code": 56,
+        "message": "Não foi possível efetuar consulta de endereço![56]",
+        "description": "",
+    },
+    {
+        "code": 57,
+        "message": "Erro na consulta de endereço![57]",
+        "description": "",
     }
 ]

@@ -28,6 +28,7 @@ def filter(request,model_login,model_login_client):
 
     if limit and re.match(r'^[0-9]+$', str(limit)) and int(limit) >= 1:
         limit = int(limit)
+
     else:
         limit = ApiConfig.query_row_limit
 
@@ -54,7 +55,7 @@ def filter(request,model_login,model_login_client):
     try:
         person = paginator.page(page)
         person_total = model_person.count()
-        perso_has_next = person.has_next()
+        person_has_next = person.has_next()
         person_has_previous = person.has_previous()
 
         person_data = person.object_list
@@ -76,9 +77,10 @@ def filter(request,model_login,model_login_client):
         'limit': limit,
         'count': paginator.count,
         'num_pages': paginator.num_pages,
-        'has_next': perso_has_next,
+        'has_next': person_has_next,
         'has_previous': person_has_previous,
-        'data': person_data,}
+        'data': person_data,
+    }
 
     return JsonResponse(result,status=200)
 
@@ -99,7 +101,7 @@ def getById(request,model_login,model_login_client):
             message=error,
             trace=traceback.format_exc())
 
-        return JsonResponse({'message': str(error)}, status=400)
+        return JsonResponse({'message': message}, status=400)
 
     result = {
         'person_id': model_person.person_id,
@@ -110,7 +112,7 @@ def getById(request,model_login,model_login_client):
         'phone1': model_person.phone1,
         'phone2': model_person.phone2,
         'address': list(model_address.values(
-            'address_id','state','city','number','complement','invoice','delivery')),
+            'address_id','state','city','number','complement','invoice','delivery','date_create')),
     }
 
     return JsonResponse(result,status=200)
@@ -129,10 +131,8 @@ def add(request,model_login,model_login_client):
             model_person)
 
     except Exception as error:
-        message = 'Erro na criação de pessoa![29]'
-
         BusinessExceptionLog(request,model_login,model_login_client,
-            description=message,
+            description='Erro na criação de pessoa![29]',
             message=error,
             trace=traceback.format_exc())
 
@@ -150,6 +150,151 @@ def add(request,model_login,model_login_client):
             'username': model_login_client.username,
             'verified': model_login_client.verified,
         }
+    }
+
+    return JsonResponse(result,status=200)
+
+@require_http_methods(['GET'])
+@csrf_exempt
+@BusinessDecoratorAuth(profile=('merchant',))
+def addressFilter(request,model_login,model_login_client):
+    page = request.GET.get('page',None)
+    limit = request.GET.get('limit',None)
+    state = request.GET.get('state',None)
+    city = request.GET.get('city',None)
+    number = request.GET.get('number',None)
+    complement = request.GET.get('complement',None)
+    invoice = request.GET.get('invoice',None)
+    delivery = request.GET.get('delivery',None)
+
+    if page and re.match(r'^[0-9]+$', str(page)) and int(page) >= 1:
+        page = int(page)
+
+    else:
+        page = 1
+
+    if limit and re.match(r'^[0-9]+$', str(limit)) and int(limit) >= 1:
+        limit = int(limit)
+
+    else:
+        limit = ApiConfig.query_row_limit
+
+    if invoice not in ['0','1'] or delivery not in ['0','1']:
+        error = Exception('Valor incorreto![55]')
+
+        BusinessExceptionLog(request,model_login,model_login_client,
+            description=str(error),
+            message=error,
+            trace=traceback.format_exc())
+
+        return JsonResponse({'message': str(error)}, status=400)
+
+    if invoice == '0':
+        invoice = False
+
+    else:
+        invoice = True
+
+    if delivery == '0':
+        delivery = False
+
+    else:
+        delivery = True
+
+    try:
+        model_address = ModelAddress.objects.filter(person_id=model_login_client.person_id)
+
+        if city:
+            model_address = model_address.filter(city__contains=city)
+
+        if state:
+            model_address = model_address.filter(state__contains=state)
+
+        if number:
+            model_address = model_address.filter(number__contains=number)
+
+        if complement:
+            model_address = model_address.filter(complement__contains=complement)
+
+        if invoice:
+            model_address = model_address.filter(invoice=invoice)
+
+        if delivery:
+            model_address = model_address.filter(delivery=delivery)
+
+    except Exception as error:
+        message = 'Não foi possível efetuar consulta de endereço![56]'
+
+        BusinessExceptionLog(request,model_login,model_login_client,
+            description='Registro não encontrado',
+            message=error,
+            trace=traceback.format_exc())
+
+        return JsonResponse({'message': message}, status=400)
+
+    paginator = Paginator(model_address, limit)
+
+    try:
+        address = paginator.page(page)
+        address_total = model_address.count()
+        address_has_next = address.has_next()
+        address_has_previous = address.has_previous()
+
+        address_data = address.object_list
+        address_data = list(address_data.values(
+            'address_id','person_id','state','city','number',
+            'complement','invoice','delivery','date_create'))
+
+    except Exception as error:
+        message = 'Erro na consulta de endereço![57]'
+
+        BusinessExceptionLog(request,model_login,model_login_client,
+            description=message,
+            message=error,
+            trace=traceback.format_exc())
+
+        return JsonResponse({'message': message}, status=400)
+
+    result = {
+        'total': address_total,
+        'limit': limit,
+        'count': paginator.count,
+        'num_pages': paginator.num_pages,
+        'has_next': address_has_next,
+        'has_previous': address_has_previous,
+        'data': address_data,
+    }
+
+    return JsonResponse(result,status=200)
+
+@require_http_methods(['GET'])
+@csrf_exempt
+@BusinessDecoratorAuth(profile=('merchant',))
+def addressById(request,model_login,model_login_client,address_id):
+    try:
+        model_address = ModelAddress.objects.get(
+            address_id=address_id,)
+
+    except Exception as error:
+        message = 'Registro de endereço não encontrado[54]'
+
+        BusinessExceptionLog(request,model_login,model_login_client,
+            description=message,
+            message=error,
+            trace=traceback.format_exc())
+
+        return JsonResponse({'message': message}, status=400)
+
+    result = {
+        'address_id': model_address.address_id,
+        'person_id': model_address.person_id,
+        'state': model_address.state,
+        'city': model_address.city,
+        'number': model_address.number,
+        'complement': model_address.complement,
+        'invoice': model_address.invoice,
+        'delivery': model_address.delivery,
+        'date_create': model_address.date_create,
     }
 
     return JsonResponse(result,status=200)
@@ -182,6 +327,7 @@ def addressAdd(request,model_login,model_login_client):
         'complement': model_address.complement,
         'invoice': model_address.invoice,
         'delivery': model_address.delivery,
+        'date_create': model_address.date_create,
     }
 
     return JsonResponse(result,status=200)
@@ -215,118 +361,33 @@ def addressUpdate(request,model_login,model_login_client,address_id):
         'complement': model_address.complement,
         'invoice': model_address.invoice,
         'delivery': model_address.delivery,
+        'date_create': model_address.date_create,
     }
 
     return JsonResponse(result,status=200)
 
-    @require_http_methods(['POST'])
-    @csrf_exempt
-    @transaction.atomic
-    @BusinessDecoratorAuth(profile=('merchant',))
-    def addressDelete(request,model_login,person_id,address_id):
-        try:
-            session_identifier = transaction.savepoint()
+@require_http_methods(['POST'])
+@csrf_exempt
+@transaction.atomic
+@BusinessDecoratorAuth(profile=('merchant',))
+def addressDelete(request,model_login,model_login_client,address_id):
+    try:
+        model_address = ModelAddress.objects.delete(
+            request,
+            model_login,
+            model_login_client,
+            address_id,)
 
-            model_person = ModelPerson.objects.get(person_id=person_id)
+    except Exception as error:
+        BusinessExceptionLog(request,model_login,model_login_client,
+            description='Erro na remoção de endereço',
+            message=error,
+            trace=traceback.format_exc())
 
-            model_address = ModelAddress.objects.delete(request,model_login,model_person,
-                address_id=address_id,)
+        return JsonResponse({'message': str(error)}, status=400)
 
-            transaction.savepoint_commit(session_identifier)
+    result = {
+        'result': True
+    }
 
-        except Exception as error:
-            transaction.savepoint_rollback(session_identifier)
-
-            BusinessExceptionLog(request,model_login,
-                description='Erro na remoção de endereço',
-                message=error,
-                trace=traceback.format_exc())
-
-            return JsonResponse({'message': str(error)}, status=400)
-
-        result = {
-            'result': True
-        }
-
-        return JsonResponse(result,status=200)
-#
-# @require_http_methods(['GET'])
-# @csrf_exempt
-# @BusinessDecoratorAuthRequired
-# def addressById(request,model_login,person_id,address_id):
-#     try:
-#         model_address = ModelAddress.objects.get(
-#             address=address_id,)
-#
-#     except Exception as error:
-#         BusinessExceptionLog(request,model_login,
-#             description='Registro não encontrado',
-#             message=error,
-#             trace=traceback.format_exc())
-#
-#         return JsonResponse({'message': str(error)}, status=400)
-#
-#     result = {
-#         'address_id': model_address.address_id,
-#         'person_id': model_address.person_id,
-#         'state': model_address.state,
-#         'city': model_address.city,
-#         'number': model_address.number,
-#         'complement': model_address.complement,
-#         'invoice': model_address.invoice,
-#         'delivery': model_address.delivery
-#     }
-#
-#     return JsonResponse(result, safe=False,status=200)
-#
-# @require_http_methods(['GET'])
-# @csrf_exempt
-# @BusinessDecoratorAuthRequired
-# def addressFilter(request,model_login,person_id):
-#     page = request.GET.get('page',None)
-#     state = request.GET.get('state',None)
-#     city = request.GET.get('city',None)
-#     number = request.GET.get('number',None)
-#     complement = request.GET.get('complement',None)
-#     invoice = request.GET.get('invoice',None)
-#     delivery = request.GET.get('delivery',None)
-#
-#     if not page:
-#         page = 1
-#
-#     try:
-#         model_address = ModelAddress.objects.filter(person=person_id)
-#
-#         if city:
-#             model_address = model_address.filter(city__contains=city)
-#
-#         if state:
-#             model_address = model_address.objects.filter(state__contains=state)
-#
-#         if number:
-#             model_address = model_address.objects.filter(number__contains=number)
-#
-#         if complement:
-#             model_address = model_address.objects.filter(complement__contains=complement)
-#
-#         if invoice:
-#             model_address = model_address.objects.filter(invoice=invoice)
-#
-#         if delivery:
-#             model_address = model_address.objects.filter(delivery=delivery)
-#
-#     except Exception as error:
-#         BusinessExceptionLog(request,model_login,
-#             description='Registro não encontrado',
-#             message=error,
-#             trace=traceback.format_exc())
-#
-#         return JsonResponse({'message': str(error)}, status=400)
-#
-#     paginator = Paginator(model_address, ApiConfig.query_row_limit)
-#
-#     address = paginator.page(page)
-#
-#     result = serializers.serialize('json', address)
-#
-#     return JsonResponse(json.loads(result), safe=False,status=200)
+    return JsonResponse(result,status=200)

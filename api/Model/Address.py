@@ -37,7 +37,7 @@ class AddressManager(models.Manager):
 
         try:
             model_address_test = Address.objects.filter(
-                    person=model_login_client.person,
+                    person_id=model_login_client.person_id,
                     state=self.state,
                     number=self.number,
                     complement=self.complement,)
@@ -54,12 +54,28 @@ class AddressManager(models.Manager):
                     self.delivery = True
 
             else:
-                if self.invoice:
+                if not self.invoice:
+                    model_address_invoice = Address.objects.filter(
+                        person=model_login_client.person,
+                        invoice=True)
+
+                    if model_address_invoice.count() == 0:
+                        self.invoice = True
+
+                else:
                     model_address_invoice = Address.objects.filter(
                         person=model_login_client.person,
                         invoice=True).update(invoice=False)
 
-                if self.delivery:
+                if not self.delivery:
+                    model_address_delivery = Address.objects.filter(
+                        person=model_login_client.person,
+                        delivery=True)
+
+                    if model_address_delivery.count() == 0:
+                        self.delivery = True
+
+                else:
                     model_address_delivery = Address.objects.filter(
                         person=model_login_client.person,
                         delivery=True).update(delivery=False)
@@ -156,23 +172,24 @@ class AddressManager(models.Manager):
 
         return model_address
 
-    def delete(self,request,model_login,model_person,**kwargs):
-        self.address_id = None
-
+    def delete(self,request,model_login,model_login_client,address_id,**kwargs):
         for key in kwargs:
             setattr(self,key,kwargs[key])
-
-        if not self.address_id:
-            raise Exception('Dados insuficientes para remoção de endereço!')
 
         try:
             try:
                 model_address = Address.objects.get(
-                    address_id=self.address_id,
-                    person=model_person)
+                    address_id=address_id,
+                    person=model_login_client.person)
 
             except Exception as error:
-                raise Exception('Endereço não encontrado!')
+                raise Exception('Endereço não encontrado![51]')
+
+            if model_address.invoice:
+                raise Exception('Não é possível remover endereço de cobrança ou entrega![52]')
+
+            if model_address.delivery:
+                raise Exception('Não é possível remover endereço de entrega ou cobrança![53]')
 
             model_address.delete()
 
@@ -180,7 +197,6 @@ class AddressManager(models.Manager):
             raise error
 
         return True
-
 
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)
@@ -197,4 +213,5 @@ class Address(models.Model):
 
     class Meta:
         db_table = 'address'
+        ordering = ['-address_id']
         app_label = 'api'

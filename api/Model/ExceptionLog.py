@@ -20,9 +20,6 @@ class ExceptionManager(models.Manager):
         self.trace = None
         self.message = None
 
-        if not ip:
-            raise Exception('campo "ip" necessário')
-
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
@@ -58,7 +55,7 @@ class ExceptionLog(models.Model):
     exceptionlog_id = models.AutoField(primary_key=True)
     login_id = models.IntegerField(null=True)
     login_client_id = models.IntegerField(null=True)
-    ip = models.GenericIPAddressField(protocol='both')
+    ip = models.GenericIPAddressField(protocol='both',null=True)
     date_created = models.DateTimeField(auto_now=False, auto_now_add=True)
     description = models.CharField(max_length=254,null=True,blank=True)
     message = models.TextField()
