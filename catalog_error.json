@@ -223,5 +223,25 @@
         "code": 46,
         "message": "Endereço duplicado![46]",
         "description": "",
+    },
+    {
+        "code": 47,
+        "message": "Nenhum dado para alterar![47]",
+        "description": "",
+    },
+    {
+        "code": 48,
+        "message": "Valor incorreto![48]",
+        "description": "",
+    },
+    {
+        "code": 49,
+        "message": "Relacionamento entre tipo de pessoas incorreto![49]",
+        "description": "",
+    },
+    {
+        "code": 50,
+        "message": "Endereço não encontrado![50]",
+        "description": "",
     }
 ]

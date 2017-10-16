@@ -2,11 +2,11 @@ from django.db import models
 
 class PersonManager(models.Manager):
     def create(self,request,model_login,**kwargs):
-        self.name = None
-        self.cpf = None
-        self.email = None
-        self.phone1 = None
-        self.phone2 = None
+        self.name = request.POST.get('name',None)
+        self.cpf = request.POST.get('cpf',None)
+        self.email = request.POST.get('email',None)
+        self.phone1 = request.POST.get('phone1',None)
+        self.phone2 = request.POST.get('phone2',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])

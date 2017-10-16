@@ -3,13 +3,13 @@ from django.db import models
 from api.Model.Person import Person as ModelPerson
 
 class AddressManager(models.Manager):
-    def create(self,request,model_login,model_person,**kwargs):
-        self.state = None
-        self.city = None
-        self.number = None
-        self.complement = None
-        self.invoice = None
-        self.delivery = None
+    def create(self,request,model_login,model_login_client,**kwargs):
+        self.state = request.POST.get('state',None)
+        self.city = request.POST.get('city',None)
+        self.number = request.POST.get('number',None)
+        self.complement = request.POST.get('complement',None)
+        self.invoice = request.POST.get('invoice',None)
+        self.delivery = request.POST.get('delivery',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
@@ -37,7 +37,7 @@ class AddressManager(models.Manager):
 
         try:
             model_address_test = Address.objects.filter(
-                    person=model_person,
+                    person=model_login_client.person,
                     state=self.state,
                     number=self.number,
                     complement=self.complement,)
@@ -47,7 +47,7 @@ class AddressManager(models.Manager):
 
             if not self.invoice and not self.delivery:
                 model_address_test = Address.objects.filter(
-                    person=model_person)
+                    person=model_login_client.person)
 
                 if model_address_test.count() == 0:
                     self.invoice = True
@@ -56,24 +56,16 @@ class AddressManager(models.Manager):
             else:
                 if self.invoice:
                     model_address_invoice = Address.objects.filter(
-                        person=model_person,
-                        invoice=True)
-
-                    if model_address_invoice.count() >= 1:
-                        model_address_invoice[0].invoice = False
-                        model_address_invoice[0].save()
+                        person=model_login_client.person,
+                        invoice=True).update(invoice=False)
 
                 if self.delivery:
                     model_address_delivery = Address.objects.filter(
-                        person=model_person,
-                        delivery=True)
-
-                    if model_address_delivery.count() >= 1:
-                        model_address_delivery[0].delivery = False
-                        model_address_delivery[0].save()
+                        person=model_login_client.person,
+                        delivery=True).update(delivery=False)
 
             model_address = Address(
-                person=model_person,
+                person=model_login_client.person,
                 state=self.state,
                 city=self.city,
                 number=self.number,
@@ -88,52 +80,56 @@ class AddressManager(models.Manager):
 
         return model_address
 
-    def update(self,request,model_login,model_person,**kwargs):
-        self.address_id = None
-        self.state = None
-        self.city = None
-        self.number = None
-        self.complement = None
-        self.invoice = None
-        self.delivery = None
+    def update(self,request,model_login,model_login_client,address_id,**kwargs):
+        self.state = request.POST.get('state',None)
+        self.city = request.POST.get('city',None)
+        self.number = request.POST.get('number',None)
+        self.complement = request.POST.get('complement',None)
+        self.invoice = request.POST.get('invoice',None)
+        self.delivery = request.POST.get('delivery',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.address_id:
-            raise Exception('Necessário informar um ID de endereço!')
-
         if not self.city and not self.state and not self.number and not self.complement and not self.invoice and not self.delivery:
-            raise Exception('Atenção, nenhum dado para alterar!')
+            raise Exception('Nenhum dado para alterar![47]')
+
+        if self.invoice not in ['0','1'] or self.delivery not in ['0','1']:
+            raise Exception('Valor incorreto![48]')
+
+        if self.invoice == '0':
+            self.invoice = False
+
+        else:
+            self.invoice = True
+
+        if self.delivery == '0':
+            self.delivery = False
+
+        else:
+            self.delivery = True
+
+        if model_login.profile_id not in (model_login.PROFILE_MERCHANT,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![49]')
 
         try:
             try:
-                model_address = ModelAddress.objects.get(
-                    address_id=self.address_id,
-                    person=model_person)
+                model_address = Address.objects.get(
+                    address_id=address_id,
+                    person=model_login_client.person)
 
             except Exception as error:
-                raise Exception('Endereço não encontrado!')
+                raise Exception('Endereço não encontrado![50]')
 
-            if not self.invoice and not self.delivery:
-                self.invoice = False
-                self.delivery = False
+            if self.invoice:
+                model_address_invoice = Address.objects.filter(
+                    person=model_login_client.person,
+                    invoice=True).update(invoice=False)
 
-            elif self.invoice == True:
-                model_address_invoice = Address.objects.get(
-                    person=model_person,
-                    invoice=True)
-
-                model_address_invoice.invoice = False
-                model_address_invoice.save()
-
-            elif self.delivery == True:
-                model_address_delivery = Address.objects.get(
-                    person=model_person,
-                    delivery=True)
-
-                model_address_delivery.delivery = False
-                model_address_delivery.save()
+            if self.delivery:
+                model_address_delivery = Address.objects.filter(
+                    person=model_login_client.person,
+                    delivery=True).update(delivery=False)
 
             if self.state:
                 model_address.state = self.state
@@ -171,7 +167,7 @@ class AddressManager(models.Manager):
 
         try:
             try:
-                model_address = ModelAddress.objects.get(
+                model_address = Address.objects.get(
                     address_id=self.address_id,
                     person=model_person)
 

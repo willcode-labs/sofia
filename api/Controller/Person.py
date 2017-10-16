@@ -120,21 +120,13 @@ def getById(request,model_login,model_login_client):
 @transaction.atomic
 @BusinessDecoratorAuth(profile=('merchant',),client=False)
 def add(request,model_login,model_login_client):
-    name = request.POST.get('name',None)
-    cpf = request.POST.get('cpf',None)
-    email = request.POST.get('email',None)
-    phone1 = request.POST.get('phone1',None)
-    phone2 = request.POST.get('phone2',None)
-
     try:
-        model_person = ModelPerson.objects.create(request,model_login,
-            name=name,
-            cpf=cpf,
-            email=email,
-            phone1=phone1,
-            phone2=phone2)
+        model_person = ModelPerson.objects.create(request,model_login)
 
-        model_login_client = ModelLogin.objects.create(request,model_login,model_person)
+        model_login_client = ModelLogin.objects.create(
+            request,
+            model_login,
+            model_person)
 
     except Exception as error:
         message = 'Erro na criação de pessoa![29]'
@@ -167,23 +159,11 @@ def add(request,model_login,model_login_client):
 @transaction.atomic
 @BusinessDecoratorAuth(profile=('merchant',))
 def addressAdd(request,model_login,model_login_client):
-    state = request.POST.get('state',None)
-    city = request.POST.get('city',None)
-    number = request.POST.get('number',None)
-    complement = request.POST.get('complement',None)
-    invoice = request.POST.get('invoice',None)
-    delivery = request.POST.get('delivery',None)
-
     try:
-        model_person = ModelPerson.objects.get(person_id=model_login_client.person_id)
-
-        model_address = ModelAddress.objects.create(request,model_login,model_person,
-            state=state,
-            city=city,
-            number=number,
-            complement=complement,
-            invoice=invoice,
-            delivery=delivery)
+        model_address = ModelAddress.objects.create(
+            request,
+            model_login,
+            model_login_client)
 
     except Exception as error:
         BusinessExceptionLog(request,model_login,model_login_client,
@@ -195,7 +175,7 @@ def addressAdd(request,model_login,model_login_client):
 
     result = {
         'address_id': model_address.address_id,
-        'person_id': model_person.person_id,
+        'person_id': model_login_client.person_id,
         'state': model_address.state,
         'city': model_address.city,
         'number': model_address.number,
@@ -205,6 +185,70 @@ def addressAdd(request,model_login,model_login_client):
     }
 
     return JsonResponse(result,status=200)
+
+@require_http_methods(['POST'])
+@csrf_exempt
+@transaction.atomic
+@BusinessDecoratorAuth(profile=('merchant',))
+def addressUpdate(request,model_login,model_login_client,address_id):
+    try:
+        model_address = ModelAddress.objects.update(
+            request,
+            model_login,
+            model_login_client,
+            address_id)
+
+    except Exception as error:
+        BusinessExceptionLog(request,model_login,model_login_client,
+            description='Erro na atualização de endereço',
+            message=error,
+            trace=traceback.format_exc())
+
+        return JsonResponse({'message': str(error)}, status=400)
+
+    result = {
+        'address_id': model_address.address_id,
+        'person_id': model_login_client.person_id,
+        'state': model_address.state,
+        'city': model_address.city,
+        'number': model_address.number,
+        'complement': model_address.complement,
+        'invoice': model_address.invoice,
+        'delivery': model_address.delivery,
+    }
+
+    return JsonResponse(result,status=200)
+
+    @require_http_methods(['POST'])
+    @csrf_exempt
+    @transaction.atomic
+    @BusinessDecoratorAuth(profile=('merchant',))
+    def addressDelete(request,model_login,person_id,address_id):
+        try:
+            session_identifier = transaction.savepoint()
+
+            model_person = ModelPerson.objects.get(person_id=person_id)
+
+            model_address = ModelAddress.objects.delete(request,model_login,model_person,
+                address_id=address_id,)
+
+            transaction.savepoint_commit(session_identifier)
+
+        except Exception as error:
+            transaction.savepoint_rollback(session_identifier)
+
+            BusinessExceptionLog(request,model_login,
+                description='Erro na remoção de endereço',
+                message=error,
+                trace=traceback.format_exc())
+
+            return JsonResponse({'message': str(error)}, status=400)
+
+        result = {
+            'result': True
+        }
+
+        return JsonResponse(result,status=200)
 #
 # @require_http_methods(['GET'])
 # @csrf_exempt
@@ -286,85 +330,3 @@ def addressAdd(request,model_login,model_login_client):
 #     result = serializers.serialize('json', address)
 #
 #     return JsonResponse(json.loads(result), safe=False,status=200)
-#
-# @require_http_methods(['POST'])
-# @csrf_exempt
-# @transaction.atomic
-# @BusinessDecoratorAuthRequired
-# def addressUpdate(request,model_login,person_id,address_id):
-#     state = request.GET.get('state',None)
-#     city = request.GET.get('city',None)
-#     number = request.GET.get('number',None)
-#     complement = request.GET.get('complement',None)
-#     invoice = request.GET.get('invoice',None)
-#     delivery = request.GET.get('delivery',None)
-#
-#     try:
-#         session_identifier = transaction.savepoint()
-#
-#         model_person = ModelPerson.objects.get(person_id=person_id)
-#
-#         model_address = ModelAddress.objects.update(request,model_login,model_person,
-#             address_id=address_id,
-#             state=state,
-#             city=city,
-#             number=number,
-#             complement=complement,
-#             invoice=invoice,
-#             delivery=delivery)
-#
-#         transaction.savepoint_commit(session_identifier)
-#
-#     except Exception as error:
-#         transaction.savepoint_rollback(session_identifier)
-#
-#         BusinessExceptionLog(request,model_login,
-#             description='Erro na atualização de endereço',
-#             message=error,
-#             trace=traceback.format_exc())
-#
-#         return JsonResponse({'message': str(error)}, status=400)
-#
-#     result = {
-#         'address_id': model_address.address_id,
-#         'person_id': model_person.person_id,
-#         'state': model_address.state,
-#         'city': model_address.city,
-#         'number': model_address.number,
-#         'complement': model_address.complement,
-#         'invoice': model_address.invoice,
-#         'delivery': model_address.delivery,
-#     }
-#
-#     return JsonResponse(result,safe=False,status=200)
-#
-# @require_http_methods(['POST'])
-# @csrf_exempt
-# @transaction.atomic
-# @BusinessDecoratorAuthRequired
-# def addressDelete(request,model_login,person_id,address_id):
-#     try:
-#         session_identifier = transaction.savepoint()
-#
-#         model_person = ModelPerson.objects.get(person_id=person_id)
-#
-#         model_address = ModelAddress.objects.delete(request,model_login,model_person,
-#             address_id=address_id,)
-#
-#         transaction.savepoint_commit(session_identifier)
-#
-#     except Exception as error:
-#         transaction.savepoint_rollback(session_identifier)
-#
-#         BusinessExceptionLog(request,model_login,
-#             description='Erro na remoção de endereço',
-#             message=error,
-#             trace=traceback.format_exc())
-#
-#         return JsonResponse({'message': str(error)}, status=400)
-#
-#     result = {
-#         'result': True
-#     }
-#
-#     return JsonResponse(result,safe=False,status=200)
