@@ -649,7 +649,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertTrue(isinstance(response,HttpResponseNotFound),'Não é um objeto do tipo "HttpResponseNotFound"')
 
     def test_person_address_update_http_not_allowed(self):
-        response = self.client.get('/api/v1/person/address/update/123/')
+        response = self.client.get('/api/v1/person/address/123/update/')
 
         self.assertEqual(response.status_code,405)
         self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
@@ -664,7 +664,7 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '',
         }
 
-        response = self.client.post('/api/v1/person/address/update/123/',data_post,
+        response = self.client.post('/api/v1/person/address/123/update/',data_post,
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
@@ -685,7 +685,7 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '123',
         }
 
-        response = self.client.post('/api/v1/person/address/update/123/',data_post,
+        response = self.client.post('/api/v1/person/address/123/update/',data_post,
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
@@ -706,7 +706,7 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '0',
         }
 
-        response = self.client.post('/api/v1/person/address/update/123/',data_post,
+        response = self.client.post('/api/v1/person/address/123/update/',data_post,
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
@@ -757,7 +757,7 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '1',
         }
 
-        response_c = self.client.post('/api/v1/person/address/update/%s/' % (response_b.json()['address_id'],),data_post_c,
+        response_c = self.client.post('/api/v1/person/address/%s/update/' % (response_b.json()['address_id'],),data_post_c,
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
@@ -789,13 +789,13 @@ class TestControllerPerson(TransactionTestCase):
             delivery=True))
     
     def test_person_address_delete_http_not_allowed(self):
-        response = self.client.get('/api/v1/person/address/update/123/')
+        response = self.client.get('/api/v1/person/address/123/update/')
 
         self.assertEqual(response.status_code,405)
         self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
 
     def test_person_address_delete_not_found(self):
-        response = self.client.post('/api/v1/person/address/delete/123/',{},
+        response = self.client.post('/api/v1/person/address/123/delete/',{},
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
@@ -822,7 +822,7 @@ class TestControllerPerson(TransactionTestCase):
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
             HTTP_CLIENT_IP='127.0.0.9')
 
-        response_b = self.client.post('/api/v1/person/address/delete/%s/' % (response_a.json()['address_id'],),{},
+        response_b = self.client.post('/api/v1/person/address/%s/delete/' % (response_a.json()['address_id'],),{},
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
@@ -864,7 +864,7 @@ class TestControllerPerson(TransactionTestCase):
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
             HTTP_CLIENT_IP='127.0.0.9')
 
-        response_c = self.client.post('/api/v1/person/address/delete/%s/' % (response_b.json()['address_id'],),{},
+        response_c = self.client.post('/api/v1/person/address/%s/delete/' % (response_b.json()['address_id'],),{},
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
             HTTP_CLIENT_API_KEY=self.model_login_client.token,
@@ -909,7 +909,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsNotNone(ModelAddress.objects.get(address_id=response_a.json()['address_id']))
         self.assertIsNotNone(ModelAddress.objects.get(address_id=response_b.json()['address_id']))
 
-        response_c = self.client.post('/api/v1/person/address/delete/%s/' % (response_b.json()['address_id'],),{},
+        response_c = self.client.post('/api/v1/person/address/%s/delete/' % (response_b.json()['address_id'],),{},
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_merchant.token,
             HTTP_CLIENT_API_KEY=self.model_login_client.token,

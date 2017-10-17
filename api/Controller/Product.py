@@ -83,12 +83,11 @@ from api.Model.Product import Product as ModelProduct
 @csrf_exempt
 @transaction.atomic
 @BusinessDecoratorAuth(profile=('merchant',))
-def add(request,model_user,model_login_client):
+def add(request,model_login,model_login_client):
     try:
         model_product = ModelProduct.objects.create(
             request,
-            model_user,
-            model_login_client)
+            model_login)
 
     except Exception as error:
         BusinessExceptionLog(request,model_login,model_login_client,

@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from api.Controller import Login as ControllerLogin
 from api.Controller import Person as ControllerPerson
-# from api.Controller import Product as ControllerProduct
+from api.Controller import Product as ControllerProduct
 # from web.Controller import Home as ControllerHome
 
 # app api route
@@ -18,15 +18,15 @@ urlpatterns += [
     url(r'^api/v1/person/address/([0-9]+)/$', ControllerPerson.addressById, name='api_v1_person_address_by_id'),
     url(r'^api/v1/person/address/filter', ControllerPerson.addressFilter, name='api_v1_person_address_filter'),
     url(r'^api/v1/person/address/add/$', ControllerPerson.addressAdd, name='api_v1_person_address_add'),
-    url(r'^api/v1/person/address/update/([0-9]+)/$', ControllerPerson.addressUpdate, name='api_v1_person_address_update'),
-    url(r'^api/v1/person/address/delete/([0-9]+)/$', ControllerPerson.addressDelete, name='api_v1_person_address_delete'),
+    url(r'^api/v1/person/address/([0-9]+)/update/$', ControllerPerson.addressUpdate, name='api_v1_person_address_update'),
+    url(r'^api/v1/person/address/([0-9]+)/delete/$', ControllerPerson.addressDelete, name='api_v1_person_address_delete'),
 ]
 # product
 urlpatterns += [
 #     url(r'^api/v1/product/filter', ControllerProduct.filter, name='api_v1_product_filter'),
 #     url(r'^api/v1/product/[0-9]{11}', ControllerProduct.getById, name='api_v1_product_getbyid'),
-    url(r'^api/v1/product/add', ControllerProduct.add, name='api_v1_product_add'),
-#     url(r'^api/v1/product/[0-9]{11}/update', ControllerProduct.update, name='api_v1_product_update'),
+    url(r'^api/v1/product/add/$', ControllerProduct.add, name='api_v1_product_add'),
+    # url(r'^api/v1/product/([0-9]+)/update/$', ControllerProduct.update, name='api_v1_product_update'),
 #     url(r'^api/v1/product/[0-9]{11}/delete', ControllerProduct.delete, name='api_v1_product_delete'),
 #     url(r'^api/v1/product/[0-9]{11}/published', ControllerProduct.published, name='api_v1_product_published'),
 ]

@@ -278,5 +278,55 @@
         "code": 57,
         "message": "Erro na consulta de endereço![57]",
         "description": "",
+    },
+    {
+        "code": 58,
+        "message": "Dados insuficientes para criação de produto![58]",
+        "description": "",
+    },
+    {
+        "code": 59,
+        "message": "Unidade de medida recusada![59]",
+        "description": "",
+    },
+    {
+        "code": 60,
+        "message": "Origen recusada![60]",
+        "description": "",
+    },
+    {
+        "code": 61,
+        "message": "Relacionamento entre tipo de pessoas incorreto![61]",
+        "description": "",
+    },
+    {
+        "code": 62,
+        "message": "Existe produto cadastrado com este mesmo codigo![62]",
+        "description": "",
+    },
+    {
+        "code": 63,
+        "message": "Valor do parâmetro composto incorreto![63]",
+        "description": "",
+    },
+    {
+        "code": 64,
+        "message": "Valor do parâmetro peso incorreto![64]",
+        "description": "",
+    },
+    {
+        "code": 65,
+        "message": "Valor do parâmetro largura incorreto![65]",
+        "description": "",
+    },
+    {
+        "code": 66,
+        "message": "Valor do parâmetro comprimento incorreto![66]",
+        "description": "",
+    },
+    {
+        "code": 67,
+        "message": "Valor do parâmetro altura incorreto![67]",
+        "description": "",
     }
 ]

@@ -14,6 +14,8 @@ class PersonManager(models.Manager):
         if not self.name or not self.cpf or not self.email or not self.phone1:
             raise Exception('Dados insuficientes para criação de pessoa![30]')
 
+        self.phone2 = None if self.phone2 == '' else self.phone2
+
         if model_login.profile_id not in (model_login.PROFILE_MERCHANT,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![31]')
 
