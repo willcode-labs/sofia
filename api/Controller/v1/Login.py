@@ -10,26 +10,22 @@ from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
 @require_http_methods(['POST'])
 @csrf_exempt
 @transaction.atomic
-@BusinessDecoratorAuth(profile=('root','merchant',),client=False)
-def verify(request,model_login,model_login_client):
+def verify(request):
     try:
         business_auth = BusinessAuth(request)
 
-        model_login_client = business_auth.verify(model_login)
+        model_login = business_auth.verify()
 
     except Exception as error:
-        message = 'Erro de verificação do login![27]'
-
-        BusinessExceptionLog(request,model_login,model_login_client,
-            description=message,
+        BusinessExceptionLog(request,None,
             message=error,
             trace=traceback.format_exc())
 
         return JsonResponse({'message': str(error)}, status=400)
 
     result = {
-        'client_token': model_login_client.token,
-        'client_date_expired': model_login_client.date_expired,
+        'token': model_login.token,
+        'date_expired': model_login.date_expired,
     }
 
     return JsonResponse(result, status=200)
@@ -37,26 +33,22 @@ def verify(request,model_login,model_login_client):
 @require_http_methods(['POST'])
 @csrf_exempt
 @transaction.atomic
-@BusinessDecoratorAuth(profile=('merchant',),client=False)
-def auth(request,model_login,model_login_client):
+def auth(request):
     try:
         business_auth = BusinessAuth(request)
 
-        model_login_client = business_auth.auth(model_login)
+        model_login = business_auth.auth()
 
     except Exception as error:
-        message = 'Erro de autenticação do login![28]'
-
-        BusinessExceptionLog(request,model_login,model_login_client,
-            description=message,
+        BusinessExceptionLog(request,None,
             message=error,
             trace=traceback.format_exc())
 
         return JsonResponse({'message': str(error)}, status=400)
 
     result = {
-        'client_token': model_login_client.token,
-        'client_date_expired': model_login_client.date_expired,
+        'token': model_login.token,
+        'date_expired': model_login.date_expired,
     }
 
     return JsonResponse(result, status=200)

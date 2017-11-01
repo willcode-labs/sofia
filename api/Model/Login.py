@@ -77,12 +77,12 @@ class LoginManager(models.Manager):
 
 class Login(models.Model):
     PROFILE_ROOT = 1
-    PROFILE_MERCHANT = 2
+    PROFILE_DIRECTOR = 2
     PROFILE_CLIENT = 3
 
     PROFILE_TUPLE = (
         (PROFILE_ROOT, 'root'),
-        (PROFILE_MERCHANT, 'merchant'),
+        (PROFILE_DIRECTOR, 'director'),
         (PROFILE_CLIENT, 'client'),)
 
     login_id = models.AutoField(primary_key=True)

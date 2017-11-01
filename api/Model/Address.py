@@ -3,7 +3,16 @@ from django.db import models
 from api.Model.Person import Person as ModelPerson
 
 class AddressManager(models.Manager):
-    def create(self,request,model_login,model_login_client,**kwargs):
+    def create(self,request,model_login,person_id,**kwargs):
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![44]')
+
+        try:
+            model_person = ModelPerson.objects.get(person_id=person_id)
+
+        except Exception as error:
+            raise Exception('Registro de pessoa não encontrado![68]')
+
         self.state = request.POST.get('state',None)
         self.city = request.POST.get('city',None)
         self.number = request.POST.get('number',None)
@@ -32,22 +41,19 @@ class AddressManager(models.Manager):
         else:
             self.delivery = True
 
-        if model_login.profile_id not in (model_login.PROFILE_MERCHANT,):
-            raise Exception('Relacionamento entre tipo de pessoas incorreto![44]')
-
         try:
             model_address_test = Address.objects.filter(
-                    person_id=model_login_client.person_id,
-                    state=self.state,
-                    number=self.number,
-                    complement=self.complement,)
+                person_id=model_person.person_id,
+                state=self.state,
+                number=self.number,
+                complement=self.complement,)
 
             if model_address_test.count() >= 1:
                 raise Exception('Endereço duplicado![46]')
 
             if not self.invoice and not self.delivery:
                 model_address_test = Address.objects.filter(
-                    person=model_login_client.person)
+                    person=model_person.person)
 
                 if model_address_test.count() == 0:
                     self.invoice = True
@@ -56,7 +62,7 @@ class AddressManager(models.Manager):
             else:
                 if not self.invoice:
                     model_address_invoice = Address.objects.filter(
-                        person=model_login_client.person,
+                        person=model_person.person,
                         invoice=True)
 
                     if model_address_invoice.count() == 0:
@@ -64,12 +70,12 @@ class AddressManager(models.Manager):
 
                 else:
                     model_address_invoice = Address.objects.filter(
-                        person=model_login_client.person,
+                        person=model_person.person,
                         invoice=True).update(invoice=False)
 
                 if not self.delivery:
                     model_address_delivery = Address.objects.filter(
-                        person=model_login_client.person,
+                        person=model_person.person,
                         delivery=True)
 
                     if model_address_delivery.count() == 0:
@@ -77,11 +83,11 @@ class AddressManager(models.Manager):
 
                 else:
                     model_address_delivery = Address.objects.filter(
-                        person=model_login_client.person,
+                        person=model_person.person,
                         delivery=True).update(delivery=False)
 
             model_address = Address(
-                person=model_login_client.person,
+                person=model_person.person,
                 state=self.state,
                 city=self.city,
                 number=self.number,
@@ -96,7 +102,16 @@ class AddressManager(models.Manager):
 
         return model_address
 
-    def update(self,request,model_login,model_login_client,address_id,**kwargs):
+    def update(self,request,model_login,address_id,**kwargs):
+        try:
+            model_address = Address.objects.get(address_id=address_id,)
+
+        except Exception as error:
+            raise Exception('Endereço não encontrado![50]')
+
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![49]')
+
         self.state = request.POST.get('state',None)
         self.city = request.POST.get('city',None)
         self.number = request.POST.get('number',None)
@@ -125,26 +140,15 @@ class AddressManager(models.Manager):
         else:
             self.delivery = True
 
-        if model_login.profile_id not in (model_login.PROFILE_MERCHANT,):
-            raise Exception('Relacionamento entre tipo de pessoas incorreto![49]')
-
         try:
-            try:
-                model_address = Address.objects.get(
-                    address_id=address_id,
-                    person=model_login_client.person)
-
-            except Exception as error:
-                raise Exception('Endereço não encontrado![50]')
-
             if self.invoice:
                 model_address_invoice = Address.objects.filter(
-                    person=model_login_client.person,
+                    person=model_address.person,
                     invoice=True).update(invoice=False)
 
             if self.delivery:
                 model_address_delivery = Address.objects.filter(
-                    person=model_login_client.person,
+                    person=model_address.person,
                     delivery=True).update(delivery=False)
 
             if self.state:
@@ -172,19 +176,17 @@ class AddressManager(models.Manager):
 
         return model_address
 
-    def delete(self,request,model_login,model_login_client,address_id,**kwargs):
+    def delete(self,request,model_login,address_id,**kwargs):
+        try:
+            model_address = Address.objects.get(address_id=address_id)
+
+        except Exception as error:
+            raise Exception('Endereço não encontrado![51]')
+
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
         try:
-            try:
-                model_address = Address.objects.get(
-                    address_id=address_id,
-                    person=model_login_client.person)
-
-            except Exception as error:
-                raise Exception('Endereço não encontrado![51]')
-
             if model_address.invoice:
                 raise Exception('Não é possível remover endereço de cobrança ou entrega![52]')
 
