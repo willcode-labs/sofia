@@ -53,9 +53,6 @@ class Auth():
             model_login = ModelLogin.objects.update(self.request,model_login,
                 date_expired=date_expired,)
 
-            except Exception as error:
-                raise error
-
         return model_login
 
     def auth(self):
@@ -73,11 +70,11 @@ class Auth():
         except Exception as error:
             raise Exception('Login ou senha inválidos![20]')
 
-        if model_login.verified != True:
-            raise Exception('Login não verificado![21]')
-
         if model_login.profile_id not in (ModelLogin.PROFILE_ROOT,ModelLogin.PROFILE_DIRECTOR,ModelLogin.PROFILE_CLIENT,):
             raise Exception('Tipo de login não autorizado![22]')
+
+        if model_login.verified != True:
+            raise Exception('Login não verificado![21]')
 
         token = ModelLogin.objects.tokenRecursive(self.ip)
         date_expired = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
@@ -99,11 +96,11 @@ class Auth():
         except Exception as error:
             raise Exception('Api key não encontrado![11]')
 
-        if model_login.verified == True:
-            raise Exception('Login já está verificado![12]')
-
         if model_login.profile_id not in (ModelLogin.PROFILE_CLIENT,):
             raise Exception('Perfil não autorizado![14]')
+
+        if model_login.verified == True:
+            raise Exception('Login já está verificado![12]')
 
         token = ModelLogin.objects.tokenRecursive(self.ip)
         date_expired = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)

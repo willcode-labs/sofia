@@ -64,7 +64,7 @@ class ProductManager(models.Manager):
 
         self.origin = int(self.origin)
 
-        if model_login.profile_id not in (model_login.PROFILE_MERCHANT,):
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_MERCHANT,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![61]')
 
         try:

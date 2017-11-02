@@ -103,14 +103,14 @@ class AddressManager(models.Manager):
         return model_address
 
     def update(self,request,model_login,address_id,**kwargs):
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![49]')
+
         try:
             model_address = Address.objects.get(address_id=address_id,)
 
         except Exception as error:
             raise Exception('Endereço não encontrado![50]')
-
-        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
-            raise Exception('Relacionamento entre tipo de pessoas incorreto![49]')
 
         self.state = request.POST.get('state',None)
         self.city = request.POST.get('city',None)
@@ -177,6 +177,9 @@ class AddressManager(models.Manager):
         return model_address
 
     def delete(self,request,model_login,address_id,**kwargs):
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![69]')
+
         try:
             model_address = Address.objects.get(address_id=address_id)
 

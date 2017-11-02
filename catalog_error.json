@@ -238,5 +238,45 @@
         "code": 68,
         "message": "Registro de pessoa não encontrado![68]",
         "description": "",
+    },
+    {
+        "code": 69,
+        "message": "Relacionamento entre tipo de pessoas incorreto![69]",
+        "description": "",
+    },
+    {
+        "code": 70,
+        "message": "Tipo de perfil incorreto![70]",
+        "description": "",
+    },
+    {
+        "code": 71,
+        "message": "Perfil não pode criar este tipo de pessoa![71]",
+        "description": "",
+    },
+    {
+        "code": 72,
+        "message": "Perfil não pode criar este tipo de pessoa![72]",
+        "description": "",
+    },
+    {
+        "code": 73,
+        "message": "Ip não encontrado![73]",
+        "description": "",
+    },
+    {
+        "code": 74,
+        "message": "Um dos campos deve estar preenchido, CPF ou CNPJ![74]",
+        "description": "",
+    },
+    {
+        "code": 75,
+        "message": "Perfil inválido para esta operação![75]",
+        "description": "",
+    },
+    {
+        "code": 76,
+        "message": "Erro na consulta de pessoa![25]",
+        "description": "",
     }
 ]

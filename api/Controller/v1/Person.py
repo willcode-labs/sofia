@@ -34,8 +34,9 @@ def filter(request,model_login):
 
     try:
         model_person = ModelPerson.objects.filter(
-            parent_id=model_login.person_id,
-            login__profile_id__in=[ModelLogin.PROFILE_DIRECTOR,ModelLogin.PROFILE_CLIENT,])
+            login__profile_id__in=[
+                ModelLogin.PROFILE_DIRECTOR,
+                ModelLogin.PROFILE_CLIENT,]).order_by('-person_id')
 
         if name:
             model_person = model_person.filter(name__contains=name)
@@ -64,7 +65,7 @@ def filter(request,model_login):
             message=error,
             trace=traceback.format_exc())
 
-        return JsonResponse({'message': str(error)}, status=400)
+        return JsonResponse({'message': 'Erro na consulta de pessoa![25]'}, status=400)
 
     result = {
         'total': person_total,
