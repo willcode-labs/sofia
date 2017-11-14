@@ -91,7 +91,7 @@ class Login(models.Model):
     login_id = models.AutoField(primary_key=True)
     person = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
     profile_id = models.IntegerField(choices=PROFILE_TUPLE)
-    username = models.CharField(max_length=20)
+    username = models.CharField(max_length=40)
     password = models.CharField(max_length=8,null=True)
     verified = models.BooleanField()
     token = models.CharField(max_length=40,null=True)

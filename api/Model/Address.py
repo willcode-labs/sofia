@@ -3,7 +3,13 @@ from django.db import models
 from api.Model.Person import Person as ModelPerson
 
 class AddressManager(models.Manager):
-    def create(self,request,model_login,person_id,**kwargs):
+    def create(self,request,model_login,**kwargs):
+        person_id = request.POST.get('person_id',None)
+
+        if not person_id:
+            # TODO
+            raise Exception('ID de pessoa não encontrado![xxx]')
+
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![44]')
 
@@ -102,7 +108,18 @@ class AddressManager(models.Manager):
 
         return model_address
 
-    def update(self,request,model_login,address_id,**kwargs):
+    def update(self,request,model_login,**kwargs):
+        # TODO
+        # alternativa para buscar diferentes protocolos de requisições HTTP
+        # from django.http import QueryDict
+        # put = QueryDict(request.body)
+        # description = put.get('description')
+        address_id = request.POST.get('address_id',None)
+
+        if not address_id:
+            # TODO
+            raise Exception('ID de endereço não encontrado![xxx]')
+
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![49]')
 
@@ -176,7 +193,13 @@ class AddressManager(models.Manager):
 
         return model_address
 
-    def delete(self,request,model_login,address_id,**kwargs):
+    def delete(self,request,model_login,**kwargs):
+        address_id = request.POST.get('address_id',None)
+
+        if not address_id:
+            # TODO
+            raise Exception('ID de endereço não encontrado![xxx]')
+
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![69]')
 

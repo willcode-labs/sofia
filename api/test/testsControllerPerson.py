@@ -88,14 +88,8 @@ class TestControllerPerson(TransactionTestCase):
 
         self.model_login_client.save()
 
-    def test_person_filter_http_not_allowed(self):
-        response = self.client.post('/api/v1/person/filter/')
-
-        self.assertEqual(response.status_code,405)
-        self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
-
     def test_person_filter_without_param(self):
-        response = self.client.get('/api/v1/person/filter/',
+        response = self.client.get('/api/v1/person/',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -129,7 +123,7 @@ class TestControllerPerson(TransactionTestCase):
         }, response.json())
 
     def test_person_filter_with_param_page(self):
-        response = self.client.get('/api/v1/person/filter/?page=2&limit=1',
+        response = self.client.get('/api/v1/person/?page=2&limit=1',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -155,7 +149,7 @@ class TestControllerPerson(TransactionTestCase):
         }, response.json())
 
     def test_person_filter_with_param_page_error(self):
-        response = self.client.get('/api/v1/person/filter/?page=3',
+        response = self.client.get('/api/v1/person/?page=3',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -164,41 +158,15 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Erro na consulta de pessoa![25]',}, response.json())
 
-
-
-
-
-
-
-    # def test_person_get_http_not_allowed(self):
-    #     response = self.client.post('/api/v1/person/')
-
-    #     self.assertEqual(response.status_code,405)
-    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
-
-    # def test_person_get_client_missing(self):
-    #     response = self.client.get('/api/v1/person/',
-    #         REMOTE_ADDR='127.0.0.8',
-    #         HTTP_API_KEY=self.model_login_director.token,
-    #         HTTP_CLIENT_API_KEY=None,
-    #         HTTP_CLIENT_IP=None)
-
-    #     self.assertEqual(response.status_code,400)
-    #     self.assertIsNotNone(response.json())
-    #     self.assertIsInstance(response.json(), dict)
-    #     self.assertEqual({'message': 'Dados insuficientes![36]',}, response.json())
-
     # def test_person_get_client_api_key_not_found(self):
     #     response = self.client.get('/api/v1/person/',
-    #         REMOTE_ADDR='127.0.0.8',
-    #         HTTP_API_KEY=self.model_login_director.token,
-    #         HTTP_CLIENT_API_KEY='xxxxxxxxxxxxxxxxxxxx',
-    #         HTTP_CLIENT_IP='xxxxxx')
+    #         REMOTE_ADDR='127.0.0.99',
+    #         HTTP_API_KEY='xxxxxxxxx',)
 
     #     self.assertEqual(response.status_code,400)
     #     self.assertIsNotNone(response.json())
     #     self.assertIsInstance(response.json(), dict)
-    #     self.assertEqual({'message': 'Api key do cliente não encontrado![37]',}, response.json())
+    #     self.assertEqual({'message': 'Api key não autorizado![3]',}, response.json())
 
     # def test_person_get_client_ip_error(self):
     #     response = self.client.get('/api/v1/person/',
