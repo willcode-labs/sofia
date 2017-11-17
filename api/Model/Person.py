@@ -16,16 +16,18 @@ class PersonManager(models.Manager):
         if not self.profile_id or not self.name or not self.email or not self.phone1:
             raise Exception('Dados insuficientes para criação de pessoa![30]')
 
+        self.profile_id = int(self.profile_id)
+
         if not self.cpf and not self.cnpj:
             raise Exception('Um dos campos deve estar preenchido, CPF ou CNPJ![74]')
 
         self.phone2 = None if self.phone2 == '' else self.phone2
 
-        if self.profile_id not in dict(ModelLogin.PROFILE_TUPLE).keys():
+        if self.profile_id not in dict(model_login.PROFILE_TUPLE).keys():
             raise Exception('Tipo de perfil incorreto![70]')
 
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
-            raise Exception('Relacionamento entre tipo de pessoas incorreto![31]')
+            raise Exception('Tipo de perfil não permitido![31]')
 
         if model_login.profile_id == model_login.PROFILE_ROOT and self.profile_id not in(model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,model_login.PROFILE_CLIENT,):
             raise Exception('Perfil não pode criar este tipo de pessoa![71]')
@@ -34,11 +36,19 @@ class PersonManager(models.Manager):
             raise Exception('Perfil não pode criar este tipo de pessoa![72]')
 
         try:
-            model_person_cpf = Person.objects.filter(
-                cpf=self.cpf)
+            if self.cpf:
+                model_person_cpf = Person.objects.filter(
+                    cpf=self.cpf)
 
-            if model_person_cpf.count() > 0:
-                raise Exception('Já existe uma pessoa cadastrada com este mesmo CPF![32]')
+                if model_person_cpf.count() > 0:
+                    raise Exception('Já existe uma pessoa cadastrada com este mesmo CPF![32]')
+
+            if self.cnpj:
+                model_person_cnpj = Person.objects.filter(
+                    cnpj=self.cnpj)
+
+                if model_person_cnpj.count() > 0:
+                    raise Exception('Já existe uma pessoa cadastrada com este mesmo CNPJ![77]')
 
             model_person_email = Person.objects.filter(
                 email=self.email)
@@ -50,6 +60,7 @@ class PersonManager(models.Manager):
                 parent=model_login.person,
                 name=self.name,
                 cpf=self.cpf,
+                cnpj=self.cnpj,
                 email=self.email,
                 phone1=self.phone1,
                 phone2=self.phone2,)

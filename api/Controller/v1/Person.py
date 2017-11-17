@@ -25,7 +25,11 @@ class EndPoint(View):
 
         if person_id:
             try:
-                model_person = ModelPerson.objects.get(person_id=person_id)
+                try:
+                    model_person = ModelPerson.objects.get(person_id=person_id)
+
+                except Exception as error:
+                    raise Exception('Nenhum registro de pessoa encontrado com este ID[76]')
 
                 model_address = ModelAddress.objects.filter(person_id=model_person.person_id)
 

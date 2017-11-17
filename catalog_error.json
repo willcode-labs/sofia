@@ -96,7 +96,7 @@
     },
     {
         "code": 31,
-        "message": "Relacionamento entre tipo de pessoas incorreto![31]",
+        "message": "Tipo de perfil não permitido![31]",
         "description": "",
     },
     {
@@ -276,7 +276,12 @@
     },
     {
         "code": 76,
-        "message": "Erro na consulta de pessoa![25]",
+        "message": "Nenhum registro de pessoa encontrado com este ID[76]",
+        "description": "",
+    },
+    {
+        "code": 77,
+        "message": "Já existe uma pessoa cadastrada com este mesmo CNPJ![77]",
         "description": "",
     }
 ]
