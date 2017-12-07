@@ -286,7 +286,22 @@
     },
     {
         "code": 78,
-        "message": "ID de pessoa não encontrado![78]",
+        "message": "Registro de endereço não encontrado![78]",
+        "description": "",
+    },
+    {
+        "code": 79,
+        "message": "Registros de endereço não encontrado![79]",
+        "description": "",
+    },
+    {
+        "code": 80,
+        "message": "Nenhum registro encontrado![80]",
+        "description": "",
+    },
+    {
+        "code": 81,
+        "message": "Dados insuficientes para salvar um erro de excessão![81]",
         "description": "",
     }
 ]

@@ -11,7 +11,7 @@ class ExceptionLog():
             setattr(self,key,kwargs[key])
 
         if not self.message:
-            raise Exception('Dados insuficientes para salvar um erro de excessão!')
+            raise Exception('Dados insuficientes para salvar um erro de excessão![81]')
 
         self.write()
 

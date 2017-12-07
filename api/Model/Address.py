@@ -58,7 +58,7 @@ class AddressManager(models.Manager):
 
             if not self.invoice and not self.delivery:
                 model_address_test = Address.objects.filter(
-                    person=model_person.person)
+                    person_id=model_person.person_id)
 
                 if model_address_test.count() == 0:
                     self.invoice = True
@@ -67,7 +67,7 @@ class AddressManager(models.Manager):
             else:
                 if not self.invoice:
                     model_address_invoice = Address.objects.filter(
-                        person=model_person.person,
+                        person_id=model_person.person_id,
                         invoice=True)
 
                     if model_address_invoice.count() == 0:
@@ -75,12 +75,12 @@ class AddressManager(models.Manager):
 
                 else:
                     model_address_invoice = Address.objects.filter(
-                        person=model_person.person,
+                        person_id=model_person.person_id,
                         invoice=True).update(invoice=False)
 
                 if not self.delivery:
                     model_address_delivery = Address.objects.filter(
-                        person=model_person.person,
+                        person_id=model_person.person_id,
                         delivery=True)
 
                     if model_address_delivery.count() == 0:
@@ -88,11 +88,11 @@ class AddressManager(models.Manager):
 
                 else:
                     model_address_delivery = Address.objects.filter(
-                        person=model_person.person,
+                        person_id=model_person.person_id,
                         delivery=True).update(delivery=False)
 
             model_address = Address(
-                person=model_person.person,
+                person=model_person,
                 state=self.state,
                 city=self.city,
                 number=self.number,
@@ -226,9 +226,38 @@ class AddressManager(models.Manager):
         return True
 
 class Address(models.Model):
+    STATE_TUPLE = (
+        ('AC','Acre'),
+        ('AL','Alagoas'),
+        ('AP','Amapá'),
+        ('AM','Amazonas'),
+        ('BA','Bahia'),
+        ('CE','Ceará'),
+        ('DF','Distrito Federal'),
+        ('ES','Espírito Santo'),
+        ('GO','Goiás'),
+        ('MA','Maranhão'),
+        ('MT','Mato Grosso'),
+        ('MS','Mato Grosso do Sul'),
+        ('MG','Minas Gerais'),
+        ('PA','Pará'),
+        ('PB','Paraíba'),
+        ('PR','Paraná'),
+        ('PE','Pernambuco'),
+        ('PI','Piauí'),
+        ('RJ','Rio de Janeiro'),
+        ('RN','Rio Grande do Norte'),
+        ('RS','Rio Grande do Sul'),
+        ('RO','Rondônia'),
+        ('RR','Roraima'),
+        ('SC','Santa Catarina'),
+        ('SP','São Paulo'),
+        ('SE','Sergipe'),
+        ('TO','Tocantins'))
+
     address_id = models.AutoField(primary_key=True)
     person = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
-    state = models.CharField(max_length=2)
+    state = models.CharField(choices=STATE_TUPLE,max_length=2)
     city = models.CharField(max_length=80)
     number = models.IntegerField()
     complement = models.CharField(max_length=40,null=True)

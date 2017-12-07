@@ -20,6 +20,7 @@ class EndPoint(View):
     def get(self,request,model_login,*args,**kwargs):
         page = request.GET.get('page',None)
         limit = request.GET.get('limit',None)
+        address_id = request.GET.get('address_id',None)
         person_id = request.GET.get('person_id',None)
         state = request.GET.get('state',None)
         city = request.GET.get('city',None)
@@ -28,7 +29,7 @@ class EndPoint(View):
         invoice = request.GET.get('invoice',None)
         delivery = request.GET.get('delivery',None)
 
-        if person_id:
+        if address_id:
             try:
                 model_address = ModelAddress.objects.get(
                     address_id=address_id,)
@@ -38,7 +39,7 @@ class EndPoint(View):
                     message=error,
                     trace=traceback.format_exc())
 
-                return JsonResponse({'message': str(error)}, status=400)
+                return JsonResponse({'message': 'Registro de endereço não encontrado![78]'}, status=400)
 
             result = {
                 'address_id': model_address.address_id,
@@ -49,7 +50,6 @@ class EndPoint(View):
                 'complement': model_address.complement,
                 'invoice': model_address.invoice,
                 'delivery': model_address.delivery,
-                'date_create': model_address.date_create,
             }
 
             return JsonResponse(result,status=200)
@@ -66,7 +66,7 @@ class EndPoint(View):
         else:
             limit = ApiConfig.query_row_limit
 
-        if invoice not in ['0','1'] or delivery not in ['0','1']:
+        if invoice and invoice not in ['0','1'] or delivery and delivery not in ['0','1']:
             error = Exception('Valor incorreto![55]')
 
             BusinessExceptionLog(request,model_login,
@@ -78,13 +78,13 @@ class EndPoint(View):
         if invoice == '0':
             invoice = False
 
-        else:
+        elif invoice == '1':
             invoice = True
 
         if delivery == '0':
             delivery = False
 
-        else:
+        elif delivery == '1':
             delivery = True
 
         try:
@@ -116,7 +116,7 @@ class EndPoint(View):
                 message=error,
                 trace=traceback.format_exc())
 
-            return JsonResponse({'message': str(error)}, status=400)
+            return JsonResponse({'message': 'Registros de endereço não encontrado![79]'}, status=400)
 
         paginator = Paginator(model_address, limit)
 
@@ -129,14 +129,14 @@ class EndPoint(View):
             address_data = address.object_list
             address_data = list(address_data.values(
                 'address_id','person_id','state','city','number',
-                'complement','invoice','delivery','date_create'))
+                'complement','invoice','delivery'))
 
         except Exception as error:
             BusinessExceptionLog(request,model_login,
                 message=error,
                 trace=traceback.format_exc())
 
-            return JsonResponse({'message': str(error)}, status=400)
+            return JsonResponse({'message': 'Nenhum registro encontrado![80]'}, status=400)
 
         result = {
             'total': address_total,
@@ -173,7 +173,6 @@ class EndPoint(View):
             'complement': model_address.complement,
             'invoice': model_address.invoice,
             'delivery': model_address.delivery,
-            'date_create': model_address.date_create,
         }
 
         return JsonResponse(result,status=200)
@@ -201,7 +200,6 @@ class EndPoint(View):
             'complement': model_address.complement,
             'invoice': model_address.invoice,
             'delivery': model_address.delivery,
-            'date_create': model_address.date_create,
         }
 
         return JsonResponse(result,status=200)
