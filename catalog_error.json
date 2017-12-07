@@ -283,5 +283,10 @@
         "code": 77,
         "message": "Já existe uma pessoa cadastrada com este mesmo CNPJ![77]",
         "description": "",
+    },
+    {
+        "code": 78,
+        "message": "ID de pessoa não encontrado![78]",
+        "description": "",
     }
 ]

@@ -7,8 +7,7 @@ class AddressManager(models.Manager):
         person_id = request.POST.get('person_id',None)
 
         if not person_id:
-            # TODO
-            raise Exception('ID de pessoa não encontrado![xxx]')
+            raise Exception('ID de pessoa não encontrado![78]')
 
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![44]')

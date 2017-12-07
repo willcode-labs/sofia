@@ -90,6 +90,7 @@ class TestControllerPerson(TransactionTestCase):
 
     def test_person_address_add_param_missing(self):
         data_post = {
+            'person_id': '',
             'state': '',
             'city': '',
             'number': '',
@@ -100,14 +101,12 @@ class TestControllerPerson(TransactionTestCase):
 
         response = self.client.post('/api/v1/person/address/',data_post,
             REMOTE_ADDR='127.0.0.8',
-            HTTP_API_KEY=self.model_login_director.token,
-            HTTP_CLIENT_API_KEY=self.model_login_client.token,
-            HTTP_CLIENT_IP='127.0.0.9')
+            HTTP_API_KEY=self.model_login_director.token,)
 
         self.assertEqual(response.status_code,400)
         self.assertIsNotNone(response.json())
         self.assertIsInstance(response.json(), dict)
-        self.assertEqual({'message': 'Dados insuficientes para criaÁ„o de endereÁo![43]',}, response.json())
+        self.assertEqual({'message': 'ID de pessoa n√£o encontrado![78]',}, response.json())
 
     # def test_person_address_add_param_error(self):
     #     data_post = {
@@ -155,7 +154,7 @@ class TestControllerPerson(TransactionTestCase):
     #     self.assertEqual(response.status_code,400)
     #     self.assertIsNotNone(response.json())
     #     self.assertIsInstance(response.json(), dict)
-    #     self.assertEqual({'message': 'EndereÁo duplicado![46]',}, response.json())
+    #     self.assertEqual({'message': 'Endere√ßo duplicado![46]',}, response.json())
 
     # def test_person_address_add(self):
     #     data_post = {
@@ -221,7 +220,7 @@ class TestControllerPerson(TransactionTestCase):
 
     #     data_post_b = {
     #         'state': 'SC',
-    #         'city': 'FlorianÛpolis',
+    #         'city': 'Florian√≥polis',
     #         'number': '56',
     #         'complement': '',
     #         'invoice': '0',
@@ -251,7 +250,7 @@ class TestControllerPerson(TransactionTestCase):
 
     #     data_post_c = {
     #         'state': 'SP',
-    #         'city': 'S„o Paulo',
+    #         'city': 'S√£o Paulo',
     #         'number': '99',
     #         'complement': '',
     #         'invoice': '1',
@@ -299,13 +298,13 @@ class TestControllerPerson(TransactionTestCase):
     #     response = self.client.get('/api/v1/person/address/update/')
 
     #     self.assertEqual(response.status_code,404)
-    #     self.assertTrue(isinstance(response,HttpResponseNotFound),'N„o È um objeto do tipo "HttpResponseNotFound"')
+    #     self.assertTrue(isinstance(response,HttpResponseNotFound),'N√£o √© um objeto do tipo "HttpResponseNotFound"')
 
     # def test_person_address_update_http_not_allowed(self):
     #     response = self.client.get('/api/v1/person/address/123/update/')
 
     #     self.assertEqual(response.status_code,405)
-    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'N„o È um objeto do tipo "HttpResponseNotAllowed"')
+    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'N√£o √© um objeto do tipo "HttpResponseNotAllowed"')
 
     # def test_person_address_update_param_missing(self):
     #     data_post = {
@@ -368,7 +367,7 @@ class TestControllerPerson(TransactionTestCase):
     #     self.assertEqual(response.status_code,400)
     #     self.assertIsNotNone(response.json())
     #     self.assertIsInstance(response.json(), dict)
-    #     self.assertEqual({'message': 'EndereÁo n„o encontrado![50]',}, response.json())
+    #     self.assertEqual({'message': 'Endere√ßo n√£o encontrado![50]',}, response.json())
 
     # def test_person_address_update(self):
     #     data_post_a = {
@@ -388,7 +387,7 @@ class TestControllerPerson(TransactionTestCase):
 
     #     data_post_b = {
     #         'state': 'SC',
-    #         'city': 'FlorianÛpolis',
+    #         'city': 'Florian√≥polis',
     #         'number': '456',
     #         'complement': 'apartamento',
     #         'invoice': '1',
@@ -445,7 +444,7 @@ class TestControllerPerson(TransactionTestCase):
     #     response = self.client.get('/api/v1/person/address/123/update/')
 
     #     self.assertEqual(response.status_code,405)
-    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'N„o È um objeto do tipo "HttpResponseNotAllowed"')
+    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'N√£o √© um objeto do tipo "HttpResponseNotAllowed"')
 
     # def test_person_address_delete_not_found(self):
     #     response = self.client.post('/api/v1/person/address/123/delete/',{},
@@ -457,7 +456,7 @@ class TestControllerPerson(TransactionTestCase):
     #     self.assertEqual(response.status_code,400)
     #     self.assertIsNotNone(response.json())
     #     self.assertIsInstance(response.json(), dict)
-    #     self.assertEqual({'message': 'EndereÁo n„o encontrado![51]',}, response.json())
+    #     self.assertEqual({'message': 'Endere√ßo n√£o encontrado![51]',}, response.json())
 
     # def test_person_address_delete_error_invoice(self):
     #     data_post_a = {
@@ -484,7 +483,7 @@ class TestControllerPerson(TransactionTestCase):
     #     self.assertEqual(response_b.status_code,400)
     #     self.assertIsNotNone(response_b.json())
     #     self.assertIsInstance(response_b.json(), dict)
-    #     self.assertEqual({'message': 'N„o È possÌvel remover endereÁo de cobranÁa ou entrega![52]',}, response_b.json())
+    #     self.assertEqual({'message': 'N√£o √© poss√≠vel remover endere√ßo de cobran√ßa ou entrega![52]',}, response_b.json())
 
     # def test_person_address_delete_error_delivery(self):
     #     data_post_a = {
@@ -504,7 +503,7 @@ class TestControllerPerson(TransactionTestCase):
 
     #     data_post_b = {
     #         'state': 'SC',
-    #         'city': 'FlorianÛpolis',
+    #         'city': 'Florian√≥polis',
     #         'number': '123',
     #         'complement': 'casa',
     #         'invoice': '0',
@@ -526,7 +525,7 @@ class TestControllerPerson(TransactionTestCase):
     #     self.assertEqual(response_c.status_code,400)
     #     self.assertIsNotNone(response_c.json())
     #     self.assertIsInstance(response_c.json(), dict)
-    #     self.assertEqual({'message': 'N„o È possÌvel remover endereÁo de entrega ou cobranÁa![53]',}, response_c.json())
+    #     self.assertEqual({'message': 'N√£o √© poss√≠vel remover endere√ßo de entrega ou cobran√ßa![53]',}, response_c.json())
 
     # def test_person_address_delete(self):
     #     data_post_a = {
@@ -546,7 +545,7 @@ class TestControllerPerson(TransactionTestCase):
 
     #     data_post_b = {
     #         'state': 'SC',
-    #         'city': 'FlorianÛpolis',
+    #         'city': 'Florian√≥polis',
     #         'number': '132',
     #         'complement': 'casa',
     #         'invoice': '0',
@@ -579,7 +578,7 @@ class TestControllerPerson(TransactionTestCase):
     #     response = self.client.post('/api/v1/person/address/123/')
 
     #     self.assertEqual(response.status_code,405)
-    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'N„o È um objeto do tipo "HttpResponseNotAllowed"')
+    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'N√£o √© um objeto do tipo "HttpResponseNotAllowed"')
 
     # def test_person_address_get_not_found(self):
     #     response = self.client.get('/api/v1/person/address/123/',{},
@@ -591,7 +590,7 @@ class TestControllerPerson(TransactionTestCase):
     #     self.assertEqual(response.status_code,400)
     #     self.assertIsNotNone(response.json())
     #     self.assertIsInstance(response.json(), dict)
-    #     self.assertEqual({'message': 'Registro de endereÁo n„o encontrado[54]',}, response.json())
+    #     self.assertEqual({'message': 'Registro de endere√ßo n√£o encontrado[54]',}, response.json())
 
     # def test_person_address_get(self):
     #     data_post_a = {
@@ -634,7 +633,7 @@ class TestControllerPerson(TransactionTestCase):
     #     response = self.client.post('/api/v1/person/address/filter/')
 
     #     self.assertEqual(response.status_code,405)
-    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'N„o È um objeto do tipo "HttpResponseNotAllowed"')
+    #     self.assertTrue(isinstance(response,HttpResponseNotAllowed),'N√£o √© um objeto do tipo "HttpResponseNotAllowed"')
 
     # def test_person_address_filter_param_error(self):
     #     data_get = 'page=error&limit=error&invoice=test&delivery=test'

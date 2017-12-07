@@ -5,6 +5,7 @@ from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
+from django.utils.decorators import method_decorator
 from django.db import transaction
 from api.apps import ApiConfig
 from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
@@ -15,8 +16,8 @@ from api.Model.Address import Address as ModelAddress
 
 class EndPoint(View):
     @csrf_exempt
-    @BusinessDecoratorAuth(profile=('root','director',))
-    def get(request,model_login,*args,**kwargs):
+    @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
+    def get(self,request,model_login,*args,**kwargs):
         page = request.GET.get('page',None)
         limit = request.GET.get('limit',None)
         person_id = request.GET.get('person_id',None)
@@ -151,8 +152,8 @@ class EndPoint(View):
 
     @csrf_exempt
     @transaction.atomic
-    @BusinessDecoratorAuth(profile=('root','director',))
-    def post(request,model_login,*args,**kwargs):
+    @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
+    def post(self,request,model_login,*args,**kwargs):
         try:
             model_address = ModelAddress.objects.create(request,model_login)
 
@@ -179,7 +180,7 @@ class EndPoint(View):
 
     @csrf_exempt
     @transaction.atomic
-    @BusinessDecoratorAuth(profile=('root','director',))
+    @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
     def put(request,model_login):
         try:
             model_address = ModelAddress.objects.update(request,model_login)
@@ -207,7 +208,7 @@ class EndPoint(View):
 
     @csrf_exempt
     @transaction.atomic
-    @BusinessDecoratorAuth(profile=('root','director',))
+    @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
     def delete(request,model_login):
         try:
             model_address = ModelAddress.objects.delete(request,model_login)
