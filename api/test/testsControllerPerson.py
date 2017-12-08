@@ -278,7 +278,8 @@ class TestControllerPerson(TransactionTestCase):
     def test_person_add_profile_not_authorized(self):
         data_post = {}
 
-        response = self.client.post('/api/v1/person/',data_post,
+        response = self.client.post('/api/v1/person/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.9',
             HTTP_API_KEY=self.model_login_client.token,)
 
@@ -298,7 +299,8 @@ class TestControllerPerson(TransactionTestCase):
             'phone2': '',
         }
 
-        response = self.client.post('/api/v1/person/',data_post,
+        response = self.client.post('/api/v1/person/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -318,7 +320,8 @@ class TestControllerPerson(TransactionTestCase):
             'phone2': '',
         }
 
-        response = self.client.post('/api/v1/person/',data_post,
+        response = self.client.post('/api/v1/person/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -338,7 +341,8 @@ class TestControllerPerson(TransactionTestCase):
             'phone2': '',
         }
 
-        response = self.client.post('/api/v1/person/',data_post,
+        response = self.client.post('/api/v1/person/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -358,7 +362,8 @@ class TestControllerPerson(TransactionTestCase):
             'phone2': '',
         }
 
-        response = self.client.post('/api/v1/person/',data_post,
+        response = self.client.post('/api/v1/person/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -378,7 +383,8 @@ class TestControllerPerson(TransactionTestCase):
             'phone2': '',
         }
 
-        response = self.client.post('/api/v1/person/',data_post,
+        response = self.client.post('/api/v1/person/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -398,7 +404,8 @@ class TestControllerPerson(TransactionTestCase):
             'phone2': '',
         }
 
-        response = self.client.post('/api/v1/person/',data_post,
+        response = self.client.post('/api/v1/person/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -418,7 +425,8 @@ class TestControllerPerson(TransactionTestCase):
             'phone2': '',
         }
 
-        response = self.client.post('/api/v1/person/',data_post,
+        response = self.client.post('/api/v1/person/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 

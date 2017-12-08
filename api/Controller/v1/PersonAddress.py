@@ -180,7 +180,7 @@ class EndPoint(View):
     @csrf_exempt
     @transaction.atomic
     @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
-    def put(request,model_login):
+    def put(self,request,model_login,*args,**kwargs):
         try:
             model_address = ModelAddress.objects.update(request,model_login)
 

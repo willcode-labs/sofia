@@ -303,5 +303,15 @@
         "code": 81,
         "message": "Dados insuficientes para salvar um erro de excessão![81]",
         "description": "",
+    },
+    {
+        "code": 82,
+        "message": "ID de endereço não encontrado![82]",
+        "description": "",
+    },
+    {
+        "code": 83,
+        "message": "Unable to parse JSON data. Error : {xxx}[83]",
+        "description": "",
     }
 ]

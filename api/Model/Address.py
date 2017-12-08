@@ -1,5 +1,6 @@
 import uuid,traceback
 from django.db import models
+from django.http import QueryDict
 from api.Model.Person import Person as ModelPerson
 
 class AddressManager(models.Manager):
@@ -108,16 +109,10 @@ class AddressManager(models.Manager):
         return model_address
 
     def update(self,request,model_login,**kwargs):
-        # TODO
-        # alternativa para buscar diferentes protocolos de requisições HTTP
-        # from django.http import QueryDict
-        # put = QueryDict(request.body)
-        # description = put.get('description')
-        address_id = request.POST.get('address_id',None)
+        address_id = request.PUT.get('address_id',None)
 
         if not address_id:
-            # TODO
-            raise Exception('ID de endereço não encontrado![xxx]')
+            raise Exception('ID de endereço não encontrado![82]')
 
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![49]')
@@ -128,12 +123,12 @@ class AddressManager(models.Manager):
         except Exception as error:
             raise Exception('Endereço não encontrado![50]')
 
-        self.state = request.POST.get('state',None)
-        self.city = request.POST.get('city',None)
-        self.number = request.POST.get('number',None)
-        self.complement = request.POST.get('complement',None)
-        self.invoice = request.POST.get('invoice',None)
-        self.delivery = request.POST.get('delivery',None)
+        self.state = request.PUT.get('state',None)
+        self.city = request.PUT.get('city',None)
+        self.number = request.PUT.get('number',None)
+        self.complement = request.PUT.get('complement',None)
+        self.invoice = request.PUT.get('invoice',None)
+        self.delivery = request.PUT.get('delivery',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])

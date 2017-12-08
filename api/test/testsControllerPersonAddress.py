@@ -377,7 +377,8 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '',
         }
 
-        response = self.client.post('/api/v1/person/address/',data_post,
+        response = self.client.post('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -397,7 +398,8 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '',
         }
 
-        response = self.client.post('/api/v1/person/address/',data_post,
+        response = self.client.post('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -417,7 +419,8 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '',
         }
 
-        response = self.client.post('/api/v1/person/address/',data_post,
+        response = self.client.post('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -437,7 +440,8 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '',
         }
 
-        response = self.client.post('/api/v1/person/address/',data_post,
+        response = self.client.post('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -457,7 +461,8 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': 'gfdsa',
         }
 
-        response = self.client.post('/api/v1/person/address/',data_post,
+        response = self.client.post('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -466,7 +471,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Valor incorreto![45]'}, response.json())
 
-    def test_person_address_add_address_error(self):
+    def test_person_address_add_error(self):
         model_address_1 = ModelAddress(
             person_id=self.model_person_client.person_id,
             state='SP',
@@ -497,7 +502,8 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '0',
         }
 
-        response = self.client.post('/api/v1/person/address/',data_post,
+        response = self.client.post('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -506,7 +512,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Endereço duplicado![46]'}, response.json())
 
-    def test_person_address_add_address_ok(self):
+    def test_person_address_add_ok(self):
         model_address_1 = ModelAddress(
             person_id=self.model_person_client.person_id,
             state='SP',
@@ -537,9 +543,10 @@ class TestControllerPerson(TransactionTestCase):
             'delivery': '1',
         }
 
-        response = self.client.post('/api/v1/person/address/',data_post,
+        response = self.client.post('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
-            HTTP_API_KEY=self.model_login_director.token,)
+            HTTP_API_KEY=self.model_login_director.token)
 
         self.assertEqual(response.status_code,200)
         self.assertIsNotNone(response.json())
@@ -558,3 +565,45 @@ class TestControllerPerson(TransactionTestCase):
             ModelAddress.objects.filter(address_id=model_address_1.address_id,invoice=False,delivery=False).count(),1)
         self.assertEqual(
             ModelAddress.objects.filter(address_id=model_address_2.address_id,invoice=False,delivery=False).count(),1)
+
+    def test_person_address_update_address_id_missing(self):
+        data_post = {
+            'address_id': '',
+            'state': '',
+            'city': '',
+            'number': '',
+            'complement': '',
+            'invoice': '',
+            'delivery': '',
+        }
+
+        response = self.client.put('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'ID de endereço não encontrado![82]'}, response.json())
+
+    def test_person_address_update_address_not_find(self):
+        data_post = {
+            'address_id': '1234567890',
+            'state': '',
+            'city': '',
+            'number': '',
+            'complement': '',
+            'invoice': '',
+            'delivery': '',
+        }
+
+        response = self.client.put('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Endereço não encontrado![50]'}, response.json())

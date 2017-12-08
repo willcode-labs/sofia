@@ -1,4 +1,4 @@
-import uuid,datetime
+import uuid,datetime,json
 from django.test import Client,TestCase,TransactionTestCase
 from django.http import HttpResponseNotAllowed
 from api.Model.Person import Person as ModelPerson
@@ -93,7 +93,8 @@ class TestControllerLogin(TransactionTestCase):
         self.assertTrue(isinstance(response,HttpResponseNotAllowed),'Não é um objeto do tipo "HttpResponseNotAllowed"')
 
     def test_login_verify_ip_not_found(self):
-        response = self.client.post('/api/v1/login/verify/',{},
+        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+            content_type='application/json',
             REMOTE_ADDR=None,
             HTTP_API_KEY=None,)
 
@@ -101,7 +102,8 @@ class TestControllerLogin(TransactionTestCase):
         self.assertEqual(response.json()['message'],'IP não encontrado![1]')
 
     def test_login_verify_apikey_not_found(self):
-        response = self.client.post('/api/v1/login/verify/',{},
+        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=None,)
 
@@ -109,7 +111,8 @@ class TestControllerLogin(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Api key não encontrado![11]')
 
     def test_login_verify_root_apikey_login_not_authorized(self):
-        response = self.client.post('/api/v1/login/verify/',{},
+        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=self.model_login_root.token,)
 
@@ -117,7 +120,8 @@ class TestControllerLogin(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Perfil não autorizado![14]')
 
     def test_login_verify_director_apikey_login_not_authorized(self):
-        response = self.client.post('/api/v1/login/verify/',{},
+        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -128,7 +132,8 @@ class TestControllerLogin(TransactionTestCase):
         self.model_login_client.verified = True
         self.model_login_client.save()
 
-        response = self.client.post('/api/v1/login/verify/',{},
+        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=self.model_login_client.token,)
 
@@ -136,7 +141,8 @@ class TestControllerLogin(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Login já está verificado![12]')
 
     def test_login_verify_client_ok(self):
-        response = self.client.post('/api/v1/login/verify/',{},
+        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.9',
             HTTP_API_KEY=self.model_login_client.token,)
 
@@ -161,7 +167,8 @@ class TestControllerLogin(TransactionTestCase):
             'password':'',
         }
 
-        response = self.client.post('/api/v1/login/auth/',data_post,
+        response = self.client.post('/api/v1/login/auth/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=None,)
 
@@ -174,7 +181,8 @@ class TestControllerLogin(TransactionTestCase):
             'password':'error',
         }
 
-        response = self.client.post('/api/v1/login/auth/',data_post,
+        response = self.client.post('/api/v1/login/auth/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=None,)
 
@@ -190,7 +198,8 @@ class TestControllerLogin(TransactionTestCase):
             'password':'123456',
         }
 
-        response = self.client.post('/api/v1/login/auth/',data_post,
+        response = self.client.post('/api/v1/login/auth/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=None,)
 
@@ -206,7 +215,8 @@ class TestControllerLogin(TransactionTestCase):
             'password':'123456',
         }
 
-        response = self.client.post('/api/v1/login/auth/',data_post,
+        response = self.client.post('/api/v1/login/auth/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=None,)
 
@@ -219,7 +229,8 @@ class TestControllerLogin(TransactionTestCase):
             'password':'123456',
         }
 
-        response = self.client.post('/api/v1/login/auth/',data_post,
+        response = self.client.post('/api/v1/login/auth/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.1',
             HTTP_API_KEY=None,)
 
@@ -238,7 +249,8 @@ class TestControllerLogin(TransactionTestCase):
             'password':'123456',
         }
 
-        response = self.client.post('/api/v1/login/auth/',data_post,
+        response = self.client.post('/api/v1/login/auth/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=None,)
 
@@ -260,7 +272,8 @@ class TestControllerLogin(TransactionTestCase):
             'password':'123456',
         }
 
-        response = self.client.post('/api/v1/login/auth/',data_post,
+        response = self.client.post('/api/v1/login/auth/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.9',
             HTTP_API_KEY=None,)
 
