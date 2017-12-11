@@ -6,7 +6,6 @@ from django.views import View
 from django.db import transaction
 from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 from api.Business.Auth import Auth as BusinessAuth
-from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
 
 class Verify(View):
     @csrf_exempt
