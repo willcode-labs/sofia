@@ -1,1 +1,1 @@
-* Testar campos como limite de caracteres
+* Testar campos com limite de caracteres

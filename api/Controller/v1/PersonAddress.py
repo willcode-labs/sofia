@@ -207,7 +207,7 @@ class EndPoint(View):
     @csrf_exempt
     @transaction.atomic
     @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
-    def delete(request,model_login):
+    def delete(self,request,model_login,*args,**kwargs):
         try:
             model_address = ModelAddress.objects.delete(request,model_login)
 

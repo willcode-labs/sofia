@@ -428,6 +428,27 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsNotNone(response.json())
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Dados insuficientes para criação de endereço![43]'}, response.json())
+    
+    def test_person_address_add_estate_error(self):
+        data_post = {
+            'person_id': self.model_person_client.person_id,
+            'state': 'KK',
+            'city': 'Porto Alegre',
+            'number': '123',
+            'complement': '',
+            'invoice': 'qwert',
+            'delivery': 'gfdsa',
+        }
+
+        response = self.client.post('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Sigla de estado incorreto![85]'}, response.json())
 
     def test_person_address_add_invoice_and_delivery_error(self):
         data_post = {
@@ -607,3 +628,266 @@ class TestControllerPerson(TransactionTestCase):
         self.assertIsNotNone(response.json())
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Endereço não encontrado![50]'}, response.json())
+
+    def test_person_address_update_param_missing(self):
+        model_address_1 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='SP',
+            city='São Paulo',
+            number=321,
+            complement='Apartamento',
+            invoice=False,
+            delivery=False,)
+        model_address_1.save()
+
+        data_post = {
+            'address_id': model_address_1.address_id,
+            'state': '',
+            'city': '',
+            'number': '',
+            'complement': '',
+            'invoice': '',
+            'delivery': '',
+        }
+
+        response = self.client.put('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Nenhum dado para alterar![47]'}, response.json())
+
+    def test_person_address_update_param_estate_error(self):
+        model_address_1 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='SP',
+            city='São Paulo',
+            number=321,
+            complement='Apartamento',
+            invoice=False,
+            delivery=False,)
+        model_address_1.save()
+
+        data_post = {
+            'address_id': model_address_1.address_id,
+            'state': 'KK',
+            'city': 'Porto Alegre',
+            'number': '134567890',
+            'complement': 'Apartamento',
+            'invoice': 'error',
+            'delivery': '1',
+        }
+
+        response = self.client.put('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Sigla de estado incorreto![84]'}, response.json())
+
+    def test_person_address_update_param_invoice_or_delivery_error(self):
+        model_address_1 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='SP',
+            city='São Paulo',
+            number=321,
+            complement='Apartamento',
+            invoice=False,
+            delivery=False,)
+        model_address_1.save()
+
+        data_post = {
+            'address_id': model_address_1.address_id,
+            'state': 'RS',
+            'city': 'Porto Alegre',
+            'number': '134567890',
+            'complement': 'Apartamento',
+            'invoice': 'error',
+            'delivery': '1',
+        }
+
+        response = self.client.put('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Valor incorreto![48]'}, response.json())
+
+    def test_person_address_update_ok(self):
+        model_address_1 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='SP',
+            city='São Paulo',
+            number=321,
+            complement='Apartamento',
+            invoice=False,
+            delivery=False,)
+        model_address_1.save()
+
+        data_post = {
+            'address_id': model_address_1.address_id,
+            'state': 'RS',
+            'city': 'Porto Alegre',
+            'number': '134567890',
+            'complement': 'Apartamento',
+            'invoice': '1',
+            'delivery': '1',
+        }
+
+        response = self.client.put('/api/v1/person/address/',json.dumps(data_post),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({
+            'complement': data_post['complement'], 
+            'address_id': data_post['address_id'], 
+            'city': data_post['city'], 
+            'state': data_post['state'], 
+            'delivery': True, 
+            'number': data_post['number'], 
+            'person_id': model_address_1.person_id, 
+            'invoice': True}, response.json())
+
+        self.assertEqual(
+            ModelAddress.objects.filter(address_id=model_address_1.address_id,invoice=True,delivery=True).count(),1)
+
+    def test_person_address_delete_address_id_missing(self):
+        data_delete = {
+            'address_id': '',
+        }
+
+        response = self.client.delete('/api/v1/person/address/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'ID de endereço não encontrado![86]'}, response.json())
+
+    def test_person_address_delete_address_not_found(self):
+        data_delete = {
+            'address_id': '1234567890',
+        }
+
+        response = self.client.delete('/api/v1/person/address/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Endereço não encontrado![51]'}, response.json())
+
+    def test_person_address_delete_invoice_error(self):
+        model_address_1 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='SP',
+            city='São Paulo',
+            number=321,
+            complement='Apartamento',
+            invoice=True,
+            delivery=False,)
+        model_address_1.save()
+
+        data_delete = {
+            'address_id': model_address_1.address_id,
+        }
+
+        response = self.client.delete('/api/v1/person/address/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Não é possível remover endereço de cobrança ou entrega![52]'}, response.json())
+
+    def test_person_address_delete_delivery_error(self):
+        model_address_1 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='SP',
+            city='São Paulo',
+            number=321,
+            complement='Apartamento',
+            invoice=False,
+            delivery=False,)
+        model_address_1.save()
+
+        model_address_2 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='RS',
+            city='Porto Alegre',
+            number=123,
+            complement='Casa',
+            invoice=False,
+            delivery=True,)
+        model_address_2.save()
+
+        data_delete = {
+            'address_id': model_address_2.address_id,
+        }
+
+        response = self.client.delete('/api/v1/person/address/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Não é possível remover endereço de entrega ou cobrança![53]'}, response.json())
+
+    def test_person_address_delete_ok(self):
+        model_address_1 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='SP',
+            city='São Paulo',
+            number=321,
+            complement='Apartamento',
+            invoice=False,
+            delivery=False,)
+        model_address_1.save()
+
+        model_address_2 = ModelAddress(
+            person_id=self.model_person_client.person_id,
+            state='RS',
+            city='Porto Alegre',
+            number=123,
+            complement='Casa',
+            invoice=False,
+            delivery=False,)
+        model_address_2.save()
+
+        data_delete = {
+            'address_id': model_address_2.address_id,
+        }
+
+        response = self.client.delete('/api/v1/person/address/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'result': True}, response.json())
+
+        self.assertEqual(
+            ModelAddress.objects.filter().count(),1)

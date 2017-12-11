@@ -313,5 +313,20 @@
         "code": 83,
         "message": "Unable to parse JSON data. Error : {xxx}[83]",
         "description": "",
+    },
+    {
+        "code": 84,
+        "message": "Sigla de estado incorreto![84]",
+        "description": "",
+    },
+    {
+        "code": 85,
+        "message": "Sigla de estado incorreto![85]",
+        "description": "",
+    },
+    {
+        "code": 86,
+        "message": "ID de endereço não encontrado![86]",
+        "description": "",
     }
 ]

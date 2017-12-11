@@ -32,6 +32,9 @@ class AddressManager(models.Manager):
         if not self.state or not self.city or not self.number:
             raise Exception('Dados insuficientes para criação de endereço![43]')
 
+        if self.state not in dict(Address.STATE_TUPLE).keys():
+            raise Exception('Sigla de estado incorreto![85]')
+
         if self.invoice not in ['0','1'] or self.delivery not in ['0','1']:
             raise Exception('Valor incorreto![45]')
 
@@ -136,6 +139,9 @@ class AddressManager(models.Manager):
         if not self.city and not self.state and not self.number and not self.complement and not self.invoice and not self.delivery:
             raise Exception('Nenhum dado para alterar![47]')
 
+        if self.state not in dict(Address.STATE_TUPLE).keys():
+            raise Exception('Sigla de estado incorreto![84]')
+
         if self.invoice not in ['0','1'] or self.delivery not in ['0','1']:
             raise Exception('Valor incorreto![48]')
 
@@ -188,11 +194,10 @@ class AddressManager(models.Manager):
         return model_address
 
     def delete(self,request,model_login,**kwargs):
-        address_id = request.POST.get('address_id',None)
+        address_id = request.DELETE.get('address_id',None)
 
         if not address_id:
-            # TODO
-            raise Exception('ID de endereço não encontrado![xxx]')
+            raise Exception('ID de endereço não encontrado![86]')
 
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![69]')
