@@ -1,4 +1,4 @@
-import json,traceback
+import json,traceback,re
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.core import serializers
@@ -17,6 +17,7 @@ class EndPoint(View):
     @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
     def get(self,request,model_login,*args,**kwargs):
         page = request.GET.get('page',None)
+        limit = request.GET.get('limit',None)
         name = request.GET.get('name',None)
         product_id = request.GET.get('product_id',None)
 
@@ -26,13 +27,11 @@ class EndPoint(View):
                     product_id=product_id)
 
             except Exception as error:
-                BusinessExceptionLog(request,
-                    user_id=model_user.user_id,
-                    description='Produto não encontrado',
+                BusinessExceptionLog(request,model_login,
                     message=error,
                     trace=traceback.format_exc())
 
-                return JsonResponse({'message': str(error)}, status=400)
+                return JsonResponse({'message': 'Nenhum registro encontrado para este product_id[87]'}, status=400)
 
             result = {
                 'product_id': model_product.product_id,
@@ -52,8 +51,17 @@ class EndPoint(View):
 
             return JsonResponse(result, safe=False,status=200)
 
-        if not page:
+        if page and re.match(r'^[0-9]+$', str(page)) and int(page) >= 1:
+            page = int(page)
+
+        else:
             page = 1
+
+        if limit and re.match(r'^[0-9]+$', str(limit)) and int(limit) >= 1:
+            limit = int(limit)
+
+        else:
+            limit = ApiConfig.query_row_limit
 
         try:
             model_product = ModelProduct.objects.filter()
@@ -63,19 +71,42 @@ class EndPoint(View):
 
         except Exception as error:
             BusinessExceptionLog(request,model_login,
-                description='Erro de consulta para produto',
                 message=error,
                 trace=traceback.format_exc())
 
-            return JsonResponse({'message': str(error)}, status=400)
+            return JsonResponse({'message': 'Erro na consulta de produto[88]'}, status=400)
 
-        paginator = Paginator(model_product, ApiConfig.query_row_limit)
+        paginator = Paginator(model_product, limit)
 
-        product = paginator.page(page)
+        try:
+            product = paginator.page(page)
+            product_total = model_product.count()
+            product_has_next = product.has_next()
+            product_has_previous = product.has_previous()
 
-        result = serializers.serialize('json', product)
+            product_data = product.object_list
+            product_data = list(product_data.values(
+                'product_id','name','description','code','compound','unit_weight',
+                'weight','width','length','height','origin','gtin','published',))
 
-        return JsonResponse(json.loads(result), safe=False,status=200)
+        except Exception as error:
+            BusinessExceptionLog(request,model_login,
+                message=error,
+                trace=traceback.format_exc())
+
+            return JsonResponse({'message': 'Nenhum registro encontrado![80]'}, status=400)
+
+        result = {
+            'total': product_total,
+            'limit': limit,
+            'count': paginator.count,
+            'num_pages': paginator.num_pages,
+            'has_next': product_has_next,
+            'has_previous': product_has_previous,
+            'data': product_data,
+        }
+
+        return JsonResponse(result,status=200)
 
     @csrf_exempt
     @transaction.atomic
@@ -87,8 +118,7 @@ class EndPoint(View):
                 model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,model_login_client,
-                description='Erro na cadastro de produto!',
+            BusinessExceptionLog(request,model_login,
                 message=error,
                 trace=traceback.format_exc())
 
@@ -151,9 +181,7 @@ class EndPoint(View):
         except Exception as error:
             transaction.savepoint_rollback(session_identifier)
 
-            BusinessExceptionLog(request,
-                user_id=model_user.user_id,
-                description='Erro na atualização de produto',
+            BusinessExceptionLog(request,model_login,
                 message=error,
                 trace=traceback.format_exc())
 
@@ -192,9 +220,7 @@ class EndPoint(View):
         except Exception as error:
             transaction.savepoint_rollback(session_identifier)
 
-            BusinessExceptionLog(request,
-                user_id=model_user.user_id,
-                description='Erro na remoção de produto',
+            BusinessExceptionLog(request,model_login,
                 message=error,
                 trace=traceback.format_exc())
 
@@ -206,44 +232,42 @@ class EndPoint(View):
 
         return JsonResponse(result, safe=False,status=200)
 
-@require_http_methods(['PUT'])
-@csrf_exempt
-@transaction.atomic
-@BusinessDecoratorAuth(profile=('root','director',))
-def published(request,model_user):
-    try:
-        session_identifier = transaction.savepoint()
+class Published(View):
+    @csrf_exempt
+    @transaction.atomic
+    @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
+    def put(self,request,model_login,*args,**kwargs):
+        try:
+            session_identifier = transaction.savepoint()
 
-        model_product = ModelProduct.objects.published(request,model_user,
-            product_id=product_id,)
+            model_product = ModelProduct.objects.published(request,model_user,
+                product_id=product_id,)
 
-        transaction.savepoint_commit(session_identifier)
+            transaction.savepoint_commit(session_identifier)
 
-    except Exception as error:
-        transaction.savepoint_rollback(session_identifier)
+        except Exception as error:
+            transaction.savepoint_rollback(session_identifier)
 
-        BusinessExceptionLog(request,
-            user_id=model_user.user_id,
-            description='Erro na publicação de produto',
-            message=error,
-            trace=traceback.format_exc())
+            BusinessExceptionLog(request,model_login,
+                message=error,
+                trace=traceback.format_exc())
 
-        return JsonResponse({'message': str(error)}, status=400)
+            return JsonResponse({'message': str(error)}, status=400)
 
-    result = {
-        'product_id': model_product.product_id,
-        'name': model_product.name,
-        'description': model_product.description,
-        'code': model_product.code,
-        'compound': model_product.compound,
-        'unit_weight': model_product.unit_weight,
-        'weight': model_product.weight,
-        'width': model_product.width,
-        'length': model_product.length,
-        'height': model_product.height,
-        'origin': model_product.origin,
-        'gtin': model_product.gtin,
-        'published': model_product.published,
-    }
+        result = {
+            'product_id': model_product.product_id,
+            'name': model_product.name,
+            'description': model_product.description,
+            'code': model_product.code,
+            'compound': model_product.compound,
+            'unit_weight': model_product.unit_weight,
+            'weight': model_product.weight,
+            'width': model_product.width,
+            'length': model_product.length,
+            'height': model_product.height,
+            'origin': model_product.origin,
+            'gtin': model_product.gtin,
+            'published': model_product.published,
+        }
 
-    return JsonResponse(result, safe=False,status=200)
+        return JsonResponse(result, safe=False,status=200)

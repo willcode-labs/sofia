@@ -328,5 +328,15 @@
         "code": 86,
         "message": "ID de endereço não encontrado![86]",
         "description": "",
+    },
+    {
+        "code": 87,
+        "message": "Nenhum registro encontrado para este product_id[87]",
+        "description": "",
+    },
+    {
+        "code": 88,
+        "message": "Erro na consulta de produto[88]",
+        "description": "",
     }
 ]

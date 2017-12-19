@@ -20,12 +20,7 @@ urlpatterns += [
 # product
 urlpatterns += [
     path('api/v1/product/', v1ControllerProduct.EndPoint.as_view(), name='api_v1_product_endpoint'),
-    path('api/v1/product/[0-9]/published', v1ControllerProduct.published, name='api_v1_product_published'),
-#     url(r'^api/v1/product/[0-9]{11}', v1ControllerProduct.getById, name='api_v1_product_getbyid'),
-    # url(r'^api/v1/product/add/?$', v1ControllerProduct.add, name='api_v1_product_add'),
-    # url(r'^api/v1/product/([0-9]+)/update/?$', v1ControllerProduct.update, name='api_v1_product_update'),
-#     url(r'^api/v1/product/[0-9]{11}/delete', v1ControllerProduct.delete, name='api_v1_product_delete'),
-#     url(r'^api/v1/product/[0-9]{11}/published', v1ControllerProduct.published, name='api_v1_product_published'),
+    path('api/v1/product/published', v1ControllerProduct.Published.as_view(), name='api_v1_product_published'),
 ]
 # order
 # urlpatterns += [
