@@ -206,7 +206,7 @@
     },
     {
         "code": 62,
-        "message": "Existe produto cadastrado com este mesmo codigo![62]",
+        "message": "Existe um produto cadastrado com este mesmo codigo![62]",
         "description": "",
     },
     {

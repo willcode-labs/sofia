@@ -34,25 +34,25 @@ class ProductManager(models.Manager):
         self.compound = True if self.compound == '1' else self.compound
         self.compound = False if self.compound == '0' else self.compound
 
-        if self.weight and not re.match(r'^[0-9]+[,]{1}[0-9]{1,2}$',self.weight):
+        if self.weight and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',self.weight):
             raise Exception('Valor do parâmetro peso incorreto![64]')
 
-        self.weight = float(self.weight.replace(',','.')) if self.weight else self.weight
+        self.weight = float(self.weight) if self.weight else self.weight
 
-        if self.width and not re.match(r'^[0-9]+[,]{1}[0-9]{1,2}$',self.width):
+        if self.width and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',self.width):
             raise Exception('Valor do parâmetro largura incorreto![65]')
 
-        self.width = float(self.width.replace(',','.')) if self.width else self.width
+        self.width = float(self.width) if self.width else self.width
 
-        if self.length and not re.match(r'^[0-9]+[,]{1}[0-9]{1,2}$',self.length):
+        if self.length and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',self.length):
             raise Exception('Valor do parâmetro comprimento incorreto![66]')
 
-        self.length = float(self.length.replace(',','.')) if self.length else self.length
+        self.length = float(self.length) if self.length else self.length
 
-        if self.height and not re.match(r'^[0-9]+[,]{1}[0-9]{1,2}$',self.height):
+        if self.height and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',self.height):
             raise Exception('Valor do parâmetro altura incorreto![67]')
 
-        self.height = float(self.height.replace(',','.')) if self.height else self.height
+        self.height = float(self.height) if self.height else self.height
 
         if not self.unit_weight or not re.match(r'^[0-9]+$',self.unit_weight) or int(self.unit_weight) not in dict(Product.UNIT_WEIGHT_LIST).keys():
             raise Exception('Unidade de medida recusada![59]')
@@ -64,14 +64,14 @@ class ProductManager(models.Manager):
 
         self.origin = int(self.origin)
 
-        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_MERCHANT,):
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![61]')
 
         try:
             product_code_equal = Product.objects.filter(code=self.code)
 
             if product_code_equal.count() >= 1:
-                raise Exception('Existe produto cadastrado com este mesmo codigo![62]')
+                raise Exception('Existe um produto cadastrado com este mesmo codigo![62]')
 
             model_product = Product(
                 name=self.name,

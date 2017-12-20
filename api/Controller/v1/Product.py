@@ -138,7 +138,6 @@ class EndPoint(View):
             'origin': model_product.origin,
             'gtin': model_product.gtin,
             'published': model_product.published,
-            'date_create': model_product.date_create,
         }
 
         return JsonResponse(result,status=200)
