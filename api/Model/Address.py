@@ -1,6 +1,4 @@
-import uuid,traceback
 from django.db import models
-from django.http import QueryDict
 from api.Model.Person import Person as ModelPerson
 
 class AddressManager(models.Manager):

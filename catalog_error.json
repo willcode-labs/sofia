@@ -338,5 +338,70 @@
         "code": 88,
         "message": "Erro na consulta de produto[88]",
         "description": "",
+    },
+    {
+        "code": 89,
+        "message": "Dados insuficientes para edição de produto![89]",
+        "description": "",
+    },
+    {
+        "code": 90,
+        "message": "Dados insuficientes para edição de produto![90]",
+        "description": "",
+    },
+    {
+        "code": 91,
+        "message": "Valor do parâmetro composto incorreto![91]",
+        "description": "",
+    },
+    {
+        "code": 92,
+        "message": "Valor do parâmetro peso incorreto![92]",
+        "description": "",
+    },
+    {
+        "code": 93,
+        "message": "Valor do parâmetro largura incorreto![93]",
+        "description": "",
+    },
+    {
+        "code": 94,
+        "message": "Valor do parâmetro comprimento incorreto![94]",
+        "description": "",
+    },
+    {
+        "code": 95,
+        "message": "Valor do parâmetro comprimento incorreto![95]",
+        "description": "",
+    },
+    {
+        "code": 96,
+        "message": "Unidade de medida recusada![96]",
+        "description": "",
+    },
+    {
+        "code": 97,
+        "message": "Origen recusada![97]",
+        "description": "",
+    },
+    {
+        "code": 98,
+        "message": "Relacionamento entre tipo de pessoas incorreto![98]",
+        "description": "",
+    },
+    {
+        "code": 99,
+        "message": "Produto não encontrado![99]",
+        "description": "",
+    },
+    {
+        "code": 100,
+        "message": "Existe um outro produto cadastrado com este mesmo código![100]",
+        "description": "",
+    },
+    {
+        "code": 101,
+        "message": "Não é possível editar um produto publicado![101]",
+        "description": "",
     }
 ]

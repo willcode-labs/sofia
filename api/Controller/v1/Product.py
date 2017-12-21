@@ -146,40 +146,12 @@ class EndPoint(View):
     @transaction.atomic
     @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
     def put(self,request,model_login,*args,**kwargs):
-        name = request.POST.get('name',None)
-        description = request.POST.get('description',None)
-        code = request.POST.get('code',None)
-        compound = request.POST.get('compound',None)
-        unit_weight = request.POST.get('unit_weight',None)
-        weight = request.POST.get('weight',None)
-        width = request.POST.get('width',None)
-        length = request.POST.get('length',None)
-        height = request.POST.get('height',None)
-        origin = request.POST.get('origin',None)
-        gtin = request.POST.get('gtin',None)
-
         try:
-            session_identifier = transaction.savepoint()
-
-            model_product = ModelProduct.objects.update(request,model_user,
-                product_id=product_id,
-                name=name,
-                description=description,
-                code=code,
-                compound=compound,
-                unit_weight=unit_weight,
-                weight=weight,
-                width=width,
-                length=length,
-                height=height,
-                origin=origin,
-                gtin=gtin,)
-
-            transaction.savepoint_commit(session_identifier)
+            model_product = ModelProduct.objects.update(
+                request,
+                model_login)
 
         except Exception as error:
-            transaction.savepoint_rollback(session_identifier)
-
             BusinessExceptionLog(request,model_login,
                 message=error,
                 trace=traceback.format_exc())
@@ -202,7 +174,7 @@ class EndPoint(View):
             'published': model_product.published,
         }
 
-        return JsonResponse(result, safe=False,status=200)
+        return JsonResponse(result,status=200)
 
     @csrf_exempt
     @transaction.atomic

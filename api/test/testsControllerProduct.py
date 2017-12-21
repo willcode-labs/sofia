@@ -493,7 +493,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'',
         }
 
-        response = self.client.post('/api/v1/product/',data_post,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -517,7 +518,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'',
         }
 
-        response = self.client.post('/api/v1/product/',data_post,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -541,7 +543,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'',
         }
 
-        response = self.client.post('/api/v1/product/',data_post,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -565,7 +568,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'',
         }
 
-        response = self.client.post('/api/v1/product/',data_post,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -589,7 +593,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'',
         }
 
-        response = self.client.post('/api/v1/product/',data_post,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -613,7 +618,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'',
         }
 
-        response = self.client.post('/api/v1/product/',data_post,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -637,7 +643,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'',
         }
 
-        response = self.client.post('/api/v1/product/',data_post,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -661,7 +668,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'',
         }
 
-        response = self.client.post('/api/v1/product/',data_post,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -702,7 +710,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'0987654321234567890987654321',
         }
 
-        response = self.client.post('/api/v1/product/',data_post_2,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post_2),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -729,7 +738,7 @@ class TestControllerProduct(TransactionTestCase):
 
         model_product_1.save()
 
-        data_post_2 = {
+        data_post = {
             'name':'product test 2',
             'description':'product test description 2',
             'code':'0987654321',
@@ -743,7 +752,8 @@ class TestControllerProduct(TransactionTestCase):
             'gtin':'0987654321234567890987654321',
         }
 
-        response = self.client.post('/api/v1/product/',data_post_2,
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
             REMOTE_ADDR='127.0.0.8',
             HTTP_API_KEY=self.model_login_director.token,)
 
@@ -767,3 +777,139 @@ class TestControllerProduct(TransactionTestCase):
         }, response.json())
 
         self.assertEqual(ModelProduct.objects.filter().count(),2)
+
+    def test_product_update_product_id_missing(self):
+        data_put = {
+            'product_id': '',
+            'name':'',
+            'description':'',
+            'code':'',
+            'compound':'',
+            'unit_weight':'',
+            'weight':'',
+            'width':'',
+            'length':'',
+            'height':'',
+            'origin':'',
+            'gtin':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Dados insuficientes para edição de produto![89]'}, response.json())
+
+    def test_product_update_product_not_found(self):
+        data_put = {
+            'product_id': '1234567890',
+            'name':'',
+            'description':'',
+            'code':'',
+            'compound':'',
+            'unit_weight':'',
+            'weight':'',
+            'width':'',
+            'length':'',
+            'height':'',
+            'origin':'',
+            'gtin':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Produto não encontrado![99]'}, response.json())
+
+    def test_product_update_product_published_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            published=True)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'',
+            'description':'',
+            'code':'',
+            'compound':'',
+            'unit_weight':'',
+            'weight':'',
+            'width':'',
+            'length':'',
+            'height':'',
+            'origin':'',
+            'gtin':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Não é possível editar um produto publicado![101]'}, response.json())
+
+    def test_product_update_data_insufficient(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'',
+            'description':'',
+            'code':'',
+            'compound':'',
+            'unit_weight':'',
+            'weight':'',
+            'width':'',
+            'length':'',
+            'height':'',
+            'origin':'',
+            'gtin':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Dados insuficientes para edição de produto![90]'}, response.json())

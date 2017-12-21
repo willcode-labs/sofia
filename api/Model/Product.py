@@ -34,32 +34,32 @@ class ProductManager(models.Manager):
         self.compound = True if self.compound == '1' else self.compound
         self.compound = False if self.compound == '0' else self.compound
 
-        if self.weight and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',self.weight):
+        if self.weight and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.weight)):
             raise Exception('Valor do parâmetro peso incorreto![64]')
 
         self.weight = float(self.weight) if self.weight else self.weight
 
-        if self.width and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',self.width):
+        if self.width and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.width)):
             raise Exception('Valor do parâmetro largura incorreto![65]')
 
         self.width = float(self.width) if self.width else self.width
 
-        if self.length and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',self.length):
+        if self.length and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.length)):
             raise Exception('Valor do parâmetro comprimento incorreto![66]')
 
         self.length = float(self.length) if self.length else self.length
 
-        if self.height and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',self.height):
+        if self.height and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.height)):
             raise Exception('Valor do parâmetro altura incorreto![67]')
 
         self.height = float(self.height) if self.height else self.height
 
-        if not self.unit_weight or not re.match(r'^[0-9]+$',self.unit_weight) or int(self.unit_weight) not in dict(Product.UNIT_WEIGHT_LIST).keys():
+        if not self.unit_weight or not re.match(r'^[0-9]+$',str(self.unit_weight)) or int(self.unit_weight) not in dict(Product.UNIT_WEIGHT_LIST).keys():
             raise Exception('Unidade de medida recusada![59]')
 
         self.unit_weight = int(self.unit_weight)
 
-        if not self.origin or not re.match(r'^[0-9]+$',self.origin) or int(self.origin) not in dict(Product.ORIGIN_LIST).keys():
+        if not self.origin or not re.match(r'^[0-9]+$',str(self.origin)) or int(self.origin) not in dict(Product.ORIGIN_LIST).keys():
             raise Exception('Origen recusada![60]')
 
         self.origin = int(self.origin)
@@ -95,21 +95,38 @@ class ProductManager(models.Manager):
         return model_product
 
     def update(self,request,model_login,**kwargs):
-        self.product_id = None
-        self.name = None
-        self.description = None
-        self.code = None
-        self.compound = None
-        self.unit_weight = None
-        self.weight = None
-        self.width = None
-        self.length = None
-        self.height = None
-        self.origin = None
-        self.gtin = None
+        self.product_id = request.PUT.get('product_id',None)
+        self.name = request.PUT.get('name',None)
+        self.description = request.PUT.get('description',None)
+        self.code = request.PUT.get('code',None)
+        self.compound = request.PUT.get('compound',None)
+        self.unit_weight = request.PUT.get('unit_weight',None)
+        self.weight = request.PUT.get('weight',None)
+        self.width = request.PUT.get('width',None)
+        self.length = request.PUT.get('length',None)
+        self.height = request.PUT.get('height',None)
+        self.origin = request.PUT.get('origin',None)
+        self.gtin = request.PUT.get('gtin',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
+
+        if not self.product_id:
+            raise Exception('Dados insuficientes para edição de produto![89]')
+
+        try:
+            model_product = Product.objects.get(product_id=self.product_id)
+
+        except Exception as error:
+            raise Exception('Produto não encontrado![99]')
+
+        if model_product.published == True:
+            raise Exception('Não é possível editar um produto publicado![101]')
+
+        if not self.name or not self.description or not self.code or not self.compound \
+            or not self.unit_weight or not self.weight or not self.width or not self.length \
+            or not self.height or not self.origin or not self.gtin:
+            raise Exception('Dados insuficientes para edição de produto![90]')
 
         self.compound = None if self.compound == '' else self.compound
         self.weight = None if self.weight == '' else self.weight
@@ -118,26 +135,51 @@ class ProductManager(models.Manager):
         self.height = None if self.height == '' else self.height
         self.gtin = None if self.gtin == '' else self.gtin
 
-        if self.unit_weight and self.unit_weight not in dict(Product.UNIT_WEIGHT_LIST).keys():
-            raise Exception('Unidade de medita recusada!')
+        if self.compound and not self.compound in ('0','1'):
+            raise Exception('Valor do parâmetro composto incorreto![91]')
 
-        if self.origin and self.origin not in dict(Product.ORIGIN_LIST).keys():
-            raise Exception('Origen recusada!')
+        self.compound = True if self.compound == '1' else self.compound
+        self.compound = False if self.compound == '0' else self.compound
+
+        if self.weight and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.weight)):
+            raise Exception('Valor do parâmetro peso incorreto![92]')
+
+        self.weight = float(self.weight) if self.weight else self.weight
+
+        if self.width and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.width)):
+            raise Exception('Valor do parâmetro largura incorreto![93]')
+
+        self.width = float(self.width) if self.width else self.width
+
+        if self.length and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.length)):
+            raise Exception('Valor do parâmetro comprimento incorreto![94]')
+
+        self.length = float(self.length) if self.length else self.length
+
+        if self.height and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.height)):
+            raise Exception('Valor do parâmetro comprimento incorreto![95]')
+
+        self.height = float(self.height) if self.height else self.height
+
+        if not self.unit_weight or not re.match(r'^[0-9]+$',str(self.unit_weight)) or int(self.unit_weight) not in dict(Product.UNIT_WEIGHT_LIST).keys():
+            raise Exception('Unidade de medida recusada![96]')
+
+        self.unit_weight = int(self.unit_weight)
+
+        if not self.origin or not re.match(r'^[0-9]+$',str(self.origin)) or int(self.origin) not in dict(Product.ORIGIN_LIST).keys():
+            raise Exception('Origen recusada![97]')
+
+        self.origin = int(self.origin)
+
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![98]')
 
         try:
-            product_code_equal = Product.objects.filter(code=self.code,published=True)
+            if self.code:
+                product_code_equal_total = Product.objects.filter(code=self.code).exclude(product_id=model_product.product_id).count()
 
-            if product_code_equal.count() >= 1:
-                raise Exception('Produto com mesmo codigo publicado!')
-
-            try:
-                model_product = Product.objects.get(product_id=self.product_id)
-
-            except Exception as error:
-                raise Exception('Produto não encontrado!')
-
-            if model_product.published == True:
-                raise Exception('Não é possível editar um produto publicado!')
+                if product_code_equal_total >= 1:
+                    raise Exception('Existe um outro produto cadastrado com este mesmo código![100]')
 
             if self.name:
                 model_product.name = self.name
