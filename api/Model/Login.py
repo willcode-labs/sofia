@@ -22,7 +22,10 @@ class LoginManager(models.Manager):
     def create(self,request,model_login,model_person,**kwargs):
         ip = request.META.get('REMOTE_ADDR',None)
 
-        if model_login.profile_id not in (model_login.PROFILE_MERCHANT,):
+        if not ip:
+            raise Exception('Ip não encontrado![73]')
+
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![34]')
 
         try:
@@ -51,44 +54,44 @@ class LoginManager(models.Manager):
 
         return model_login_to_save
 
-    def update(self,request,model_login,model_login_to_update,**kwargs):
-        if model_login_to_update.profile_id not in(Login.PROFILE_MERCHANT,Login.PROFILE_CLIENT,):
-            raise Exception('Perfil de login não pode ser atualizado!')
+    def update(self,request,model_login,**kwargs):
+        if model_login.profile_id not in(Login.PROFILE_ROOT,Login.PROFILE_DIRECTOR,Login.PROFILE_CLIENT):
+            raise Exception('Perfil inválido para esta operação![75]')
 
         try:
             if 'token' in kwargs.keys():
-                model_login_to_update.token = kwargs['token']
+                model_login.token = kwargs['token']
 
             if 'ip' in kwargs.keys():
-                model_login_to_update.ip = kwargs['ip']
+                model_login.ip = kwargs['ip']
 
             if 'date_expired' in kwargs.keys():
-                model_login_to_update.date_expired = kwargs['date_expired']
+                model_login.date_expired = kwargs['date_expired']
 
             if 'verified' in kwargs.keys():
-                model_login_to_update.verified = kwargs['verified']
+                model_login.verified = kwargs['verified']
 
-            model_login_to_update.save()
+            model_login.save()
 
         except Exception as error:
             raise error
 
-        return model_login_to_update
+        return model_login
 
 class Login(models.Model):
     PROFILE_ROOT = 1
-    PROFILE_MERCHANT = 2
+    PROFILE_DIRECTOR = 2
     PROFILE_CLIENT = 3
 
     PROFILE_TUPLE = (
         (PROFILE_ROOT, 'root'),
-        (PROFILE_MERCHANT, 'merchant'),
+        (PROFILE_DIRECTOR, 'director'),
         (PROFILE_CLIENT, 'client'),)
 
     login_id = models.AutoField(primary_key=True)
-    person = models.ForeignKey(ModelPerson)
+    person = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
     profile_id = models.IntegerField(choices=PROFILE_TUPLE)
-    username = models.CharField(max_length=20)
+    username = models.CharField(max_length=40)
     password = models.CharField(max_length=8,null=True)
     verified = models.BooleanField()
     token = models.CharField(max_length=40,null=True)

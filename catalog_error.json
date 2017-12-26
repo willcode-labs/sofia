@@ -40,28 +40,18 @@
         "description": "",
     },
     {
-        "code": 10,
-        "message": "Dados de cliente insuficientes![10]",
-        "description": "",
-    },
-    {
         "code": 11,
-        "message": "Api key do cliente não encontrado![11]",
+        "message": "Api key não encontrado![11]",
         "description": "",
     },
     {
         "code": 12,
-        "message": "Login de cliente já está verificado![12]",
-        "description": "",
-    },
-    {
-        "code": 13,
-        "message": "Cliente não relacionado![13]",
+        "message": "Login já está verificado![12]",
         "description": "",
     },
     {
         "code": 14,
-        "message": "Perfil de cliente não autorizado![14]",
+        "message": "Perfil não autorizado![14]",
         "description": "",
     },
     {
@@ -72,16 +62,6 @@
     {
         "code": 16,
         "message": "Perfil não identificado![16]",
-        "description": "",
-    },
-    {
-        "code": 17,
-        "message": "Não há um registro de controle para este comerciante![17]",
-        "description": "",
-    },
-    {
-        "code": 18,
-        "message": "Comerciante expirado![18]",
         "description": "",
     },
     {
@@ -105,36 +85,6 @@
         "description": "",
     },
     {
-        "code": 23,
-        "message": "Tipo de valor invalido para validação de cliente![23]",
-        "description": "",
-    },
-    {
-        "code": 24,
-        "message": "Erro na consulta de pessoa![24]",
-        "description": "",
-    },
-    {
-        "code": 25,
-        "message": "Erro na consulta de pessoa![25]",
-        "description": "",
-    },
-    {
-        "code": 26,
-        "message": "Erro ao tentar encontrar pessoa![26]",
-        "description": "",
-    },
-    {
-        "code": 27,
-        "message": "Erro de verificação do login![27]",
-        "description": "",
-    },
-    {
-        "code": 28,
-        "message": "Erro de autenticação do login![28]",
-        "description": "",
-    },
-    {
         "code": 29,
         "message": "Erro na criação de pessoa![29]",
         "description": "",
@@ -146,7 +96,7 @@
     },
     {
         "code": 31,
-        "message": "Relacionamento entre tipo de pessoas incorreto![31]",
+        "message": "Tipo de perfil não permitido![31]",
         "description": "",
     },
     {
@@ -170,38 +120,338 @@
         "description": "",
     },
     {
-        "code": 36,
-        "message": "Dados insuficientes![36]",
+        "code": 43,
+        "message": "Dados insuficientes para criação de endereço![43]",
         "description": "",
     },
     {
-        "code": 37,
-        "message": "Api key do cliente não encontrado![37]",
+        "code": 44,
+        "message": "Relacionamento entre tipo de pessoas incorreto![44]",
         "description": "",
     },
     {
-        "code": 38,
-        "message": "Ip de acesso do login de cliente difere de seu ip de origem![38]",
+        "code": 45,
+        "message": "Valor incorreto![45]",
         "description": "",
     },
     {
-        "code": 39,
-        "message": "Login de cliente não verificado![39]",
+        "code": 46,
+        "message": "Endereço duplicado![46]",
         "description": "",
     },
     {
-        "code": 40,
-        "message": "Cliente não relacionado![40]",
+        "code": 47,
+        "message": "Nenhum dado para alterar![47]",
         "description": "",
     },
     {
-        "code": 41,
-        "message": "Perfil de cliente não autorizado![41]",
+        "code": 48,
+        "message": "Valor incorreto![48]",
         "description": "",
     },
     {
-        "code": 42,
-        "message": "Api key do cliente expirado![42]",
+        "code": 49,
+        "message": "Relacionamento entre tipo de pessoas incorreto![49]",
+        "description": "",
+    },
+    {
+        "code": 50,
+        "message": "Endereço não encontrado![50]",
+        "description": "",
+    },
+    {
+        "code": 51,
+        "message": "Endereço não encontrado![51]",
+        "description": "",
+    },
+    {
+        "code": 52,
+        "message": "Não é possível remover endereço de cobrança ou entrega![52]",
+        "description": "",
+    },
+    {
+        "code": 53,
+        "message": "Não é possível remover endereço de entrega ou cobrança![53]",
+        "description": "",
+    },
+    {
+        "code": 55,
+        "message": "Valor incorreto![55]",
+        "description": "",
+    },
+    {
+        "code": 57,
+        "message": "Erro na consulta de endereço![57]",
+        "description": "",
+    },
+    {
+        "code": 58,
+        "message": "Dados insuficientes para criação de produto![58]",
+        "description": "",
+    },
+    {
+        "code": 59,
+        "message": "Unidade de medida recusada![59]",
+        "description": "",
+    },
+    {
+        "code": 60,
+        "message": "Origen recusada![60]",
+        "description": "",
+    },
+    {
+        "code": 61,
+        "message": "Relacionamento entre tipo de pessoas incorreto![61]",
+        "description": "",
+    },
+    {
+        "code": 62,
+        "message": "Existe um produto cadastrado com este mesmo codigo![62]",
+        "description": "",
+    },
+    {
+        "code": 63,
+        "message": "Valor do parâmetro composto incorreto![63]",
+        "description": "",
+    },
+    {
+        "code": 64,
+        "message": "Valor do parâmetro peso incorreto![64]",
+        "description": "",
+    },
+    {
+        "code": 65,
+        "message": "Valor do parâmetro largura incorreto![65]",
+        "description": "",
+    },
+    {
+        "code": 66,
+        "message": "Valor do parâmetro comprimento incorreto![66]",
+        "description": "",
+    },
+    {
+        "code": 67,
+        "message": "Valor do parâmetro altura incorreto![67]",
+        "description": "",
+    },
+    {
+        "code": 68,
+        "message": "Registro de pessoa não encontrado![68]",
+        "description": "",
+    },
+    {
+        "code": 69,
+        "message": "Relacionamento entre tipo de pessoas incorreto![69]",
+        "description": "",
+    },
+    {
+        "code": 70,
+        "message": "Tipo de perfil incorreto![70]",
+        "description": "",
+    },
+    {
+        "code": 71,
+        "message": "Perfil não pode criar este tipo de pessoa![71]",
+        "description": "",
+    },
+    {
+        "code": 72,
+        "message": "Perfil não pode criar este tipo de pessoa![72]",
+        "description": "",
+    },
+    {
+        "code": 73,
+        "message": "Ip não encontrado![73]",
+        "description": "",
+    },
+    {
+        "code": 74,
+        "message": "Um dos campos deve estar preenchido, CPF ou CNPJ![74]",
+        "description": "",
+    },
+    {
+        "code": 75,
+        "message": "Perfil inválido para esta operação![75]",
+        "description": "",
+    },
+    {
+        "code": 76,
+        "message": "Nenhum registro de pessoa encontrado com este ID[76]",
+        "description": "",
+    },
+    {
+        "code": 77,
+        "message": "Já existe uma pessoa cadastrada com este mesmo CNPJ![77]",
+        "description": "",
+    },
+    {
+        "code": 78,
+        "message": "Registro de endereço não encontrado![78]",
+        "description": "",
+    },
+    {
+        "code": 79,
+        "message": "Registros de endereço não encontrado![79]",
+        "description": "",
+    },
+    {
+        "code": 80,
+        "message": "Nenhum registro encontrado![80]",
+        "description": "",
+    },
+    {
+        "code": 81,
+        "message": "Dados insuficientes para salvar um erro de excessão![81]",
+        "description": "",
+    },
+    {
+        "code": 82,
+        "message": "ID de endereço não encontrado![82]",
+        "description": "",
+    },
+    {
+        "code": 83,
+        "message": "Unable to parse JSON data. Error : {xxx}[83]",
+        "description": "",
+    },
+    {
+        "code": 84,
+        "message": "Sigla de estado incorreto![84]",
+        "description": "",
+    },
+    {
+        "code": 85,
+        "message": "Sigla de estado incorreto![85]",
+        "description": "",
+    },
+    {
+        "code": 86,
+        "message": "ID de endereço não encontrado![86]",
+        "description": "",
+    },
+    {
+        "code": 87,
+        "message": "Nenhum registro encontrado para este product_id[87]",
+        "description": "",
+    },
+    {
+        "code": 88,
+        "message": "Erro na consulta de produto[88]",
+        "description": "",
+    },
+    {
+        "code": 89,
+        "message": "Dados insuficientes para edição de produto![89]",
+        "description": "",
+    },
+    {
+        "code": 90,
+        "message": "Dados insuficientes para edição de produto![90]",
+        "description": "",
+    },
+    {
+        "code": 91,
+        "message": "Valor do parâmetro composto incorreto![91]",
+        "description": "",
+    },
+    {
+        "code": 92,
+        "message": "Valor do parâmetro peso incorreto![92]",
+        "description": "",
+    },
+    {
+        "code": 93,
+        "message": "Valor do parâmetro largura incorreto![93]",
+        "description": "",
+    },
+    {
+        "code": 94,
+        "message": "Valor do parâmetro comprimento incorreto![94]",
+        "description": "",
+    },
+    {
+        "code": 95,
+        "message": "Valor do parâmetro comprimento incorreto![95]",
+        "description": "",
+    },
+    {
+        "code": 96,
+        "message": "Unidade de medida recusada![96]",
+        "description": "",
+    },
+    {
+        "code": 97,
+        "message": "Origen recusada![97]",
+        "description": "",
+    },
+    {
+        "code": 98,
+        "message": "Relacionamento entre tipo de pessoas incorreto![98]",
+        "description": "",
+    },
+    {
+        "code": 99,
+        "message": "Produto não encontrado![99]",
+        "description": "",
+    },
+    {
+        "code": 100,
+        "message": "Existe um outro produto cadastrado com este mesmo código![100]",
+        "description": "",
+    },
+    {
+        "code": 101,
+        "message": "Não é possível editar um produto publicado![101]",
+        "description": "",
+    },
+    {
+        "code": 102,
+        "message": "ID de produto não encontrado![102]",
+        "description": "",
+    },
+    {
+        "code": 103,
+        "message": "Produto não encontrado![103]",
+        "description": "",
+    },
+    {
+        "code": 104,
+        "message": "Não é possível remover um produto publicado![104]",
+        "description": "",
+    },
+    {
+        "code": 105,
+        "message": "Parâmetros insuficientes para este operação![105]",
+        "description": "",
+    },
+    {
+        "code": 106,
+        "message": "Valor de parâmetro incorreto![106]",
+        "description": "",
+    },
+    {
+        "code": 107,
+        "message": "Produto não encontrado![107]",
+        "description": "",
+    },
+    {
+        "code": 108,
+        "message": "Produto ja está publicado![108]",
+        "description": "",
+    },
+    {
+        "code": 109,
+        "message": "Produto não se encontra com status publicado![109]",
+        "description": "",
+    },
+    {
+        "code": 110,
+        "message": "Parametro quantidade incorreto![110]",
+        "description": "",
+    },
+    {
+        "code": 111,
+        "message": "Parametro quantidade incorreto![111]",
         "description": "",
     }
 ]

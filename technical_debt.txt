@@ -1,10 +1,13 @@
+* Testar campos com limite de caracteres
+* Gravar log em operaÁıes de banco
+
 import uuid,traceback
 from django.db import models
 from api.Model.Order import Order as ModelOrder
 from api.Model.Product import Product as ModelProduct
 
 class OrderProductManager(models.Manager):
-    def create(self,request,model_user,**kwargs):
+    def create(self,request,model_login,**kwargs):
         self.order_id = None
         self.product_id = None
         self.quantity = None
@@ -20,13 +23,13 @@ class OrderProductManager(models.Manager):
                 model_order = ModelOrder.objects.get(order_id=self.order_id)
 
             except Exception as error:
-                raise Exception('Pedido n√£o encontrado!')
+                raise Exception('Pedido n„o encontrado!')
 
             try:
                 model_product = ModelProduct.objects.get(product_id=self.product_id)
 
             except Exception as error:
-                raise Exception('Produto n√£o encontrado!')
+                raise Exception('Produto n„o encontrado!')
 
             model_order_product = OrderProduct(
                 order=model_order,
@@ -34,11 +37,11 @@ class OrderProductManager(models.Manager):
                 quantity=self.quantity)
 
         except Exception as error:
-            raise Exception('N√£o foi poss√≠vel criar rela√ß√£o entre pedido e produto!')
+            raise Exception('N„o foi possÌvel criar relaÁ„o entre pedido e produto!')
 
         return model_order_product
 
-    def update(self,request,model_user,**kwargs):
+    def update(self,request,model_login,**kwargs):
         self.order_id = None
         self.product_id = None
         self.product_id_origin = None
@@ -48,39 +51,39 @@ class OrderProductManager(models.Manager):
             setattr(self,key,kwargs[key])
 
         if not self.order_id or not self.product_id or not self.product_id_origin or not self.quantity:
-            raise Exception('Dados insuficientes para atualizar rela√ß√£o entre produto e pedido!')
+            raise Exception('Dados insuficientes para atualizar relaÁ„o entre produto e pedido!')
 
         if self.quantity <= 0:
-            raise Exception('Quantidade n√£o pode ser menor que zero!')
+            raise Exception('Quantidade n„o pode ser menor que zero!')
 
         if self.product_id == self.product_id_origin:
-            raise Exception('Os produtos s√£o iguais, atualiza√ß√£o cancelada!')
+            raise Exception('Os produtos s„o iguais, atualizaÁ„o cancelada!')
 
         try:
             try:
                 model_order = ModelOrder.objects.get(order_id=self.order_id)
 
             except Exception as error:
-                raise Exception('Pedido n√£o encontrado!')
+                raise Exception('Pedido n„o encontrado!')
 
             try:
                 model_product = ModelProduct.objects.get(product_id=self.product_id)
 
             except Exception as error:
-                raise Exception('Produto n√£o encontrado!')
+                raise Exception('Produto n„o encontrado!')
 
             try:
                 model_product_origin = ModelProduct.objects.get(product_id=self.product_id_origin)
 
             except Exception as error:
-                raise Exception('Produto de origem n√£o encontrado!')
+                raise Exception('Produto de origem n„o encontrado!')
 
             model_order_product_conflict = OrderProduct.objects.filter(
                 order=model_order,
                 product=model_product)
 
             if model_order_product_conflict.count() >= 1:
-                raise Exception('Pedido j√° contem este produto!')
+                raise Exception('Pedido j· contem este produto!')
 
             try:
                 model_order_product = OrderProduct.objects.get(
@@ -88,7 +91,7 @@ class OrderProductManager(models.Manager):
                     product=model_product_origin)
 
             except Exception as error:
-                raise Exception('Vinculo entre pedido e produto n√£o encontrado!')
+                raise Exception('Vinculo entre pedido e produto n„o encontrado!')
 
             try:
                 model_order_product.product = model_product
@@ -96,10 +99,10 @@ class OrderProductManager(models.Manager):
                 model_order_product.save()
 
             except Exception as error:
-                raise Exception('N√£o foi poss√≠vel efetuar a troca de produto para este pedido!')
+                raise Exception('N„o foi possÌvel efetuar a troca de produto para este pedido!')
 
         except Exception as error:
-            raise Exception('N√£o foi poss√≠vel atualizar rela√ß√£o entre pedido e produto!')
+            raise Exception('N„o foi possÌvel atualizar relaÁ„o entre pedido e produto!')
 
         return model_order_product
 
@@ -118,13 +121,13 @@ class OrderProductManager(models.Manager):
                 model_order = ModelOrder.objects.get(order_id=self.order_id)
 
             except Exception as error:
-                raise Exception('Pedido n√£o encontrado!')
+                raise Exception('Pedido n„o encontrado!')
 
             try:
                 model_product = ModelOrder.objects.get(product_id=self.product_id)
 
             except Exception as error:
-                raise Exception('Produto n√£o encontrado!')
+                raise Exception('Produto n„o encontrado!')
 
             try:
                 model_order_product = OrderProduct.objects.get(
@@ -132,24 +135,11 @@ class OrderProductManager(models.Manager):
                     product=model_product,)
 
             except Exception as error:
-                raise Exception('Rela√ß√£o entre pedido e produto n√£o encontrada!')
+                raise Exception('RelaÁ„o entre pedido e produto n„o encontrada!')
 
             model_order_product.delete()
 
         except Exception as error:
-            raise Exception('N√£o foi poss√≠vel remover rela√ß√£o entre pedido e produto!')
+            raise Exception('N„o foi possÌvel remover relaÁ„o entre pedido e produto!')
 
         return True
-
-class OrderProduct(models.Model):
-    order = models.ForeignKey(ModelOrder)
-    product = models.ForeignKey(ModelProduct)
-    quantity = models.IntegerField()
-    date_create = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = 'order_product'
-        app_label = 'api'
-        unique_together = ((order, product),)
-
-    objects = OrderProductManager()

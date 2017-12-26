@@ -1,26 +1,24 @@
-import uuid,traceback,datetime
+import datetime
 from django.db import models
 from api.apps import ApiConfig
-from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 from api.Model.Product import Product as ModelProduct
-from api.Model.Person import Person as ModelUser
+from api.Model.Person import Person as ModelPerson
 from api.Model.Address import Address as ModelAddress
-from api.Model.OrderProduct import OrderProduct as ModelOrderProduct
 
 class OrderManager(models.Manager):
     def create(self,request,**kwargs):
         self.product_id_list = None
         self.product_quantity_list = None
-        self.user = None
-        self.ticket = None
+        self.person = None
+        self.coupon = None
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.user or not self.product_id_list or not self.product_quantity_list:
+        if not self.person or not self.product_id_list or not self.product_quantity_list:
             raise Exception('Dados insuficientes para criação de pedido!')
 
-        if not isinstance(self.user, ModelUser):
+        if not isinstance(self.person, ModelPerson):
             raise Exception('Um usuário é necessário para criação de pedido!')
 
         if self.product_id_list.count() != self.product_quantity_list.count():
@@ -49,10 +47,10 @@ class OrderManager(models.Manager):
                 date_expired = datetime.datetime.now() + datetime.timedelta(hours=ApiConfig.order_expired_in_hour)
 
                 model_order = Order(
-                    user=user,
+                    person=person,
                     address=None,
                     status=Order.STATUS_OPEN,
-                    ticket=self.ticket,
+                    coupon=self.coupon,
                     date_expired=date_expired,)
 
                 model_order.save()
@@ -63,7 +61,7 @@ class OrderManager(models.Manager):
             model_order_product_list = []
 
             for model_product_with_quantity in model_product_with_quantity_list:
-                model_order_product = ModelOrderProduct.objects.create(
+                model_order_product = OrderProduct.objects.create(
                     order=model_order,
                     product=model_product_with_quantity['model_product'],
                     quantity=model_product_with_quantity['quantity'])
@@ -71,11 +69,6 @@ class OrderManager(models.Manager):
                 model_order_product_list.append(model_order_product)
 
         except Exception as error:
-            BusinessExceptionLog(request,
-                description='Erro na criação de pedido',
-                message=error,
-                trace=traceback.format_exc())
-
             raise Exception('Não foi possível criar pedido!')
 
         model_order.product = model_order_product_list
@@ -86,7 +79,7 @@ class OrderManager(models.Manager):
         self.order_id = None
         self.product_id_list = None
         self.product_quantity_list = None
-        self.ticket = None
+        self.coupon = None
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
@@ -120,10 +113,10 @@ class OrderManager(models.Manager):
                 date_expired = datetime.datetime.now() + datetime.timedelta(hours=ApiConfig.order_expired_in_hour)
 
                 model_order = Order(
-                    user=user,
+                    person=person,
                     address=None,
                     status=Order.STATUS_OPEN,
-                    ticket=self.ticket,
+                    coupon=self.coupon,
                     date_expired=date_expired,)
 
                 model_order.save()
@@ -134,7 +127,7 @@ class OrderManager(models.Manager):
             model_order_product_list = []
 
             for model_product_with_quantity in model_product_with_quantity_list:
-                model_order_product = ModelOrderProduct.objects.create(
+                model_order_product = OrderProduct.objects.create(
                     order=model_order,
                     product=model_product_with_quantity['model_product'],
                     quantity=model_product_with_quantity['quantity'])
@@ -142,11 +135,6 @@ class OrderManager(models.Manager):
                 model_order_product_list.append(model_order_product)
 
         except Exception as error:
-            BusinessExceptionLog(request,
-                description='Erro na criação de pedido',
-                message=error,
-                trace=traceback.format_exc())
-
             raise Exception('Não foi possível criar pedido!')
 
         model_order.product = model_order_product_list
@@ -172,19 +160,30 @@ class Order(models.Model):
         (STATUS_PAYMENT_OK, 'Pago'),
         (STATUS_DISPATCHED, 'Despachado'),
         (STATUS_DELIVERED, 'Entregue'),
-        (STATUS_REVERSED, 'Estornado')
+        (STATUS_REVERSED, 'Estornado'),
         (STATUS_RETURNED, 'Devolvido'))
 
     order_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(ModelUser)
-    address_id = models.ForeignKey(ModelAddress)
+    person_id = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
+    address_id = models.ForeignKey(ModelAddress,on_delete=models.CASCADE)
     status = models.IntegerField(choices=STATUS_LIST)
-    ticket = models.CharField(max_length=30)
+    coupon = models.CharField(max_length=30)
     date_expired = models.DateTimeField()
     date_create = models.DateTimeField(auto_now_add=True)
+
+    objects = OrderManager()
 
     class Meta:
         db_table = 'order'
         app_label = 'api'
 
-    objects = OrderManager()
+class OrderProduct(models.Model):
+    order = models.ForeignKey(Order,on_delete=models.CASCADE)
+    product = models.ForeignKey(ModelProduct,on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    date_create = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'order_product'
+        app_label = 'api'
+        unique_together = (('order', 'product'),)

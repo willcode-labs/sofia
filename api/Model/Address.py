@@ -1,49 +1,97 @@
-import uuid,traceback
 from django.db import models
 from api.Model.Person import Person as ModelPerson
 
 class AddressManager(models.Manager):
-    def create(self,request,model_login,model_person,**kwargs):
-        self.state = None
-        self.city = None
-        self.number = None
-        self.complement = None
-        self.invoice = None
-        self.delivery = None
+    def create(self,request,model_login,**kwargs):
+        person_id = request.POST.get('person_id',None)
+
+        if not person_id:
+            raise Exception('ID de pessoa não encontrado![78]')
+
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![44]')
+
+        try:
+            model_person = ModelPerson.objects.get(person_id=person_id)
+
+        except Exception as error:
+            raise Exception('Registro de pessoa não encontrado![68]')
+
+        self.state = request.POST.get('state',None)
+        self.city = request.POST.get('city',None)
+        self.number = request.POST.get('number',None)
+        self.complement = request.POST.get('complement',None)
+        self.invoice = request.POST.get('invoice',None)
+        self.delivery = request.POST.get('delivery',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
         if not self.state or not self.city or not self.number:
-            raise Exception('Dados insuficientes para criação de endereço!')
+            raise Exception('Dados insuficientes para criação de endereço![43]')
+
+        if self.state not in dict(Address.STATE_TUPLE).keys():
+            raise Exception('Sigla de estado incorreto![85]')
+
+        if self.invoice not in ['0','1'] or self.delivery not in ['0','1']:
+            raise Exception('Valor incorreto![45]')
+
+        if self.invoice == '0':
+            self.invoice = False
+
+        else:
+            self.invoice = True
+
+        if self.delivery == '0':
+            self.delivery = False
+
+        else:
+            self.delivery = True
 
         try:
+            model_address_test = Address.objects.filter(
+                person_id=model_person.person_id,
+                state=self.state,
+                number=self.number,
+                complement=self.complement,)
+
+            if model_address_test.count() >= 1:
+                raise Exception('Endereço duplicado![46]')
+
             if not self.invoice and not self.delivery:
                 model_address_test = Address.objects.filter(
-                    person=model_person)
-
-                self.invoice = False
-                self.delivery = False
+                    person_id=model_person.person_id)
 
                 if model_address_test.count() == 0:
                     self.invoice = True
                     self.delivery = True
 
-            elif self.invoice == True:
-                model_address_invoice = Address.objects.get(
-                    person=model_person,
-                    invoice=True)
+            else:
+                if not self.invoice:
+                    model_address_invoice = Address.objects.filter(
+                        person_id=model_person.person_id,
+                        invoice=True)
 
-                model_address_invoice.invoice = False
-                model_address_invoice.save()
+                    if model_address_invoice.count() == 0:
+                        self.invoice = True
 
-            elif self.delivery == True:
-                model_address_delivery = Address.objects.get(
-                    person=model_person,
-                    delivery=True)
+                else:
+                    model_address_invoice = Address.objects.filter(
+                        person_id=model_person.person_id,
+                        invoice=True).update(invoice=False)
 
-                model_address_delivery.delivery = False
-                model_address_delivery.save()
+                if not self.delivery:
+                    model_address_delivery = Address.objects.filter(
+                        person_id=model_person.person_id,
+                        delivery=True)
+
+                    if model_address_delivery.count() == 0:
+                        self.delivery = True
+
+                else:
+                    model_address_delivery = Address.objects.filter(
+                        person_id=model_person.person_id,
+                        delivery=True).update(delivery=False)
 
             model_address = Address(
                 person=model_person,
@@ -61,52 +109,62 @@ class AddressManager(models.Manager):
 
         return model_address
 
-    def update(self,request,model_login,model_person,**kwargs):
-        self.address_id = None
-        self.state = None
-        self.city = None
-        self.number = None
-        self.complement = None
-        self.invoice = None
-        self.delivery = None
+    def update(self,request,model_login,**kwargs):
+        address_id = request.PUT.get('address_id',None)
+
+        if not address_id:
+            raise Exception('ID de endereço não encontrado![82]')
+
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![49]')
+
+        try:
+            model_address = Address.objects.get(address_id=address_id,)
+
+        except Exception as error:
+            raise Exception('Endereço não encontrado![50]')
+
+        self.state = request.PUT.get('state',None)
+        self.city = request.PUT.get('city',None)
+        self.number = request.PUT.get('number',None)
+        self.complement = request.PUT.get('complement',None)
+        self.invoice = request.PUT.get('invoice',None)
+        self.delivery = request.PUT.get('delivery',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.address_id:
-            raise Exception('Necessário informar um ID de endereço!')
-
         if not self.city and not self.state and not self.number and not self.complement and not self.invoice and not self.delivery:
-            raise Exception('Atenção, nenhum dado para alterar!')
+            raise Exception('Nenhum dado para alterar![47]')
+
+        if self.state not in dict(Address.STATE_TUPLE).keys():
+            raise Exception('Sigla de estado incorreto![84]')
+
+        if self.invoice not in ['0','1'] or self.delivery not in ['0','1']:
+            raise Exception('Valor incorreto![48]')
+
+        if self.invoice == '0':
+            self.invoice = False
+
+        else:
+            self.invoice = True
+
+        if self.delivery == '0':
+            self.delivery = False
+
+        else:
+            self.delivery = True
 
         try:
-            try:
-                model_address = ModelAddress.objects.get(
-                    address_id=self.address_id,
-                    person=model_person)
+            if self.invoice:
+                model_address_invoice = Address.objects.filter(
+                    person=model_address.person,
+                    invoice=True).update(invoice=False)
 
-            except Exception as error:
-                raise Exception('Endereço não encontrado!')
-
-            if not self.invoice and not self.delivery:
-                self.invoice = False
-                self.delivery = False
-
-            elif self.invoice == True:
-                model_address_invoice = Address.objects.get(
-                    person=model_person,
-                    invoice=True)
-
-                model_address_invoice.invoice = False
-                model_address_invoice.save()
-
-            elif self.delivery == True:
-                model_address_delivery = Address.objects.get(
-                    person=model_person,
-                    delivery=True)
-
-                model_address_delivery.delivery = False
-                model_address_delivery.save()
+            if self.delivery:
+                model_address_delivery = Address.objects.filter(
+                    person=model_address.person,
+                    delivery=True).update(delivery=False)
 
             if self.state:
                 model_address.state = self.state
@@ -133,23 +191,30 @@ class AddressManager(models.Manager):
 
         return model_address
 
-    def delete(self,request,model_login,model_person,**kwargs):
-        self.address_id = None
+    def delete(self,request,model_login,**kwargs):
+        address_id = request.DELETE.get('address_id',None)
+
+        if not address_id:
+            raise Exception('ID de endereço não encontrado![86]')
+
+        if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
+            raise Exception('Relacionamento entre tipo de pessoas incorreto![69]')
+
+        try:
+            model_address = Address.objects.get(address_id=address_id)
+
+        except Exception as error:
+            raise Exception('Endereço não encontrado![51]')
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.address_id:
-            raise Exception('Dados insuficientes para remoção de endereço!')
-
         try:
-            try:
-                model_address = ModelAddress.objects.get(
-                    address_id=self.address_id,
-                    person=model_person)
+            if model_address.invoice:
+                raise Exception('Não é possível remover endereço de cobrança ou entrega![52]')
 
-            except Exception as error:
-                raise Exception('Endereço não encontrado!')
+            if model_address.delivery:
+                raise Exception('Não é possível remover endereço de entrega ou cobrança![53]')
 
             model_address.delete()
 
@@ -158,14 +223,42 @@ class AddressManager(models.Manager):
 
         return True
 
-
 class Address(models.Model):
+    STATE_TUPLE = (
+        ('AC','Acre'),
+        ('AL','Alagoas'),
+        ('AP','Amapá'),
+        ('AM','Amazonas'),
+        ('BA','Bahia'),
+        ('CE','Ceará'),
+        ('DF','Distrito Federal'),
+        ('ES','Espírito Santo'),
+        ('GO','Goiás'),
+        ('MA','Maranhão'),
+        ('MT','Mato Grosso'),
+        ('MS','Mato Grosso do Sul'),
+        ('MG','Minas Gerais'),
+        ('PA','Pará'),
+        ('PB','Paraíba'),
+        ('PR','Paraná'),
+        ('PE','Pernambuco'),
+        ('PI','Piauí'),
+        ('RJ','Rio de Janeiro'),
+        ('RN','Rio Grande do Norte'),
+        ('RS','Rio Grande do Sul'),
+        ('RO','Rondônia'),
+        ('RR','Roraima'),
+        ('SC','Santa Catarina'),
+        ('SP','São Paulo'),
+        ('SE','Sergipe'),
+        ('TO','Tocantins'))
+
     address_id = models.AutoField(primary_key=True)
-    person = models.ForeignKey(ModelPerson)
-    state = models.CharField(max_length=2)
+    person = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
+    state = models.CharField(choices=STATE_TUPLE,max_length=2)
     city = models.CharField(max_length=80)
     number = models.IntegerField()
-    complement = models.CharField(max_length=40)
+    complement = models.CharField(max_length=40,null=True)
     invoice = models.BooleanField()
     delivery = models.BooleanField()
     date_create = models.DateTimeField(auto_now_add=True)
@@ -174,4 +267,5 @@ class Address(models.Model):
 
     class Meta:
         db_table = 'address'
+        ordering = ['-address_id']
         app_label = 'api'
