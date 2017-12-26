@@ -46,6 +46,7 @@ class EndPoint(View):
                 'height': model_product.height,
                 'origin': model_product.origin,
                 'gtin': model_product.gtin,
+                'quantity': model_product.quantity,
                 'published': model_product.published,
             }
 
@@ -87,7 +88,7 @@ class EndPoint(View):
             product_data = product.object_list
             product_data = list(product_data.values(
                 'product_id','name','description','code','compound','unit_weight',
-                'weight','width','length','height','origin','gtin','published',))
+                'weight','width','length','height','origin','gtin','published','quantity'))
 
         except Exception as error:
             BusinessExceptionLog(request,model_login,
@@ -137,6 +138,7 @@ class EndPoint(View):
             'height': model_product.height,
             'origin': model_product.origin,
             'gtin': model_product.gtin,
+            'quantity': model_product.quantity,
             'published': model_product.published,
         }
 
@@ -171,6 +173,7 @@ class EndPoint(View):
             'height': model_product.height,
             'origin': model_product.origin,
             'gtin': model_product.gtin,
+            'quantity': model_product.quantity,
             'published': model_product.published,
         }
 
@@ -181,16 +184,11 @@ class EndPoint(View):
     @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
     def delete(self,request,model_login,*args,**kwargs):
         try:
-            session_identifier = transaction.savepoint()
-
-            model_product = ModelProduct.objects.delete(request,model_user,
-                product_id=product_id,)
-
-            transaction.savepoint_commit(session_identifier)
+            model_product = ModelProduct.objects.delete(
+                request,
+                model_login)
 
         except Exception as error:
-            transaction.savepoint_rollback(session_identifier)
-
             BusinessExceptionLog(request,model_login,
                 message=error,
                 trace=traceback.format_exc())
@@ -201,24 +199,19 @@ class EndPoint(View):
             'result': True
         }
 
-        return JsonResponse(result, safe=False,status=200)
+        return JsonResponse(result,status=200)
 
-class Published(View):
+class Publish(View):
     @csrf_exempt
     @transaction.atomic
     @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
     def put(self,request,model_login,*args,**kwargs):
         try:
-            session_identifier = transaction.savepoint()
-
-            model_product = ModelProduct.objects.published(request,model_user,
-                product_id=product_id,)
-
-            transaction.savepoint_commit(session_identifier)
+            model_product = ModelProduct.objects.publish(
+                request,
+                model_login)
 
         except Exception as error:
-            transaction.savepoint_rollback(session_identifier)
-
             BusinessExceptionLog(request,model_login,
                 message=error,
                 trace=traceback.format_exc())
@@ -226,19 +219,7 @@ class Published(View):
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
-            'product_id': model_product.product_id,
-            'name': model_product.name,
-            'description': model_product.description,
-            'code': model_product.code,
-            'compound': model_product.compound,
-            'unit_weight': model_product.unit_weight,
-            'weight': model_product.weight,
-            'width': model_product.width,
-            'length': model_product.length,
-            'height': model_product.height,
-            'origin': model_product.origin,
-            'gtin': model_product.gtin,
-            'published': model_product.published,
+            'result': True
         }
 
-        return JsonResponse(result, safe=False,status=200)
+        return JsonResponse(result,status=200)

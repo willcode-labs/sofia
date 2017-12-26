@@ -403,5 +403,55 @@
         "code": 101,
         "message": "Não é possível editar um produto publicado![101]",
         "description": "",
+    },
+    {
+        "code": 102,
+        "message": "ID de produto não encontrado![102]",
+        "description": "",
+    },
+    {
+        "code": 103,
+        "message": "Produto não encontrado![103]",
+        "description": "",
+    },
+    {
+        "code": 104,
+        "message": "Não é possível remover um produto publicado![104]",
+        "description": "",
+    },
+    {
+        "code": 105,
+        "message": "Parâmetros insuficientes para este operação![105]",
+        "description": "",
+    },
+    {
+        "code": 106,
+        "message": "Valor de parâmetro incorreto![106]",
+        "description": "",
+    },
+    {
+        "code": 107,
+        "message": "Produto não encontrado![107]",
+        "description": "",
+    },
+    {
+        "code": 108,
+        "message": "Produto ja está publicado![108]",
+        "description": "",
+    },
+    {
+        "code": 109,
+        "message": "Produto não se encontra com status publicado![109]",
+        "description": "",
+    },
+    {
+        "code": 110,
+        "message": "Parametro quantidade incorreto![110]",
+        "description": "",
+    },
+    {
+        "code": 111,
+        "message": "Parametro quantidade incorreto![111]",
+        "description": "",
     }
 ]

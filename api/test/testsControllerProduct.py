@@ -120,6 +120,7 @@ class TestControllerProduct(TransactionTestCase):
             height=12.43,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=False)
 
         model_product.save()
@@ -152,6 +153,7 @@ class TestControllerProduct(TransactionTestCase):
             'unit_weight': model_product.unit_weight,
             'weight': model_product.weight,
             'width': model_product.width,
+            'quantity': model_product.quantity,
         }, response.json())
 
     def test_product_filter_test_1(self):
@@ -167,6 +169,7 @@ class TestControllerProduct(TransactionTestCase):
             height=12.43,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=False)
 
         model_product_1.save()
@@ -183,6 +186,7 @@ class TestControllerProduct(TransactionTestCase):
             height=52.43,
             origin=ModelProduct.ORIGIN_LIST[1][0],
             gtin='333344455556667778899',
+            quantity=1,
             published=True)
 
         model_product_2.save()
@@ -222,6 +226,7 @@ class TestControllerProduct(TransactionTestCase):
                 'unit_weight': model_product_2.unit_weight,
                 'weight': model_product_2.weight,
                 'width': model_product_2.width,
+                'quantity': model_product_2.quantity,
             },{
                 'product_id': model_product_1.product_id,
                 'code': model_product_1.code,
@@ -236,6 +241,7 @@ class TestControllerProduct(TransactionTestCase):
                 'unit_weight': model_product_1.unit_weight,
                 'weight': model_product_1.weight,
                 'width': model_product_1.width,
+                'quantity': model_product_1.quantity,
             }]
         }, response.json())
 
@@ -252,6 +258,7 @@ class TestControllerProduct(TransactionTestCase):
             height=12.43,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=False)
 
         model_product_1.save()
@@ -268,6 +275,7 @@ class TestControllerProduct(TransactionTestCase):
             height=52.43,
             origin=ModelProduct.ORIGIN_LIST[1][0],
             gtin='333344455556667778899',
+            quantity=1,
             published=True)
 
         model_product_2.save()
@@ -284,6 +292,7 @@ class TestControllerProduct(TransactionTestCase):
             height=1232.43,
             origin=ModelProduct.ORIGIN_LIST[2][0],
             gtin='2345234567dfghgfd',
+            quantity=1,
             published=False)
 
         model_product_3.save()
@@ -323,6 +332,7 @@ class TestControllerProduct(TransactionTestCase):
                 'unit_weight': model_product_2.unit_weight,
                 'weight': model_product_2.weight,
                 'width': model_product_2.width,
+                'quantity': model_product_2.quantity,
             }]
         }, response.json())
 
@@ -339,6 +349,7 @@ class TestControllerProduct(TransactionTestCase):
             height=12.43,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=False)
 
         model_product_1.save()
@@ -355,6 +366,7 @@ class TestControllerProduct(TransactionTestCase):
             height=52.43,
             origin=ModelProduct.ORIGIN_LIST[1][0],
             gtin='333344455556667778899',
+            quantity=1,
             published=True)
 
         model_product_2.save()
@@ -371,6 +383,7 @@ class TestControllerProduct(TransactionTestCase):
             height=1232.43,
             origin=ModelProduct.ORIGIN_LIST[2][0],
             gtin='2345234567dfghgfd',
+            quantity=1,
             published=False)
 
         model_product_3.save()
@@ -404,6 +417,7 @@ class TestControllerProduct(TransactionTestCase):
             height=12.43,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=False)
 
         model_product_1.save()
@@ -420,6 +434,7 @@ class TestControllerProduct(TransactionTestCase):
             height=52.43,
             origin=ModelProduct.ORIGIN_LIST[1][0],
             gtin='333344455556667778899',
+            quantity=1,
             published=True)
 
         model_product_2.save()
@@ -436,6 +451,7 @@ class TestControllerProduct(TransactionTestCase):
             height=1232.43,
             origin=ModelProduct.ORIGIN_LIST[2][0],
             gtin='2345234567dfghgfd',
+            quantity=1,
             published=False)
 
         model_product_3.save()
@@ -475,6 +491,7 @@ class TestControllerProduct(TransactionTestCase):
                 'unit_weight': model_product_3.unit_weight,
                 'weight': model_product_3.weight,
                 'width': model_product_3.width,
+                'quantity': model_product_3.quantity,
             }]
         }, response.json())
 
@@ -491,6 +508,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':'',
             'gtin':'',
+            'quantity': '',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -516,6 +534,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':ModelProduct.ORIGIN_LIST[0][0],
             'gtin':'',
+            'quantity': '1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -541,6 +560,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':ModelProduct.ORIGIN_LIST[0][0],
             'gtin':'',
+            'quantity': '1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -566,6 +586,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':ModelProduct.ORIGIN_LIST[0][0],
             'gtin':'',
+            'quantity': '1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -591,6 +612,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':ModelProduct.ORIGIN_LIST[0][0],
             'gtin':'',
+            'quantity': '1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -616,6 +638,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'error',
             'origin':ModelProduct.ORIGIN_LIST[0][0],
             'gtin':'',
+            'quantity': '1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -641,6 +664,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'23.72',
             'origin':ModelProduct.ORIGIN_LIST[0][0],
             'gtin':'',
+            'quantity': '1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -666,6 +690,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'27.87',
             'origin':'error',
             'gtin':'',
+            'quantity': '1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -677,6 +702,32 @@ class TestControllerProduct(TransactionTestCase):
         self.assertIsNotNone(response.json())
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Origen recusada![60]'}, response.json())
+
+    def test_product_add_param_quantity_error(self):
+        data_post = {
+            'name':'product test 1',
+            'description':'product test description 1',
+            'code':'1234567890',
+            'compound':'0',
+            'unit_weight':ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            'weight':'1.25',
+            'width':'3.75',
+            'length':'45.65',
+            'height':'27.87',
+            'origin':ModelProduct.ORIGIN_LIST[0][0],
+            'gtin':'',
+            'quantity': 'error',
+        }
+
+        response = self.client.post('/api/v1/product/',json.dumps(data_post),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Parametro quantidade incorreto![110]'}, response.json())
 
     def test_product_add_product_code_duplicate(self):
         model_product_1 = ModelProduct(
@@ -691,6 +742,7 @@ class TestControllerProduct(TransactionTestCase):
             height=23.12,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=False,
         )
 
@@ -708,6 +760,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'34.21',
             'origin':ModelProduct.ORIGIN_LIST[1][0],
             'gtin':'0987654321234567890987654321',
+            'quantity':'1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post_2),
@@ -733,6 +786,7 @@ class TestControllerProduct(TransactionTestCase):
             height=23.12,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=False,
         )
 
@@ -750,6 +804,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'34.21',
             'origin':ModelProduct.ORIGIN_LIST[1][0],
             'gtin':'0987654321234567890987654321',
+            'quantity':'1',
         }
 
         response = self.client.post('/api/v1/product/',json.dumps(data_post),
@@ -773,6 +828,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':34.21,
             'origin':ModelProduct.ORIGIN_LIST[1][0],
             'gtin':'0987654321234567890987654321',
+            'quantity':1,
             'published':False,
         }, response.json())
 
@@ -792,6 +848,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':'',
             'gtin':'',
+            'quantity':''
         }
 
         response = self.client.put('/api/v1/product/',json.dumps(data_put),
@@ -818,6 +875,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':'',
             'gtin':'',
+            'quantity':'',
         }
 
         response = self.client.put('/api/v1/product/',json.dumps(data_put),
@@ -843,6 +901,7 @@ class TestControllerProduct(TransactionTestCase):
             height=12.43,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=True)
 
         model_product.save()
@@ -860,6 +919,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':'',
             'gtin':'',
+            'quantity':'',
         }
 
         response = self.client.put('/api/v1/product/',json.dumps(data_put),
@@ -885,6 +945,7 @@ class TestControllerProduct(TransactionTestCase):
             height=12.43,
             origin=ModelProduct.ORIGIN_LIST[0][0],
             gtin='1234567890987654321234567890',
+            quantity=1,
             published=False)
 
         model_product.save()
@@ -902,6 +963,7 @@ class TestControllerProduct(TransactionTestCase):
             'height':'',
             'origin':'',
             'gtin':'',
+            'quantity':'',
         }
 
         response = self.client.put('/api/v1/product/',json.dumps(data_put),
@@ -913,3 +975,718 @@ class TestControllerProduct(TransactionTestCase):
         self.assertIsNotNone(response.json())
         self.assertIsInstance(response.json(), dict)
         self.assertEqual({'message': 'Dados insuficientes para edição de produto![90]'}, response.json())
+
+    def test_product_update_data_compound_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'',
+            'compound':'error',
+            'unit_weight':'',
+            'weight':'',
+            'width':'',
+            'length':'',
+            'height':'',
+            'origin':'',
+            'gtin':'',
+            'quantity':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Valor do parâmetro composto incorreto![91]'}, response.json())
+
+    def test_product_update_data_weight_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'',
+            'compound':'0',
+            'unit_weight':'',
+            'weight':'error',
+            'width':'',
+            'length':'',
+            'height':'',
+            'origin':'',
+            'gtin':'',
+            'quantity':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Valor do parâmetro peso incorreto![92]'}, response.json())
+
+    def test_product_update_data_width_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'',
+            'compound':'0',
+            'unit_weight':'',
+            'weight':'123.54',
+            'width':'error',
+            'length':'',
+            'height':'',
+            'origin':'',
+            'gtin':'',
+            'quantity':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Valor do parâmetro largura incorreto![93]'}, response.json())
+
+    def test_product_update_data_length_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'',
+            'compound':'0',
+            'unit_weight':'',
+            'weight':'123.54',
+            'width':'32.54',
+            'length':'error',
+            'height':'',
+            'origin':'',
+            'gtin':'',
+            'quantity':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Valor do parâmetro comprimento incorreto![94]'}, response.json())
+
+    def test_product_update_data_height_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'',
+            'compound':'0',
+            'unit_weight':'',
+            'weight':'123.54',
+            'width':'32.54',
+            'length':'34.21',
+            'height':'error',
+            'origin':'',
+            'gtin':'',
+            'quantity':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Valor do parâmetro comprimento incorreto![95]'}, response.json())
+
+    def test_product_update_data_unit_weight_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'',
+            'compound':'0',
+            'unit_weight':'error',
+            'weight':'123.54',
+            'width':'32.54',
+            'length':'34.21',
+            'height':'76.34',
+            'origin':'',
+            'gtin':'',
+            'quantity':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Unidade de medida recusada![96]'}, response.json())
+
+    def test_product_update_data_origin_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'',
+            'compound':'0',
+            'unit_weight':ModelProduct.UNIT_WEIGHT_LIST[1][0],
+            'weight':'123.54',
+            'width':'32.54',
+            'length':'34.21',
+            'height':'76.34',
+            'origin':'error',
+            'gtin':'',
+            'quantity':'',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Origen recusada![97]'}, response.json())
+
+    def test_product_update_data_quantity_error(self):
+        model_product = ModelProduct(
+            name='produto teste',
+            description='descrição de teste',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'',
+            'compound':'0',
+            'unit_weight':ModelProduct.UNIT_WEIGHT_LIST[1][0],
+            'weight':'123.54',
+            'width':'32.54',
+            'length':'34.21',
+            'height':'76.34',
+            'origin':ModelProduct.ORIGIN_LIST[0][0],
+            'gtin':'',
+            'quantity':'error',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Parametro quantidade incorreto![111]'}, response.json())
+
+    def test_product_update_product_code_duplicate(self):
+        model_product_1 = ModelProduct(
+            name='produto teste 1',
+            description='descrição de teste 1',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product_1.save()
+
+        model_product_2 = ModelProduct(
+            name='produto teste 2',
+            description='descrição de teste 2',
+            code='12345678901',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product_2.save()
+
+        data_put = {
+            'product_id': model_product_1.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'12345678901',
+            'compound':'0',
+            'unit_weight':ModelProduct.UNIT_WEIGHT_LIST[1][0],
+            'weight':'123.54',
+            'width':'32.54',
+            'length':'34.21',
+            'height':'76.34',
+            'origin':ModelProduct.ORIGIN_LIST[1][0],
+            'gtin':'',
+            'quantity':'1',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Existe um outro produto cadastrado com este mesmo código![100]'}, response.json())
+
+    def test_product_update_ok(self):
+        model_product = ModelProduct(
+            name='produto teste 1',
+            description='descrição de teste 1',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'name':'product teste updated 1',
+            'description':'product teste description updated 1',
+            'code':'12345678901',
+            'compound':'0',
+            'unit_weight':ModelProduct.UNIT_WEIGHT_LIST[1][0],
+            'weight':'123.54',
+            'width':'32.54',
+            'length':'34.21',
+            'height':'76.34',
+            'origin':ModelProduct.ORIGIN_LIST[1][0],
+            'gtin':'23456789oiuytrds',
+            'quantity':'1',
+        }
+
+        response = self.client.put('/api/v1/product/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({
+            'product_id': data_put['product_id'],
+            'name': data_put['name'],
+            'description': data_put['description'],
+            'code': data_put['code'],
+            'compound': False,
+            'unit_weight': data_put['unit_weight'],
+            'weight': float(data_put['weight']),
+            'width': float(data_put['width']),
+            'length': float(data_put['length']),
+            'height': float(data_put['height']),
+            'origin': data_put['origin'],
+            'gtin': data_put['gtin'],
+            'quantity': int(data_put['quantity']),
+            'published': False,
+        }, response.json())
+
+    def test_product_delete_data_product_id_not_found(self):
+        data_delete = {
+            'product_id': '',
+        }
+
+        response = self.client.delete('/api/v1/product/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message':'ID de produto não encontrado![102]'}, response.json())
+
+    def test_product_delete_product_not_found(self):
+        data_delete = {
+            'product_id': '1234567890',
+        }
+
+        response = self.client.delete('/api/v1/product/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message':'Produto não encontrado![103]'}, response.json())
+
+    def test_product_delete_published_error(self):
+        model_product = ModelProduct(
+            name='produto teste 1',
+            description='descrição de teste 1',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=True)
+
+        model_product.save()
+
+        data_delete = {
+            'product_id': model_product.product_id,
+        }
+
+        response = self.client.delete('/api/v1/product/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message':'Não é possível remover um produto publicado![104]'}, response.json())
+
+    def test_product_delete_ok(self):
+        model_product = ModelProduct(
+            name='produto teste 1',
+            description='descrição de teste 1',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_delete = {
+            'product_id': model_product.product_id,
+        }
+
+        response = self.client.delete('/api/v1/product/',json.dumps(data_delete),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'result': True}, response.json())
+
+    def test_product_published_param_missing(self):
+        data_put = {
+            'product_id': '',
+            'published': ''
+        }
+
+        response = self.client.put('/api/v1/product/published/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Parâmetros insuficientes para este operação![105]'}, response.json())
+
+    def test_product_published_param_published_error(self):
+        data_put = {
+            'product_id': '123456789',
+            'published': 'error'
+        }
+
+        response = self.client.put('/api/v1/product/published/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Valor de parâmetro incorreto![106]'}, response.json())
+
+    def test_product_published_product_not_found(self):
+        data_put = {
+            'product_id': '123456789098765432',
+            'published': '0'
+        }
+
+        response = self.client.put('/api/v1/product/published/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Produto não encontrado![107]'}, response.json())
+
+    def test_product_published_update_error_1(self):
+        model_product = ModelProduct(
+            name='produto teste 1',
+            description='descrição de teste 1',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=True)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'published': '1'
+        }
+
+        response = self.client.put('/api/v1/product/published/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Produto ja está publicado![108]'}, response.json())
+
+    def test_product_published_update_error_2(self):
+        model_product = ModelProduct(
+            name='produto teste 1',
+            description='descrição de teste 1',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'published': '0'
+        }
+
+        response = self.client.put('/api/v1/product/published/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,400)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'message': 'Produto não se encontra com status publicado![109]'}, response.json())
+
+    def test_product_published_ok(self):
+        model_product = ModelProduct(
+            name='produto teste 1',
+            description='descrição de teste 1',
+            code='1234567890',
+            compound=False,
+            unit_weight=ModelProduct.UNIT_WEIGHT_LIST[0][0],
+            weight=1.23,
+            width=112.1,
+            length=23.45,
+            height=12.43,
+            origin=ModelProduct.ORIGIN_LIST[0][0],
+            gtin='1234567890987654321234567890',
+            quantity=1,
+            published=False)
+
+        model_product.save()
+
+        data_put = {
+            'product_id': model_product.product_id,
+            'published': '1'
+        }
+
+        response = self.client.put('/api/v1/product/published/',json.dumps(data_put),
+            content_type='application/json',
+            REMOTE_ADDR='127.0.0.8',
+            HTTP_API_KEY=self.model_login_director.token,)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json())
+        self.assertIsInstance(response.json(), dict)
+        self.assertEqual({'result': True}, response.json())
+
+        self.assertEqual(ModelProduct.objects.filter(product_id=model_product.product_id,published=1).count(),1)

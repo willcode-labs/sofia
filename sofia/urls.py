@@ -4,6 +4,7 @@ from api.Controller.v1 import Login as v1ControllerLogin
 from api.Controller.v1 import Person as v1ControllerPerson
 from api.Controller.v1 import PersonAddress as v1ControllerPersonAddress
 from api.Controller.v1 import Product as v1ControllerProduct
+from api.Controller.v1 import Order as v1ControllerOrder
 # from web.Controller import Home as ControllerHome
 
 # app api route
@@ -20,14 +21,9 @@ urlpatterns += [
 # product
 urlpatterns += [
     path('api/v1/product/', v1ControllerProduct.EndPoint.as_view(), name='api_v1_product_endpoint'),
-    path('api/v1/product/published', v1ControllerProduct.Published.as_view(), name='api_v1_product_published'),
+    path('api/v1/product/published/', v1ControllerProduct.Publish.as_view(), name='api_v1_product_publish'),
 ]
 # order
-# urlpatterns += [
-#     url(r'^api/v1/order/filter', v1ControllerOrder.filter, name='api_v1_order_filter'),
-#     url(r'^api/v1/order/person/[0-9]{11}/filter', v1ControllerOrder.personFilter, name='api_v1_order_person_filter'),
-#     url(r'^api/v1/order/[0-9]{11}', v1ControllerOrder.getById, name='api_v1_order_getById'),
-#     url(r'^api/v1/order/add', v1ControllerOrder.add, name='api_v1_order_add'),
-#     url(r'^api/v1/order/[0-9]{11}/update', v1ControllerOrder.update, name='api_v1_order_update'),
-#     url(r'^api/v1/order/[0-9]{11}/delete', v1ControllerOrder.delete, name='api_v1_order_delete'),
-# ]
+urlpatterns += [
+    path('api/v1/order/', v1ControllerOrder.EndPoint.as_view(), name='api_v1_order_endpoint'),
+]

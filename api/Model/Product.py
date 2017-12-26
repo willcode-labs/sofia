@@ -14,11 +14,12 @@ class ProductManager(models.Manager):
         self.height = request.POST.get('height',None)
         self.origin = request.POST.get('origin',None)
         self.gtin = request.POST.get('gtin',None)
+        self.quantity = request.POST.get('quantity',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.name or not self.description or not self.code or not self.unit_weight or not self.origin:
+        if not self.name or not self.description or not self.code or not self.unit_weight or not self.origin or not self.quantity:
             raise Exception('Dados insuficientes para criação de produto![58]')
 
         self.compound = None if self.compound == '' else self.compound
@@ -31,8 +32,8 @@ class ProductManager(models.Manager):
         if self.compound and not self.compound in ('0','1'):
             raise Exception('Valor do parâmetro composto incorreto![63]')
 
-        self.compound = True if self.compound == '1' else self.compound
         self.compound = False if self.compound == '0' else self.compound
+        self.compound = True if self.compound == '1' else self.compound
 
         if self.weight and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.weight)):
             raise Exception('Valor do parâmetro peso incorreto![64]')
@@ -64,6 +65,11 @@ class ProductManager(models.Manager):
 
         self.origin = int(self.origin)
 
+        if not re.match(r'^[0-9]+$',str(self.quantity)):
+            raise Exception('Parametro quantidade incorreto![110]')
+
+        self.quantity = int(self.quantity)
+
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![61]')
 
@@ -85,6 +91,7 @@ class ProductManager(models.Manager):
                 height=self.height,
                 origin=self.origin,
                 gtin=self.gtin,
+                quantity=self.quantity,
                 published=False,)
 
             model_product.save()
@@ -107,6 +114,7 @@ class ProductManager(models.Manager):
         self.height = request.PUT.get('height',None)
         self.origin = request.PUT.get('origin',None)
         self.gtin = request.PUT.get('gtin',None)
+        self.quantity = request.PUT.get('quantity',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
@@ -123,9 +131,9 @@ class ProductManager(models.Manager):
         if model_product.published == True:
             raise Exception('Não é possível editar um produto publicado![101]')
 
-        if not self.name or not self.description or not self.code or not self.compound \
-            or not self.unit_weight or not self.weight or not self.width or not self.length \
-            or not self.height or not self.origin or not self.gtin:
+        if not self.name and not self.description and not self.code and not self.compound \
+            and not self.unit_weight and not self.weight and not self.width and not self.length \
+            and not self.height and not self.origin and not self.gtin and not self.quantity:
             raise Exception('Dados insuficientes para edição de produto![90]')
 
         self.compound = None if self.compound == '' else self.compound
@@ -138,8 +146,8 @@ class ProductManager(models.Manager):
         if self.compound and not self.compound in ('0','1'):
             raise Exception('Valor do parâmetro composto incorreto![91]')
 
-        self.compound = True if self.compound == '1' else self.compound
         self.compound = False if self.compound == '0' else self.compound
+        self.compound = True if self.compound == '1' else self.compound
 
         if self.weight and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.weight)):
             raise Exception('Valor do parâmetro peso incorreto![92]')
@@ -170,6 +178,11 @@ class ProductManager(models.Manager):
             raise Exception('Origen recusada![97]')
 
         self.origin = int(self.origin)
+
+        if not re.match(r'^[0-9]+$',str(self.quantity)):
+            raise Exception('Parametro quantidade incorreto![111]')
+
+        self.quantity = int(self.quantity)
 
         if model_login.profile_id not in (model_login.PROFILE_ROOT,model_login.PROFILE_DIRECTOR,):
             raise Exception('Relacionamento entre tipo de pessoas incorreto![98]')
@@ -214,6 +227,9 @@ class ProductManager(models.Manager):
             if self.gtin:
                 model_product.gtin = self.gtin
 
+            if self.quantity:
+                model_product.quantity = self.quantity
+
             model_product.save()
 
         except Exception as error:
@@ -222,65 +238,66 @@ class ProductManager(models.Manager):
         return model_product
 
     def delete(self,request,model_login,**kwargs):
-        self.product_id = None
+        self.product_id = request.DELETE.get('product_id',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
         if not self.product_id:
-            raise Exception('ID de produto não encontrado!')
+            raise Exception('ID de produto não encontrado![102]')
 
         try:
-            try:
-                model_product = Product.objects.get(product_id=self.product_id)
+            model_product = Product.objects.get(product_id=self.product_id)
 
-            except Exception as error:
-                raise Exception('Produto não encontrado!')
+        except Exception as error:
+            raise Exception('Produto não encontrado![103]')
 
+        try:
             if model_product.published == True:
-                raise Exception('Não é possível remover um produto publicado!')
+                raise Exception('Não é possível remover um produto publicado![104]')
 
             model_product.delete()
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                description='Erro na remoção de produto',
-                message=error,
-                trace=traceback.format_exc())
+            raise error
 
-            raise Exception('Não foi possível remover produto!')
+        return True
 
-        return model_product
-
-    def published(self,request,model_login,**kwargs):
-        self.product_id = None
+    def publish(self,request,model_login,**kwargs):
+        self.product_id = request.PUT.get('product_id',None)
+        self.published = request.PUT.get('published',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.product_id:
-            raise Exception('ID de produto não encontrado!')
+        if not self.product_id or not self.published:
+            raise Exception('Parâmetros insuficientes para este operação![105]')
+
+        if self.published not in ('0','1'):
+            raise Exception('Valor de parâmetro incorreto![106]')
+
+        self.published = False if self.published == '0' else self.published
+        self.published = True if self.published == '1' else self.published
 
         try:
-            try:
-                model_product = Product.objects.get(product_id=self.product_id)
+            model_product = Product.objects.get(product_id=self.product_id)
 
-            except Exception as error:
-                raise Exception('Produto não encontrado!')
+        except Exception as error:
+            raise Exception('Produto não encontrado![107]')
 
-            if model_product.published == True:
-                raise Exception('Produto já está publicado!')
+        if model_product.published == self.published:
+            if self.published == True:
+                raise Exception('Produto ja está publicado![108]')
 
-            model_product.published = True
+            else:
+                raise Exception('Produto não se encontra com status publicado![109]')
+
+        try:
+            model_product.published = self.published
             model_product.save()
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                description='Erro na publicação de produto',
-                message=error,
-                trace=traceback.format_exc())
-
-            raise Exception('Não foi possível publicar produto!')
+            raise error
 
         return model_product
 
@@ -307,6 +324,7 @@ class Product(models.Model):
     height = models.FloatField(null=True)
     origin = models.IntegerField(choices=ORIGIN_LIST)
     gtin = models.CharField(max_length=150,null=True)
+    quantity = models.IntegerField()
     published = models.BooleanField()
     date_create = models.DateTimeField(auto_now_add=True)
 
