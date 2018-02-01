@@ -74,7 +74,7 @@ class EndPoint(View):
                     ModelLogin.PROFILE_CLIENT,]).order_by('-person_id')
 
             if name:
-                model_person = model_person.filter(name__contains=name)
+                model_person = model_person.filter(name__icontains=name)
 
         except Exception as error:
             BusinessExceptionLog(request,model_login,

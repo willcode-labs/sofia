@@ -313,9 +313,9 @@ class Product(models.Model):
         (3, 'Importado'),)
 
     product_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=150)
+    name = models.CharField(unique=True,max_length=150)
     description = models.TextField()
-    code = models.CharField(max_length=150)
+    code = models.CharField(unique=True,max_length=150)
     compound = models.NullBooleanField()
     unit_weight = models.IntegerField(choices=UNIT_WEIGHT_LIST)
     weight = models.FloatField(null=True)
@@ -323,9 +323,9 @@ class Product(models.Model):
     length = models.FloatField(null=True)
     height = models.FloatField(null=True)
     origin = models.IntegerField(choices=ORIGIN_LIST)
-    gtin = models.CharField(max_length=150,null=True)
+    gtin = models.CharField(db_index=True,max_length=150,null=True)
     quantity = models.IntegerField()
-    published = models.BooleanField()
+    published = models.BooleanField(db_index=True)
     date_create = models.DateTimeField(auto_now_add=True)
 
     objects = ProductManager()

@@ -16,12 +16,10 @@ class PersonManager(models.Manager):
         if not self.profile_id or not self.name or not self.email or not self.phone1:
             raise Exception('Dados insuficientes para criação de pessoa![30]')
 
+        if self.profile_id and not re.match(r'^[0-9]+$',str(self.profile_id)):
+            raise Exception('ID de perfil incorreto![113]')
+
         self.profile_id = int(self.profile_id)
-
-        if not self.cpf and not self.cnpj:
-            raise Exception('Um dos campos deve estar preenchido, CPF ou CNPJ![74]')
-
-        self.phone2 = None if self.phone2 == '' else self.phone2
 
         if self.profile_id not in dict(model_login.PROFILE_TUPLE).keys():
             raise Exception('Tipo de perfil incorreto![70]')
@@ -34,6 +32,23 @@ class PersonManager(models.Manager):
 
         if model_login.profile_id == model_login.PROFILE_DIRECTOR and self.profile_id not in(model_login.PROFILE_DIRECTOR,model_login.PROFILE_CLIENT,):
             raise Exception('Perfil não pode criar este tipo de pessoa![72]')
+
+        if not self.cpf and not self.cnpj:
+            raise Exception('Um dos campos deve estar preenchido, CPF ou CNPJ![74]')
+
+        if self.cpf and not re.match(r'^[0-9]{11}$',str(self.cpf)):
+            raise Exception('CPF incorreto![114]')
+
+        if self.cnpj and not re.match(r'^[0-9]{14}$',str(self.cnpj)):
+            raise Exception('CNPJ incorreto![115]')
+
+        self.phone2 = None if self.phone2 == '' else self.phone2
+
+        if self.phone1 and not re.match(r'^[0-9]{10,15}$',str(self.phone1)):
+            raise Exception('Telefone 1 incorreto![116]')
+
+        if self.phone2 and not re.match(r'^[0-9]{10,15}$',str(self.phone2)):
+            raise Exception('Telefone 2 incorreto![117]')
 
         try:
             if self.cpf:
@@ -75,12 +90,12 @@ class PersonManager(models.Manager):
 class Person(models.Model):
     person_id = models.AutoField(primary_key=True)
     parent = models.ForeignKey('self',null=True,on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    cpf = models.CharField(max_length=12,null=True)
-    cnpj = models.CharField(max_length=14,null=True)
-    email = models.EmailField(max_length=254)
-    phone1 = models.CharField(max_length=60)
-    phone2 = models.CharField(max_length=60,null=True)
+    name = models.CharField(unique=True,max_length=50)
+    cpf = models.CharField(unique=True,max_length=11,null=True)
+    cnpj = models.CharField(unique=True,max_length=14,null=True)
+    email = models.EmailField(unique=True,max_length=150)
+    phone1 = models.CharField(max_length=15)
+    phone2 = models.CharField(max_length=15,null=True)
     date_create = models.DateTimeField(auto_now_add=True)
 
     objects = PersonManager()

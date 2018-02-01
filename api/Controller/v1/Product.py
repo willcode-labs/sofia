@@ -68,7 +68,7 @@ class EndPoint(View):
             model_product = ModelProduct.objects.filter()
 
             if name:
-                model_product = model_product.filter(name__contains=name)
+                model_product = model_product.filter(name__icontains=name)
 
         except Exception as error:
             BusinessExceptionLog(request,model_login,

@@ -7,15 +7,16 @@ from api.Model.Address import Address as ModelAddress
 
 class OrderManager(models.Manager):
     def create(self,request,**kwargs):
-        self.product_id_list = None
-        self.product_quantity_list = None
-        self.person = None
+        self.product_json_list = None
+        self.person_id = None
+        self.address_id = None
+        self.delivery_id = None
         self.coupon = None
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.person or not self.product_id_list or not self.product_quantity_list:
+        if not self.product_json_list or not self.person_id or not self.address_id:
             raise Exception('Dados insuficientes para criação de pedido!')
 
         if not isinstance(self.person, ModelPerson):
@@ -143,7 +144,7 @@ class OrderManager(models.Manager):
 
 class Order(models.Model):
     STATUS_OPEN = 1
-    STATUS_CANCELED  = 2
+    STATUS_CANCELED = 2
     STATUS_AWAITING_PAYMENT = 3
     STATUS_PAYMENT_ACCEPT = 4
     STATUS_PAYMENT_OK = 5
@@ -164,8 +165,8 @@ class Order(models.Model):
         (STATUS_RETURNED, 'Devolvido'))
 
     order_id = models.AutoField(primary_key=True)
-    person_id = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
-    address_id = models.ForeignKey(ModelAddress,on_delete=models.CASCADE)
+    person = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
+    address = models.ForeignKey(ModelAddress,on_delete=models.CASCADE)
     status = models.IntegerField(choices=STATUS_LIST)
     coupon = models.CharField(max_length=30)
     date_expired = models.DateTimeField()

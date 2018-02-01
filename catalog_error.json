@@ -453,5 +453,260 @@
         "code": 111,
         "message": "Parametro quantidade incorreto![111]",
         "description": "",
+    },
+    {
+        "code": 112,
+        "message": "Dados insuficientes para criação de entrega![112]",
+        "description": "",
+    },
+    {
+        "code": 113,
+        "message": "ID de perfil incorreto![113]",
+        "description": "",
+    },
+    {
+        "code": 114,
+        "message": "CPF incorreto![114]",
+        "description": "",
+    },
+    {
+        "code": 115,
+        "message": "CNPJ incorreto![115]",
+        "description": "",
+    },
+    {
+        "code": 116,
+        "message": "Telefone 1 incorreto![116]",
+        "description": "",
+    },
+    {
+        "code": 117,
+        "message": "Telefone 2 incorreto![117]",
+        "description": "",
+    },
+    {
+        "code": 118,
+        "message": "Formato de taxa incorreto![118]",
+        "description": "",
+    },
+    {
+        "code": 119,
+        "message": "Status incorreto![119]",
+        "description": "",
+    },
+    {
+        "code": 120,
+        "message": "Existe uma entrega com este mesmo nome![120]",
+        "description": "",
+    },
+    {
+        "code": 121,
+        "message": "ID de entrega não encontrado![121]",
+        "description": "",
+    },
+    {
+        "code": 122,
+        "message": "Registro de entrega não encontrado![122]",
+        "description": "",
+    },
+    {
+        "code": 123,
+        "message": "Dados insuficientes para atualizar entrega![123]",
+        "description": "",
+    },
+    {
+        "code": 124,
+        "message": "Formato de taxa incorreto![124]",
+        "description": "",
+    },
+    {
+        "code": 125,
+        "message": "Status incorreto![125]",
+        "description": "",
+    },
+    {
+        "code": 126,
+        "message": "Existe uma entrega com este mesmo nome![126]",
+        "description": "",
+    },
+    {
+        "code": 127,
+        "message": "ID de entrega não encontrado![127]",
+        "description": "",
+    },
+    {
+        "code": 128,
+        "message": "Registro de entrega não encontrado![128]",
+        "description": "",
+    },
+    {
+        "code": 129,
+        "message": "Entrega ativo não pode ser removido![129]",
+        "description": "",
+    },
+    {
+        "code": 130,
+        "message": "Registro de entrega não encontrado![130]",
+        "description": "",
+    },
+    {
+        "code": 131,
+        "message": "Registros de entrega não encontrado![131]",
+        "description": "",
+    },
+    {
+        "code": 132,
+        "message": "Nenhum registro encontrado![132]",
+        "description": "",
+    },
+    {
+        "code": 133,
+        "message": "Status incorreto![133]",
+        "description": "",
+    },
+    {
+        "code": 134,
+        "message": "Dados insuficientes para criação de embalagem![134]",
+        "description": "",
+    },
+    {
+        "code": 135,
+        "message": "Formato de taxa incorreto![135]",
+        "description": "",
+    },
+    {
+        "code": 136,
+        "message": "Status incorreto![136]",
+        "description": "",
+    },
+    {
+        "code": 137,
+        "message": "Formato de peso incorreto![137]",
+        "description": "",
+    },
+    {
+        "code": 138,
+        "message": "Valor para peso incorreto![138]",
+        "description": "",
+    },
+    {
+        "code": 139,
+        "message": "Formato de largura incorreto![139]",
+        "description": "",
+    },
+    {
+        "code": 140,
+        "message": "Valor para largura incorreto![140]",
+        "description": "",
+    },
+    {
+        "code": 141,
+        "message": "Formato de comprimento incorreto![141]",
+        "description": "",
+    },
+    {
+        "code": 142,
+        "message": "Valor para comprimento incorreto![142]",
+        "description": "",
+    },
+    {
+        "code": 143,
+        "message": "Formato de altura incorreto![143]",
+        "description": "",
+    },
+    {
+        "code": 144,
+        "message": "Valor para altura incorreto![144]",
+        "description": "",
+    },
+    {
+        "code": 145,
+        "message": "Soma das medidas não pode ultrapassar 200cm![145]",
+        "description": "",
+    },
+    {
+        "code": 146,
+        "message": "Existe uma embalagem com este mesmo nome![146]",
+        "description": "",
+    },
+    {
+        "code": 147,
+        "message": "ID de embalagem não encontrado![147]",
+        "description": "",
+    },
+    {
+        "code": 148,
+        "message": "Registro de embalagem não encontrado![148]",
+        "description": "",
+    },
+    {
+        "code": 149,
+        "message": "Dados insuficientes para atualizar entrega![149]",
+        "description": "",
+    },
+    {
+        "code": 150,
+        "message": "Formato de preço incorreto![150]",
+        "description": "",
+    },
+    {
+        "code": 151,
+        "message": "Status incorreto![151]",
+        "description": "",
+    },
+    {
+        "code": 152,
+        "message": "Formato de peso incorreto![152]",
+        "description": "",
+    },
+    {
+        "code": 153,
+        "message": "Valor para peso incorreto![153]",
+        "description": "",
+    },
+    {
+        "code": 154,
+        "message": "Formato de largura incorreto![154]",
+        "description": "",
+    },
+    {
+        "code": 155,
+        "message": "Valor para largura incorreto![155]",
+        "description": "",
+    },
+    {
+        "code": 156,
+        "message": "Formato de comprimento incorreto![156]",
+        "description": "",
+    },
+    {
+        "code": 157,
+        "message": "Valor para comprimento incorreto![157]",
+        "description": "",
+    },
+    {
+        "code": 158,
+        "message": "Formato de altura incorreto![158]",
+        "description": "",
+    },
+    {
+        "code": 159,
+        "message": "Valor para altura incorreto![159]",
+        "description": "",
+    },
+    {
+        "code": 160,
+        "message": "Soma das medidas não pode ultrapassar 200cm![160]",
+        "description": "",
+    },
+    {
+        "code": 161,
+        "message": "Existe uma embalagem com este mesmo nome![161]",
+        "description": "",
+    },
+    {
+        "code": 162,
+        "message": "Registro de embalagem não encontrado![162]",
+        "description": "",
     }
 ]

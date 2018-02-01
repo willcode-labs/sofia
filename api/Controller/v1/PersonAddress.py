@@ -94,16 +94,16 @@ class EndPoint(View):
                 model_address = model_address.filter(person_id=person_id)
 
             if city:
-                model_address = model_address.filter(city__contains=city)
+                model_address = model_address.filter(city__icontains=city)
 
             if state:
-                model_address = model_address.filter(state__contains=state)
+                model_address = model_address.filter(state__icontains=state)
 
             if number:
-                model_address = model_address.filter(number__contains=number)
+                model_address = model_address.filter(number__icontains=number)
 
             if complement:
-                model_address = model_address.filter(complement__contains=complement)
+                model_address = model_address.filter(complement__icontains=complement)
 
             if invoice:
                 model_address = model_address.filter(invoice=invoice)

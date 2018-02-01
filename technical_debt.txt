@@ -1,5 +1,7 @@
 * Testar campos com limite de caracteres
 * Gravar log em operações de banco
+* tirar log da base e passar para outra estrutura
+* setar indices
 
 import uuid,traceback
 from django.db import models
