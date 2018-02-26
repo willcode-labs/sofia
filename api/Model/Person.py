@@ -96,6 +96,9 @@ class Person(models.Model):
     email = models.EmailField(unique=True,max_length=150)
     phone1 = models.CharField(max_length=15)
     phone2 = models.CharField(max_length=15,null=True)
+    username = models.CharField(db_index=True,max_length=40)
+    password = models.CharField(db_index=True,max_length=8,null=True)
+    verified = models.BooleanField()
     date_create = models.DateTimeField(auto_now_add=True)
 
     objects = PersonManager()

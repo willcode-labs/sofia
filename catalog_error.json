@@ -708,5 +708,10 @@
         "code": 162,
         "message": "Registro de embalagem não encontrado![162]",
         "description": "",
+    },
+    {
+        "code": 163,
+        "message": "Usuário não autorizado![163]",
+        "description": "",
     }
 ]

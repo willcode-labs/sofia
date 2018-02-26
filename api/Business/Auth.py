@@ -1,18 +1,23 @@
-import datetime,traceback
+import datetime,traceback,logging
 from django.http import JsonResponse
 from django.db import transaction
 from api.apps import ApiConfig
 from api.Model.Login import Login as ModelLogin
-from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
+
+LOGGER = logging.getLogger('sofia.api.error')
 
 class Auth():
     def __init__(self,request,**kwargs):
+        LOGGER.debug('########## Auth.__init__ ##########')
+
         self.request = request
         self.ip = request.META.get('REMOTE_ADDR',None)
         self.api_key = request.META.get('HTTP_API_KEY',None)
         self.profile_tuple = None
 
         if not self.ip:
+            LOGGER.error('IP não encontrado![1]')
+
             raise Exception('IP não encontrado![1]')
 
         for key in kwargs:

@@ -1,8 +1,9 @@
 import uuid,traceback
 from django.db import models
 from api.Model.Person import Person as ModelPerson
+from api.Model.App import App as ModelApp
 
-class LoginManager(models.Manager):
+class TokenManager(models.Manager):
     def tokenRecursive(self,ip):
         token = str(uuid.uuid4())
 
@@ -78,29 +79,17 @@ class LoginManager(models.Manager):
 
         return model_login
 
-class Login(models.Model):
-    PROFILE_ROOT = 1
-    PROFILE_DIRECTOR = 2
-    PROFILE_CLIENT = 3
-
-    PROFILE_TUPLE = (
-        (PROFILE_ROOT, 'root'),
-        (PROFILE_DIRECTOR, 'director'),
-        (PROFILE_CLIENT, 'client'),)
-
-    login_id = models.AutoField(primary_key=True)
-    person = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
-    profile_id = models.IntegerField(db_index=True,choices=PROFILE_TUPLE)
-    username = models.CharField(db_index=True,max_length=40)
-    password = models.CharField(db_index=True,max_length=8,null=True)
-    verified = models.BooleanField(db_index=True,)
+class Token(models.Model):
+    token_id = models.AutoField(primary_key=True)
+    person_id = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
+    app_id = models.ForeignKey(ModelApp,on_delete=models.CASCADE,null=True)
     token = models.CharField(db_index=True,max_length=40,null=True)
     ip = models.GenericIPAddressField(db_index=True,protocol='both',null=True)
-    date_expired = models.DateTimeField(db_index=True,null=True)
+    date_expire = models.DateTimeField(db_index=True,null=True)
     date_create = models.DateTimeField(auto_now_add=True)
 
-    objects = LoginManager()
+    objects = TokenManager()
 
     class Meta:
-        db_table = 'login'
+        db_table = 'token'
         app_label = 'api'
