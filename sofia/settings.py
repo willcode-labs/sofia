@@ -135,7 +135,7 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
-        }
+        },
         'sofia.api.error': {
             'handlers': ['file'],
             'level': 'ERROR',

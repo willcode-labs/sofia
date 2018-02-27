@@ -1,25 +1,26 @@
-import traceback
+import traceback,logging
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from django.db import transaction
-from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 from api.Business.Auth import Auth as BusinessAuth
+
+LOGGER = logging.getLogger('sofia.api.error')
 
 class Verify(View):
     @csrf_exempt
     @transaction.atomic
     def post(self,request,*args,**kwargs):
+        LOGGER.debug('########## Controller.v1.Verify.post ##########')
+
         try:
             business_auth = BusinessAuth(request)
 
             model_login = business_auth.verify()
 
         except Exception as error:
-            BusinessExceptionLog(request,None,
-                message=error,
-                trace=traceback.format_exc())
+            LOGGER.error(str(error))
 
             return JsonResponse({'message': str(error)}, status=400)
 
@@ -40,10 +41,6 @@ class Auth(View):
             model_login = business_auth.auth()
 
         except Exception as error:
-            BusinessExceptionLog(request,None,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
