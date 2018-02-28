@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MinLengthValidator
+from api.Model.App import App as ModelApp
 
 class PersonManager(models.Manager):
     def create(self,request,model_login,**kwargs):
@@ -87,17 +89,31 @@ class PersonManager(models.Manager):
 
         return model_person
 
+    def verify(self,request,model_token,model_person):
+        if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
+            raise Exception('Perfil inválido para esta operação![169]')
+
+        # TODO
+        # backup register
+
+        try:
+            model_person.save()
+
+        except Exception as error:
+            raise error
+
+        return model_person
+
 class Person(models.Model):
     person_id = models.AutoField(primary_key=True)
-    parent = models.ForeignKey('self',null=True,on_delete=models.CASCADE)
     name = models.CharField(unique=True,max_length=50)
     cpf = models.CharField(unique=True,max_length=11,null=True)
     cnpj = models.CharField(unique=True,max_length=14,null=True)
     email = models.EmailField(unique=True,max_length=150)
     phone1 = models.CharField(max_length=15)
     phone2 = models.CharField(max_length=15,null=True)
-    username = models.CharField(unique=True,max_length=40)
-    password = models.CharField(db_index=True,max_length=8,null=True)
+    username = models.CharField(unique=True,max_length=40,validators=[MinLengthValidator(6,message='Min 6 caracteres')])
+    password = models.CharField(db_index=True,max_length=8,validators=[MinLengthValidator(8,message='Min 8 caracteres')])
     verified = models.BooleanField()
     date_create = models.DateTimeField(auto_now_add=True)
 

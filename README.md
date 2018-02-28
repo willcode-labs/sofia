@@ -1,6 +1,8 @@
 #### Instalation
 
 1. `$ pip install -r requirements.txt`
+2. `$ python3 makemigrations api --check`
+2. `$ python3 migrate api`
 
 #### Tests
 

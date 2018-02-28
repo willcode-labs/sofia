@@ -1,4 +1,4 @@
-import json,traceback,re
+import json,re
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.core import serializers
@@ -8,7 +8,6 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.db import transaction
 from api.apps import ApiConfig
-from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
 from api.Model.Package import Package as ModelPackage
 
@@ -28,10 +27,6 @@ class EndPoint(View):
                     package_id=package_id,)
 
             except Exception as error:
-                BusinessExceptionLog(request,model_login,
-                    message=error,
-                    trace=traceback.format_exc())
-
                 return JsonResponse({'message': 'Registro de entrega não encontrado![130]'}, status=400)
 
             result = {
@@ -69,10 +64,6 @@ class EndPoint(View):
                 model_delivery = model_delivery.filter(status=status)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': 'Registros de entrega não encontrado![131]'}, status=400)
 
         paginator = Paginator(model_delivery, limit)
@@ -88,10 +79,6 @@ class EndPoint(View):
                 'delivery_id','name','description','rate','status',))
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': 'Nenhum registro encontrado![132]'}, status=400)
 
         result = {
@@ -114,10 +101,6 @@ class EndPoint(View):
             model_delivery = ModelDelivery.objects.create(request,model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
@@ -137,10 +120,6 @@ class EndPoint(View):
             model_delivery = ModelDelivery.objects.update(request,model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
@@ -160,10 +139,6 @@ class EndPoint(View):
             model_delivery = ModelDelivery.objects.delete(request,model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {

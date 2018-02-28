@@ -69,7 +69,7 @@ class DeliveryManager(models.Manager):
         if self.rate and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.rate)):
             raise Exception('Formato de taxa incorreto![124]')
 
-        if self.rate
+        if self.rate:
             self.rate = Decimal(self.rate).quantize(Decimal('0.00'))
 
         if self.status and self.status not in dict(Delivery.STATUS_LIST).keys():

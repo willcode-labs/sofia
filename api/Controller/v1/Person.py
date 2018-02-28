@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.db import transaction
 from api.apps import ApiConfig
 from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
-from api.Model.Login import Login as ModelLogin
+from api.Model.App import App as ModelApp
 from api.Model.Person import Person as ModelPerson
 from api.Model.Address import Address as ModelAddress
 
@@ -65,8 +65,8 @@ class EndPoint(View):
         try:
             model_person = ModelPerson.objects.filter(
                 login__profile_id__in=[
-                    ModelLogin.PROFILE_DIRECTOR,
-                    ModelLogin.PROFILE_CLIENT,]).order_by('-person_id')
+                    ModelApp.PROFILE_DIRECTOR,
+                    ModelApp.PROFILE_CLIENT,]).order_by('-person_id')
 
             if name:
                 model_person = model_person.filter(name__icontains=name)
@@ -101,31 +101,31 @@ class EndPoint(View):
 
         return JsonResponse(result,status=200)
 
-    @csrf_exempt
-    @transaction.atomic
-    @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
-    def post(self,request,model_login,*args,**kwargs):
-        try:
-            model_person = ModelPerson.objects.create(request,model_login)
+    # @csrf_exempt
+    # @transaction.atomic
+    # @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
+    # def post(self,request,model_login,*args,**kwargs):
+    #     try:
+    #         model_person = ModelPerson.objects.create(request,model_login)
 
-            model_login = ModelLogin.objects.create(request,model_login,model_person)
+    #         model_login = ModelLogin.objects.create(request,model_login,model_person)
 
-        except Exception as error:
-            return JsonResponse({'message': str(error)}, status=400)
+    #     except Exception as error:
+    #         return JsonResponse({'message': str(error)}, status=400)
 
-        result = {
-            'person_id': model_person.person_id,
-            'parent_id': model_person.parent_id,
-            'name': model_person.name,
-            'cpf': model_person.cpf,
-            'cnpj': model_person.cnpj,
-            'email': model_person.email,
-            'phone1': model_person.phone1,
-            'phone2': model_person.phone2,
-            'login': {
-                'username': model_login.username,
-                'verified': model_login.verified,
-            }
-        }
+    #     result = {
+    #         'person_id': model_person.person_id,
+    #         'parent_id': model_person.parent_id,
+    #         'name': model_person.name,
+    #         'cpf': model_person.cpf,
+    #         'cnpj': model_person.cnpj,
+    #         'email': model_person.email,
+    #         'phone1': model_person.phone1,
+    #         'phone2': model_person.phone2,
+    #         'login': {
+    #             'username': model_login.username,
+    #             'verified': model_login.verified,
+    #         }
+    #     }
 
-        return JsonResponse(result,status=200)
+    #     return JsonResponse(result,status=200)

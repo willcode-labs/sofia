@@ -1,4 +1,4 @@
-import json,traceback,re
+import json,re
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.core import serializers
@@ -8,7 +8,6 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.db import transaction
 from api.apps import ApiConfig
-from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
 from api.Model.Product import Product as ModelProduct
 
@@ -27,10 +26,6 @@ class EndPoint(View):
                     product_id=product_id)
 
             except Exception as error:
-                BusinessExceptionLog(request,model_login,
-                    message=error,
-                    trace=traceback.format_exc())
-
                 return JsonResponse({'message': 'Nenhum registro encontrado para este product_id[87]'}, status=400)
 
             result = {
@@ -71,10 +66,6 @@ class EndPoint(View):
                 model_product = model_product.filter(name__icontains=name)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': 'Erro na consulta de produto[88]'}, status=400)
 
         paginator = Paginator(model_product, limit)
@@ -91,10 +82,6 @@ class EndPoint(View):
                 'weight','width','length','height','origin','gtin','published','quantity'))
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': 'Nenhum registro encontrado![80]'}, status=400)
 
         result = {
@@ -119,10 +106,6 @@ class EndPoint(View):
                 model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
@@ -154,10 +137,6 @@ class EndPoint(View):
                 model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
@@ -189,10 +168,6 @@ class EndPoint(View):
                 model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
@@ -212,10 +187,6 @@ class Publish(View):
                 model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {

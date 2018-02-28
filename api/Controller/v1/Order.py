@@ -1,4 +1,4 @@
-import json,traceback,re
+import json,re
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.core import serializers
@@ -8,7 +8,6 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.db import transaction
 from api.apps import ApiConfig
-from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
 from api.Model.Order import Order as ModelOrder
 
@@ -34,10 +33,6 @@ class EndPoint(View):
                 model_address = ModelAddress.objects.filter(person_id=model_person.person_id)
 
             except Exception as error:
-                BusinessExceptionLog(request,model_login,
-                    message=error,
-                    trace=traceback.format_exc())
-
                 return JsonResponse({'message': str(error)}, status=400)
 
             result = {
@@ -77,10 +72,6 @@ class EndPoint(View):
                 model_person = model_person.filter(name__icontains=name)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         paginator = Paginator(model_person, limit)
@@ -96,10 +87,6 @@ class EndPoint(View):
                 'person_id','name','cpf','cnpj','email','phone1','phone2'))
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': 'Erro na consulta de pessoa!'}, status=400)
 
         result = {

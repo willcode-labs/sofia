@@ -6,22 +6,22 @@
     },
     {
         "code": 2,
-        "message": "Api key não encontrado![2]",
+        "message": "Token não encontrado![2]",
         "description": "",
     },
     {
         "code": 3,
-        "message": "Api key não autorizado![3]",
+        "message": "Token não autorizado![3]",
         "description": "",
     },
     {
         "code": 4,
-        "message": "Ip de acesso do login difere de seu ip de origem![4]",
+        "message": "Ip de acesso difere de seu ip de origem![4]",
         "description": "",
     },
     {
         "code": 5,
-        "message": "Login não verificado![5]",
+        "message": "Usuário não verificado![5]",
         "description": "",
     },
     {
@@ -36,17 +36,17 @@
     },
     {
         "code": 9,
-        "message": "Api key expirado![9]",
+        "message": "Token expirado![9]",
         "description": "",
     },
     {
         "code": 11,
-        "message": "Api key não encontrado![11]",
+        "message": "Token não autorizado![11]",
         "description": "",
     },
     {
         "code": 12,
-        "message": "Login já está verificado![12]",
+        "message": "Usuário já verificado![12]",
         "description": "",
     },
     {
@@ -257,11 +257,6 @@
     {
         "code": 72,
         "message": "Perfil não pode criar este tipo de pessoa![72]",
-        "description": "",
-    },
-    {
-        "code": 73,
-        "message": "Ip não encontrado![73]",
         "description": "",
     },
     {
@@ -712,6 +707,36 @@
     {
         "code": 163,
         "message": "Usuário não autorizado![163]",
+        "description": "",
+    },
+    {
+        "code": 164,
+        "message": "ApiKey não encontrado![164]",
+        "description": "",
+    },
+    {
+        "code": 165,
+        "message": "Apikey não autorizado![165]",
+        "description": "",
+    },
+    {
+        "code": 166,
+        "message": "Token não encontrado![166]",
+        "description": "",
+    },
+    {
+        "code": 167,
+        "message": "ApiKey desativada![167]",
+        "description": "",
+    },
+    {
+        "code": 168,
+        "message": "Perfil inválido para esta operação![168]",
+        "description": "",
+    },
+    {
+        "code": 169,
+        "message": "Perfil inválido para esta operação![169]",
         "description": "",
     }
 ]

@@ -1,4 +1,4 @@
-import json,traceback,re
+import json,re
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.core import serializers
@@ -8,9 +8,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.db import transaction
 from api.apps import ApiConfig
-from api.Business.ExceptionLog import ExceptionLog as BusinessExceptionLog
 from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
-from api.Model.Login import Login as ModelLogin
 from api.Model.Person import Person as ModelPerson
 from api.Model.Address import Address as ModelAddress
 
@@ -35,10 +33,6 @@ class EndPoint(View):
                     address_id=address_id,)
 
             except Exception as error:
-                BusinessExceptionLog(request,model_login,
-                    message=error,
-                    trace=traceback.format_exc())
-
                 return JsonResponse({'message': 'Registro de endereço não encontrado![78]'}, status=400)
 
             result = {
@@ -68,10 +62,6 @@ class EndPoint(View):
 
         if invoice and invoice not in ['0','1'] or delivery and delivery not in ['0','1']:
             error = Exception('Valor incorreto![55]')
-
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
 
             return JsonResponse({'message': str(error)}, status=400)
 
@@ -112,10 +102,6 @@ class EndPoint(View):
                 model_address = model_address.filter(delivery=delivery)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': 'Registros de endereço não encontrado![79]'}, status=400)
 
         paginator = Paginator(model_address, limit)
@@ -132,10 +118,6 @@ class EndPoint(View):
                 'complement','invoice','delivery'))
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': 'Nenhum registro encontrado![80]'}, status=400)
 
         result = {
@@ -158,10 +140,6 @@ class EndPoint(View):
             model_address = ModelAddress.objects.create(request,model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
@@ -185,10 +163,6 @@ class EndPoint(View):
             model_address = ModelAddress.objects.update(request,model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {
@@ -212,10 +186,6 @@ class EndPoint(View):
             model_address = ModelAddress.objects.delete(request,model_login)
 
         except Exception as error:
-            BusinessExceptionLog(request,model_login,
-                message=error,
-                trace=traceback.format_exc())
-
             return JsonResponse({'message': str(error)}, status=400)
 
         result = {

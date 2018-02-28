@@ -1,4 +1,4 @@
-import os
+import os,datetime,sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -112,33 +112,38 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
+            'format': '%(levelname)s | %(asctime)s | %(module)s | %(process)d | %(thread)d | %(message)s'
+        }
     },
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
             'formatter': 'verbose'
         },
         'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(BASE_DIR,'log/debug.log'),
+            'when': 'midnight',
+            'formatter': 'verbose'
         },
     },
     'loggers': {
         'sofia.api.debug': {
-            'handlers': ['console'],
+            'handlers': ['file','console'],
             'level': 'DEBUG',
             'propagate': True,
         },
-        'sofia.api.error': {
-            'handlers': ['file'],
-            'level': 'ERROR',
+        'sofia.api.warning': {
+            'handlers': ['file','console'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+        'sofia.api.critical': {
+            'handlers': ['file','console'],
+            'level': 'CRITICAL',
             'propagate': True,
         }
     }

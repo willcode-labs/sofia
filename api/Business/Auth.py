@@ -2,65 +2,72 @@ import datetime,logging
 from django.http import JsonResponse
 from django.db import transaction
 from api.apps import ApiConfig
+from api.Exception import Api as ExceptionApi
 from api.Model.App import App as ModelApp
-
-LOGGER = logging.getLogger('sofia.api.error')
+from api.Model.Token import Token as ModelToken
+from api.Model.Person import Person as ModelPerson
 
 class Auth():
     def __init__(self,request,**kwargs):
-        LOGGER.debug('########## Business.Auth.__init__ ##########')
-
         self.request = request
         self.ip = request.META.get('REMOTE_ADDR',None)
         self.token = request.META.get('HTTP_TOKEN',None)
         self.apikey = request.META.get('HTTP_APIKEY',None)
+        self.profile_tuple = None
 
         if not self.ip:
-            error = 'IP não encontrado![1]';
-
-            LOGGER.error(error)
-
-            raise Exception(error)
+            raise ExceptionApi('IP não encontrado![1]')
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
         self.api_config = ApiConfig
 
-    # def authorize(self):
-    #     if not self.api_key:
-    #         raise Exception('Api key não encontrado![2]')
+    def authorize(self) -> ModelToken:
+        if not self.apikey:
+            raise ExceptionApi('ApiKey não encontrado![164]')
 
-    #     try:
-    #         model_login = ModelLogin.objects.get(
-    #             token=self.api_key,)
+        if not self.token:
+            raise ExceptionApi('Token não encontrado![2]')
 
-    #     except Exception as error:
-    #         raise Exception('Api key não autorizado![3]')
+        try:
+            model_app = ModelApp.objects.get(
+                apikey=self.apikey,
+                active=True)
 
-    #     if not model_login.verified:
-    #         raise Exception('Login não verificado![5]')
+        except Exception as error:
+            raise ExceptionApi('Apikey não autorizado![165]',error)
 
-    #     if model_login.profile_id in (ModelLogin.PROFILE_ROOT,ModelLogin.PROFILE_DIRECTOR,):
-    #         if model_login.ip != self.ip:
-    #             raise Exception('Ip de acesso do login difere de seu ip de origem![4]')
+        try:
+            model_token = ModelToken.objects.get(
+                token=self.token,
+                app=model_app,)
 
-    #     if model_login.profile_id not in (ModelLogin.PROFILE_ROOT,ModelLogin.PROFILE_DIRECTOR,ModelLogin.PROFILE_CLIENT,):
-    #         raise Exception('Perfil não permitido![6]')
+        except Exception as error:
+            raise ExceptionApi('Token não autorizado![3]',error)
 
-    #     if dict(ModelLogin.PROFILE_TUPLE)[model_login.profile_id] not in self.profile_tuple:
-    #         raise Exception('Perfil não autorizado![7]')
+        if not model_token.person.verified:
+            raise ExceptionApi('Usuário não verificado![5]')
 
-    #     if model_login.date_expired.replace(tzinfo=None) < datetime.datetime.now().replace(tzinfo=None):
-    #         raise Exception('Api key expirado![9]')
+        if model_app.profile_id not in (ModelApp.PROFILE_ROOT,ModelApp.PROFILE_DIRECTOR,ModelApp.PROFILE_CLIENT,):
+            raise ExceptionApi('Perfil não permitido![6]')
 
-    #     if model_login.profile_id in (ModelLogin.PROFILE_CLIENT,):
-    #         date_expired = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
+        if model_token.ip != self.ip:
+            raise ExceptionApi('Ip de acesso difere de seu ip de origem![4]')
 
-    #         model_login = ModelLogin.objects.update(self.request,model_login,
-    #             date_expired=date_expired,)
+        if dict(ModelApp.PROFILE_TUPLE)[model_app.profile_id] not in self.profile_tuple:
+            raise ExceptionApi('Perfil não autorizado![7]')
 
-    #     return model_login
+        if model_token.date_expire.replace(tzinfo=None) < datetime.datetime.now().replace(tzinfo=None):
+            raise ExceptionApi('Token expirado![9]')
+
+        if model_app.profile_id in (ModelApp.PROFILE_CLIENT,):
+            date_expire = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
+
+            model_token.date_expire = date_expire
+            model_token.save()
+
+        return model_token
 
     # def auth(self):
     #     username = self.request.POST.get('username',None)
@@ -93,62 +100,88 @@ class Auth():
 
     #     return model_login
 
-    def verify(self):
-        api_key = self.request.GET.get('api_key',None)
+    def verify(self) -> ModelToken:
+        if not self.token:
+            raise ExceptionApi('Token não encontrado![166]')
 
         try:
-            model_login = ModelLogin.objects.get(
-                token=self.api_key,)
+            model_token = ModelToken.objects.get(
+                token=self.token,
+                date_expire__gte=datetime.datetime.now(),)
 
         except Exception as error:
-            raise Exception('Api key não encontrado![11]')
+            raise ExceptionApi('Token não autorizado![11]',error)
 
-        if model_login.profile_id not in (ModelLogin.PROFILE_CLIENT,):
-            raise Exception('Perfil não autorizado![14]')
+        if model_token.app.profile_id not in (ModelApp.PROFILE_CLIENT,):
+            raise ExceptionApi('Perfil não autorizado![14]')
 
-        if model_login.verified == True:
-            raise Exception('Login já está verificado![12]')
+        if model_token.app.active == False:
+            raise ExceptionApi('ApiKey desativada![167]')
 
-        token = ModelLogin.objects.tokenRecursive(self.ip)
-        date_expired = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
+        if model_token.person.verified == True:
+            raise ExceptionApi('Usuário já verificado![12]')
 
-        model_login = ModelLogin.objects.update(self.request,model_login,
-            token=token,
-            ip=self.ip,
-            date_expired=date_expired,
-            verified=True)
+        token = ModelToken.objects.tokenRecursive()
+        date_expire = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
 
-        return model_login
+        model_token.token = token
+        model_token.ip = self.ip
+        model_token.date_expire = date_expire
 
-# class DecoratorAuth(object):
-#     def __init__(self, **kwargs):
-#         self.profile = None
+        model_token = ModelToken.objects.verify(
+            self.request,
+            model_token)
 
-#         for key in kwargs:
-#             setattr(self,key,kwargs[key])
+        model_token.person.verified = True
 
-#     def __call__(self, function):
-#         @transaction.atomic
-#         def wrap(request, *args, **kwargs):
-#             if not self.profile or not isinstance(self.profile,tuple):
-#                 return JsonResponse(
-#                     {'message': 'Perfil não configurado![15]'},
-#                     status=400)
+        model_person = ModelPerson.objects.verify(
+            self.request,
+            model_token,
+            model_token.person)
 
-#             for item in self.profile:
-#                 if item not in dict(ModelLogin.PROFILE_TUPLE).values():
-#                     return JsonResponse(
-#                         {'message': 'Perfil não identificado![16]'},
-#                         status=400)
+        return model_token
 
-#             try:
-#                 business_auth = Auth(request,profile_tuple=self.profile)
+class DecoratorAuth(object):
+    def __init__(self, **kwargs):
+        self.profile = None
 
-#                 model_login = business_auth.authorize()
+        for key in kwargs:
+            setattr(self,key,kwargs[key])
 
-#             except Exception as error:
-#                 return JsonResponse({'message': str(error)}, status=400)
+    def __call__(self, function):
+        @transaction.atomic
+        def wrap(request, *args, **kwargs):
+            if not self.profile or not isinstance(self.profile,tuple):
+                error = 'Perfil não configurado![15]'
 
-#             return function(request, model_login, *args, **kwargs)
+                ApiConfig.loggerWarning(error)
 
-#         return wrap
+                return JsonResponse(
+                    {'message': error},
+                    status=400)
+
+            for item in self.profile:
+                if item not in dict(ModelApp.PROFILE_TUPLE).values():
+                    error = 'Perfil não identificado![16]'
+
+                    ApiConfig.loggerWarning(error)
+
+                    return JsonResponse(
+                        {'message': error},
+                        status=400)
+
+            try:
+                business_auth = Auth(
+                    request,
+                    profile_tuple=self.profile)
+
+                model_token = business_auth.authorize()
+
+            except Exception as error:
+                ApiConfig.loggerCritical(error)
+
+                return JsonResponse({'message': str(error)},status=400)
+
+            return function(request,model_token,*args,**kwargs)
+
+        return wrap
