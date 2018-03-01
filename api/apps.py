@@ -9,8 +9,11 @@ class ApiConfig(AppConfig):
 
     def loggerWarning(error) -> None:
         logging_logger = logging.getLogger('sofia.api.warning')
-        logging_logger.error('#' * 50 + ' ' + str(error) + ' ' + '#' * 50)
+        logging_logger.warning('#' * 50 + ' ' + str(error) + ' ' + '#' * 50)
+
+        if error.error_exception:
+            logging_logger.critical('#' * 50 + ' ' + str(error.error_exception) + ' ' + '#' * 50)
 
     def loggerCritical(error) -> None:
         logging_logger = logging.getLogger('sofia.api.critical')
-        logging_logger.error('#' * 50 + ' ' + str(error) + ' ' + '#' * 50)
+        logging_logger.critical('#' * 50 + ' ' + str(error) + ' ' + '#' * 50)

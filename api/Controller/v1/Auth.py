@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from django.db import transaction
 from api.apps import ApiConfig
-from api.Exception import Api as ExceptionApi
+from api.Exception.Api import Api as ExceptionApi
 from api.Business.Auth import Auth as BusinessAuth
 
 class Verify(View):
@@ -20,10 +20,12 @@ class Verify(View):
         except ExceptionApi as error:
             ApiConfig.loggerWarning(error)
 
+            return JsonResponse({'message': str(error)},status=400)
+
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': str(error)},status=400)
+            return JsonResponse({'message': 'Erro interno![170]'},status=400)
 
         result = {
             'token': model_token.token,

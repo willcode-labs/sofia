@@ -738,5 +738,10 @@
         "code": 169,
         "message": "Perfil inválido para esta operação![169]",
         "description": "",
+    },
+    {
+        "code": 170,
+        "message": "Erro interno![170]",
+        "description": "",
     }
 ]

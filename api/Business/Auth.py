@@ -2,7 +2,7 @@ import datetime,logging
 from django.http import JsonResponse
 from django.db import transaction
 from api.apps import ApiConfig
-from api.Exception import Api as ExceptionApi
+from api.Exception.Api import Api as ExceptionApi
 from api.Model.App import App as ModelApp
 from api.Model.Token import Token as ModelToken
 from api.Model.Person import Person as ModelPerson

@@ -12,7 +12,7 @@ from api.Controller.v1 import Order as v1ControllerOrder
 # login
 urlpatterns = [
     path('api/v1/login/verify/', v1ControllerAuth.Verify.as_view(), name='api_v1_login_verify'),
-    # path('api/v1/login/auth/', v1ControllerAuth.Auth.as_view(), name='api_v1_login_auth'),
+    path('api/v1/login/auth/', v1ControllerAuth.Auth.as_view(), name='api_v1_login_auth'),
 ]
 # # person
 # urlpatterns += [
