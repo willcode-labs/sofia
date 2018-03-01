@@ -1,4 +1,4 @@
-import uuid,traceback
+import uuid
 from django.db import models
 from api.Model.Person import Person as ModelPerson
 from api.Model.App import App as ModelApp
@@ -20,8 +20,23 @@ class TokenManager(models.Manager):
         return token
 
     def verify(self,request,model_token):
-        if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
-            raise Exception('Perfil inválido para esta operação![168]')
+        # if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
+        #     raise Exception('Perfil inválido para esta operação![168]')
+
+        # TODO
+        # backup register
+
+        try:
+            model_token.save()
+
+        except Exception as error:
+            raise error
+
+        return model_token
+
+    def auth(self,request,model_token):
+        # if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
+        #     raise Exception('Perfil inválido para esta operação![168]')
 
         # TODO
         # backup register
@@ -38,7 +53,7 @@ class Token(models.Model):
     token_id = models.AutoField(primary_key=True)
     person = models.ForeignKey(ModelPerson,on_delete=models.CASCADE)
     app = models.ForeignKey(ModelApp,on_delete=models.CASCADE)
-    token = models.CharField(unique=True,max_length=40,null=True)
+    token = models.CharField(unique=True,max_length=40)
     ip = models.GenericIPAddressField(db_index=True,protocol='both')
     date_expire = models.DateTimeField(db_index=True,null=True)
     date_create = models.DateTimeField(auto_now_add=True)

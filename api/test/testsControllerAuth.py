@@ -104,12 +104,12 @@ class TestControllerAuth(TransactionTestCase):
             app=self.model_app_client,
             token='token-client',
             ip='127.0.0.3',
-            date_expire=datetime.datetime.now() + datetime.timedelta(minutes=ApiConfig.login_time_duration_in_minutes))
+            date_expire=datetime.datetime.now() + datetime.timedelta(minutes=ApiConfig.token_time_client))
 
         self.model_token_client.save()
 
     def test_auth_verify_ip_not_found(self):
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR=None,
             HTTP_APIKEY=None,
@@ -119,7 +119,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.json()['message'],'IP não encontrado![1]')
 
     def test_auth_verify_token_not_found(self):
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -129,7 +129,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Token não encontrado![166]')
 
     def test_auth_verify_token_unauthorized(self):
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -139,7 +139,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Token não autorizado![11]')
 
     def test_auth_root_verify_profile_unauthorized(self):
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -149,7 +149,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Perfil não autorizado![14]')
 
     def test_auth_director_verify_profile_unauthorized(self):
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -162,7 +162,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_token_client.date_expire = datetime.datetime.now() - datetime.timedelta(seconds=1)
         self.model_token_client.save()
 
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -175,7 +175,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_app_client.active = False
         self.model_app_client.save()
 
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -188,7 +188,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_client.verified = True
         self.model_person_client.save()
 
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -203,7 +203,7 @@ class TestControllerAuth(TransactionTestCase):
 
         ip = '0';
 
-        response = self.client.post('/api/v1/login/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR=ip,
             HTTP_APIKEY=None,
@@ -221,3 +221,581 @@ class TestControllerAuth(TransactionTestCase):
                 app__app_id=self.model_app_client.app_id,
                 person__person_id=self.model_person_client.person_id,
                 person__verified=True).count())
+
+    def test_auth_client_auth_apikey_not_found(self):
+        ip = '0';
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps({}),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=None,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'ApiKey não encontrado![172]')
+
+    def test_auth_client_auth_param_not_found(self):
+        ip = '0';
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps({}),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY='1',
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Dados insuficientes![19]')
+
+    def test_auth_client_auth_apikey_invalid(self):
+        ip = '0';
+
+        data = {
+            'username':'wborba',
+            'password':'123456789'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY='1',
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Apikey inválida![20]')
+
+    def test_auth_root_auth_apikey_inactive(self):
+        self.model_app_root.active = False
+        self.model_app_root.save()
+
+        ip = '0';
+
+        data = {
+            'username':'wborba',
+            'password':'123456789'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'ApiKey dasativada![175]')
+
+    def test_auth_director_auth_apikey_inactive(self):
+        self.model_app_director.active = False
+        self.model_app_director.save()
+
+        ip = '0';
+
+        data = {
+            'username':'wborba',
+            'password':'123456789'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'ApiKey dasativada![175]')
+
+    def test_auth_client_auth_apikey_inactive(self):
+        self.model_app_client.active = False
+        self.model_app_client.save()
+
+        ip = '0';
+
+        data = {
+            'username':'wborba',
+            'password':'123456789'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'ApiKey dasativada![175]')
+
+    def test_auth_client_auth_user_not_found(self):
+        ip = '0';
+
+        data = {
+            'username':'wborba',
+            'password':'123456789'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Usuário não encontrado![173]')
+
+    def test_auth_client_auth_user_not_verified(self):
+        self.model_person_client.verified = False
+        self.model_person_client.save()
+
+        ip = '0';
+
+        data = {
+            'username':'wborba_client',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Usuário não verificado![21]')
+    
+    def test_auth_root_auth_token_ip_duplicate(self):
+        model_token_root = ModelToken(
+            person=self.model_person_root,
+            app=self.model_app_root,
+            token='token-client-2',
+            ip=self.model_token_root.ip,
+            date_expire=self.model_token_root.date_expire)
+
+        model_token_root.save()
+
+        ip = self.model_token_root.ip;
+
+        data = {
+            'username':'wborba_root',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Erro crítico![174]')
+
+    def test_auth_director_auth_token_ip_duplicate(self):
+        model_token_director = ModelToken(
+            person=self.model_person_director,
+            app=self.model_app_director,
+            token='token-client-2',
+            ip=self.model_token_director.ip,
+            date_expire=self.model_token_director.date_expire)
+
+        model_token_director.save()
+
+        ip = self.model_token_director.ip;
+
+        data = {
+            'username':'wborba_director',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Erro crítico![174]')
+
+    def test_auth_client_auth_token_ip_duplicate(self):
+        model_token_client = ModelToken(
+            person=self.model_person_client,
+            app=self.model_app_client,
+            token='token-client-2',
+            ip=self.model_token_client.ip,
+            date_expire=self.model_token_client.date_expire)
+
+        model_token_client.save()
+
+        ip = self.model_token_client.ip;
+
+        data = {
+            'username':'wborba_client',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Erro crítico![174]')
+
+    def test_auth_root_auth_ok_same_ip(self):
+        ip = self.model_token_root.ip;
+
+        data = {
+            'username':'wborba_root',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.json()['token'],self.model_token_root.token)
+        self.assertIsNotNone(response.json()['date_expire'])
+
+    def test_auth_director_auth_ok_same_ip(self):
+        ip = self.model_token_director.ip;
+
+        data = {
+            'username':'wborba_director',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.json()['token'],self.model_token_director.token)
+        self.assertIsNotNone(response.json()['date_expire'])
+
+    def test_auth_client_auth_ok_same_ip(self):
+        ip = self.model_token_client.ip;
+
+        data = {
+            'username':'wborba_client',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.json()['token'],self.model_token_client.token)
+        self.assertIsNotNone(response.json()['date_expire'])
+
+    def test_auth_root_auth_ok_other_ip(self):
+        ip = '127';
+
+        data = {
+            'username':'wborba_root',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json()['token'])
+        self.assertIsNotNone(response.json()['date_expire'])
+
+    def test_auth_director_auth_ok_other_ip(self):
+        ip = '127';
+
+        data = {
+            'username':'wborba_director',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json()['token'])
+        self.assertIsNotNone(response.json()['date_expire'])
+
+    def test_auth_client_auth_ok_other_ip(self):
+        ip = '127';
+
+        data = {
+            'username':'wborba_client',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIsNotNone(response.json()['token'])
+        self.assertIsNotNone(response.json()['date_expire'])
+    
+    def test_authorize_apikey_not_found(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=None,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'ApiKey não encontrado![164]')
+
+    def test_authorize_token_not_found(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY='0',
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Token não encontrado![2]')
+
+    def test_authorize_apikey_not_authorized(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY='0',
+            HTTP_TOKEN='0')
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Apikey não autorizado![165]')
+
+    def test_authorize_root_token_not_authorized(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN='0')
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Token não autorizado![3]')
+
+    def test_authorize_director_token_not_authorized(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN='0')
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Token não autorizado![3]')
+
+    def test_authorize_client_token_not_authorized(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN='0')
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Token não autorizado![3]')
+    
+    def test_authorize_root_user_not_authorized(self):
+        self.model_person_root.verified = False
+        self.model_person_root.save()
+
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=self.model_token_root.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Usuário não verificado![5]')
+
+    def test_authorize_director_user_not_authorized(self):
+        self.model_person_director.verified = False
+        self.model_person_director.save()
+
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=self.model_token_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Usuário não verificado![5]')
+
+    def test_authorize_client_user_not_authorized(self):
+        self.model_person_client.verified = False
+        self.model_person_client.save()
+
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=self.model_token_client.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Usuário não verificado![5]')
+
+    def test_authorize_root_profile_id_not_allowed(self):
+        self.model_app_root.profile_id = 99
+        self.model_app_root.save()
+
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=self.model_token_root.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Perfil não permitido![6]')
+
+    def test_authorize_director_profile_id_not_allowed(self):
+        self.model_app_director.profile_id = 99
+        self.model_app_director.save()
+
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=self.model_token_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Perfil não permitido![6]')
+
+    def test_authorize_client_profile_id_not_allowed(self):
+        self.model_app_client.profile_id = 99
+        self.model_app_client.save()
+
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=self.model_token_client.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Perfil não permitido![6]')
+
+    def test_authorize_root_ip_origin_error(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=self.model_token_root.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Ip de acesso difere de seu ip de origem![4]')
+
+    def test_authorize_director_ip_origin_error(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=self.model_token_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Ip de acesso difere de seu ip de origem![4]')
+
+    def test_authorize_client_ip_origin_error(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR='127',
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=self.model_token_client.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Ip de acesso difere de seu ip de origem![4]')
+
+    def test_authorize_client_profile_id_not_authorized(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR=self.model_token_client.ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=self.model_token_client.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Perfil não autorizado![7]')
+
+    def test_authorize_root_token_expired(self):
+        self.model_token_root.date_expire = datetime.datetime.now() - datetime.timedelta(seconds=1)
+        self.model_token_root.save()
+
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR=self.model_token_root.ip,
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=self.model_token_root.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Token expirado![9]')
+
+    def test_authorize_director_token_expired(self):
+        self.model_token_director.date_expire = datetime.datetime.now() - datetime.timedelta(seconds=1)
+        self.model_token_director.save()
+
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR=self.model_token_director.ip,
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=self.model_token_director.token)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Token expirado![9]')
+
+    def test_authorize_root_ok(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR=self.model_token_root.ip,
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=self.model_token_root.token)
+
+        self.assertEqual(response.status_code,200)
+
+    def test_authorize_director_ok(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR=self.model_token_director.ip,
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=self.model_token_director.token)
+
+        self.assertEqual(response.status_code,200)
+
+    def test_authorize_client_in_root_or_director_route(self):
+        data_get = {}
+
+        response = self.client.get('/api/v1/person/',data_get,
+            REMOTE_ADDR=self.model_token_client.ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=self.model_token_client.token)
+
+        print(response.json())
+
+        self.assertEqual(response.status_code,400)

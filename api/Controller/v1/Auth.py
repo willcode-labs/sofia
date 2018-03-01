@@ -41,16 +41,21 @@ class Auth(View):
         try:
             business_auth = BusinessAuth(request)
 
-            model_login = business_auth.auth()
+            model_token = business_auth.auth()
 
-        except Exception as error:
-            ApiConfig.logger(error)
+        except ExceptionApi as error:
+            ApiConfig.loggerWarning(error)
 
             return JsonResponse({'message': str(error)},status=400)
 
+        except Exception as error:
+            ApiConfig.loggerCritical(error)
+
+            return JsonResponse({'message': 'Erro interno![171]'},status=400)
+
         result = {
-            'token': model_login.token,
-            'date_expired': model_login.date_expired,
+            'token': model_token.token,
+            'date_expire': model_token.date_expire.strftime('%Y-%m-%d %H:%M:%S'),
         }
 
-        return JsonResponse(result, status=200)
+        return JsonResponse(result,status=200)

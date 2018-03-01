@@ -71,17 +71,12 @@
     },
     {
         "code": 20,
-        "message": "Login ou senha inválidos![20]",
+        "message": "Apikey inválida![20]",
         "description": "",
     },
     {
         "code": 21,
-        "message": "Login não verificado![21]",
-        "description": "",
-    },
-    {
-        "code": 22,
-        "message": "Tipo de login não autorizado![22]",
+        "message": "Usuário não verificado![21]",
         "description": "",
     },
     {
@@ -742,6 +737,46 @@
     {
         "code": 170,
         "message": "Erro interno![170]",
+        "description": "",
+    },
+    {
+        "code": 171,
+        "message": "Erro interno![171]",
+        "description": "",
+    },
+    {
+        "code": 172,
+        "message": "ApiKey não encontrado![172]",
+        "description": "",
+    },
+    {
+        "code": 173,
+        "message": "Usuário não encontrado![173]",
+        "description": "",
+    },
+    {
+        "code": 174,
+        "message": "Erro crítico![174]",
+        "description": "",
+    },
+    {
+        "code": 175,
+        "message": "ApiKey dasativada![175]",
+        "description": "",
+    },
+    {
+        "code": 176,
+        "message": "Erro interno![176]",
+        "description": "",
+    },
+    {
+        "code": 177,
+        "message": "Erro interno![177]",
+        "description": "",
+    },
+    {
+        "code": 178,
+        "message": "Erro interno![178]",
         "description": "",
     }
 ]

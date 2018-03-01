@@ -2,14 +2,16 @@ import json,re
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from django.core import serializers
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.db import transaction
 from api.apps import ApiConfig
+from api.Exception.Api import Api as ExceptionApi
 from api.Business.Auth import DecoratorAuth as BusinessDecoratorAuth
 from api.Model.App import App as ModelApp
+from api.Model.Token import Token as ModelToken
 from api.Model.Person import Person as ModelPerson
 from api.Model.Address import Address as ModelAddress
 
@@ -28,12 +30,19 @@ class EndPoint(View):
                     model_person = ModelPerson.objects.get(person_id=person_id)
 
                 except Exception as error:
-                    raise Exception('Nenhum registro de pessoa encontrado com este ID[76]')
+                    raise ExceptionApi('Nenhum registro de pessoa encontrado com este ID[76]',error)
 
                 model_address = ModelAddress.objects.filter(person_id=model_person.person_id)
 
+            except ExceptionApi as error:
+                ApiConfig.loggerWarning(error)
+
+                return JsonResponse({'message': str(error)},status=400)
+
             except Exception as error:
-                return JsonResponse({'message': str(error)}, status=400)
+                ApiConfig.loggerCritical(error)
+
+                return JsonResponse({'message': 'Erro interno![176]'},status=400)
 
             result = {
                 'person_id': model_person.person_id,
@@ -44,8 +53,10 @@ class EndPoint(View):
                 'email': model_person.email,
                 'phone1': model_person.phone1,
                 'phone2': model_person.phone2,
+                'username': model_person.username,
                 'address': list(model_address.values(
-                    'address_id','state','city','number','complement','invoice','delivery','date_create')),
+                    'address_id','state','city','number','complement',
+                    'invoice','delivery','date_create')),
             }
 
             return JsonResponse(result,status=200)
@@ -63,16 +74,19 @@ class EndPoint(View):
             limit = ApiConfig.query_row_limit
 
         try:
-            model_person = ModelPerson.objects.filter(
-                login__profile_id__in=[
-                    ModelApp.PROFILE_DIRECTOR,
-                    ModelApp.PROFILE_CLIENT,]).order_by('-person_id')
+            # TODO
+            # buscar somente perfil client 3
+            # model_token = ModelToken.objects.filter()
+
+            model_person = ModelPerson.objects.filter(verified=True).order_by('-person_id')
 
             if name:
                 model_person = model_person.filter(name__icontains=name)
 
         except Exception as error:
-            return JsonResponse({'message': str(error)}, status=400)
+            ApiConfig.loggerCritical(error)
+
+            return JsonResponse({'message': 'Erro interno![177]'}, status=400)
 
         paginator = Paginator(model_person, limit)
 
@@ -87,6 +101,8 @@ class EndPoint(View):
                 'person_id','name','cpf','cnpj','email','phone1','phone2'))
 
         except Exception as error:
+            ApiConfig.loggerCritical(error)
+
             return JsonResponse({'message': 'Erro na consulta de pessoa![25]'}, status=400)
 
         result = {

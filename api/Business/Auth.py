@@ -1,6 +1,7 @@
 import datetime,logging
 from django.http import JsonResponse
 from django.db import transaction
+from django.core.exceptions import MultipleObjectsReturned,ObjectDoesNotExist
 from api.apps import ApiConfig
 from api.Exception.Api import Api as ExceptionApi
 from api.Model.App import App as ModelApp
@@ -62,43 +63,78 @@ class Auth():
             raise ExceptionApi('Token expirado![9]')
 
         if model_app.profile_id in (ModelApp.PROFILE_CLIENT,):
-            date_expire = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
+            date_expire = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.token_time_client)
 
             model_token.date_expire = date_expire
             model_token.save()
 
         return model_token
 
-    # def auth(self):
-    #     username = self.request.POST.get('username',None)
-    #     password = self.request.POST.get('password',None)
+    def auth(self) -> ModelToken:
+        if not self.apikey:
+            raise ExceptionApi('ApiKey não encontrado![172]')
 
-    #     if not username or not password:
-    #         raise Exception('Dados insuficientes![19]')
+        username = self.request.POST.get('username',None)
+        password = self.request.POST.get('password',None)
 
-    #     try:
-    #         model_login = ModelLogin.objects.get(
-    #             username=username,
-    #             password=password)
+        if not username or not password:
+            raise ExceptionApi('Dados insuficientes![19]')
 
-    #     except Exception as error:
-    #         raise Exception('Login ou senha inválidos![20]')
+        try:
+            model_app = ModelApp.objects.get(
+                apikey=self.apikey,
+                profile_id__in=[
+                    ModelApp.PROFILE_ROOT,
+                    ModelApp.PROFILE_DIRECTOR,
+                    ModelApp.PROFILE_CLIENT])
 
-    #     if model_login.profile_id not in (ModelLogin.PROFILE_ROOT,ModelLogin.PROFILE_DIRECTOR,ModelLogin.PROFILE_CLIENT,):
-    #         raise Exception('Tipo de login não autorizado![22]')
+        except Exception as error:
+            raise ExceptionApi('Apikey inválida![20]',error)
 
-    #     if model_login.verified != True:
-    #         raise Exception('Login não verificado![21]')
+        if model_app.active != True:
+            raise ExceptionApi('ApiKey dasativada![175]')
 
-    #     token = ModelLogin.objects.tokenRecursive(self.ip)
-    #     date_expired = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
+        try:
+            model_person = ModelPerson.objects.get(
+                username=username,
+                password=password)
 
-    #     model_login = ModelLogin.objects.update(self.request,model_login,
-    #         token=token,
-    #         ip=self.ip,
-    #         date_expired=date_expired,)
+        except Exception as error:
+            raise ExceptionApi('Usuário não encontrado![173]',error)
 
-    #     return model_login
+        if model_person.verified != True:
+            raise ExceptionApi('Usuário não verificado![21]')
+
+        try:
+            model_token = ModelToken.objects.get(
+                person=model_person,
+                app=model_app,
+                ip=self.ip)
+
+        except MultipleObjectsReturned as error:
+            raise ExceptionApi('Erro crítico![174]',error)
+
+        except ObjectDoesNotExist as error:
+            model_token = None
+
+        if model_app.profile_id in (ModelApp.PROFILE_CLIENT,):
+            date_expire = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.token_time_client)
+
+        if model_app.profile_id in (ModelApp.PROFILE_ROOT,ModelApp.PROFILE_DIRECTOR,):
+            date_expire = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.token_time_admin)
+
+        if not model_token:
+            model_token = ModelToken(
+                token=ModelToken.objects.tokenRecursive(),
+                person=model_person,
+                app=model_app,
+                ip=self.ip)
+
+        model_token.date_expire = date_expire
+
+        model_token = ModelToken.objects.auth(self.request,model_token)
+
+        return model_token
 
     def verify(self) -> ModelToken:
         if not self.token:
@@ -122,7 +158,7 @@ class Auth():
             raise ExceptionApi('Usuário já verificado![12]')
 
         token = ModelToken.objects.tokenRecursive()
-        date_expire = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.login_time_duration_in_minutes)
+        date_expire = datetime.datetime.now() + datetime.timedelta(minutes=self.api_config.token_time_client)
 
         model_token.token = token
         model_token.ip = self.ip
@@ -177,10 +213,15 @@ class DecoratorAuth(object):
 
                 model_token = business_auth.authorize()
 
+            except ExceptionApi as error:
+                ApiConfig.loggerWarning(error)
+
+                return JsonResponse({'message': str(error)},status=400)
+
             except Exception as error:
                 ApiConfig.loggerCritical(error)
 
-                return JsonResponse({'message': str(error)},status=400)
+                return JsonResponse({'message': 'Erro interno![178]'},status=400)
 
             return function(request,model_token,*args,**kwargs)
 
