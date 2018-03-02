@@ -10,12 +10,13 @@ from api.Controller.v1 import Order as v1ControllerOrder
 # app api route
 # login
 urlpatterns = [
-    path('api/v1/auth/verify/', v1ControllerAuth.Verify.as_view(), name='api_v1_auth_verify'),
-    path('api/v1/auth/login/', v1ControllerAuth.Auth.as_view(), name='api_v1_auth_login'),
+    path('api/v1/client/auth/verify/',v1ControllerAuth.VerifyClient.as_view(),name='api_v1_client_auth_verify'),
+    path('api/v1/auth/login/',v1ControllerAuth.Auth.as_view(),name='api_v1_auth_login'),
 ]
-# # person
+# person
 urlpatterns += [
-    path('api/v1/person/', v1ControllerPerson.EndPoint.as_view(), name='api_v1_person_endpoint'),
+    path('api/v1/client/person/',v1ControllerPerson.EndPointClient.as_view(),name='api_v1_client_person_endpoint'),
+    path('api/v1/director/person/',v1ControllerPerson.EndPointDirector.as_view(),name='api_v1_director_person_endpoint'),
 ]
 # # person address
 # urlpatterns += [

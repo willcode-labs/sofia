@@ -112,7 +112,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_token_client.save()
 
     def test_auth_verify_ip_not_found(self):
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR=None,
             HTTP_APIKEY=None,
@@ -122,7 +122,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.json()['message'],'IP não encontrado![1]')
 
     def test_auth_verify_token_not_found(self):
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -132,7 +132,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Token não encontrado![166]')
 
     def test_auth_verify_token_unauthorized(self):
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -142,7 +142,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Token não autorizado![11]')
 
     def test_auth_root_verify_profile_unauthorized(self):
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -152,7 +152,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.json()['message'],'Perfil não autorizado![14]')
 
     def test_auth_director_verify_profile_unauthorized(self):
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -165,7 +165,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_token_client.date_expire = datetime.datetime.now() - datetime.timedelta(seconds=1)
         self.model_token_client.save()
 
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -178,7 +178,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_app_client.active = False
         self.model_app_client.save()
 
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -191,7 +191,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_client.verified = True
         self.model_person_client.save()
 
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR='0',
             HTTP_APIKEY=None,
@@ -206,7 +206,7 @@ class TestControllerAuth(TransactionTestCase):
 
         ip = '0';
 
-        response = self.client.post('/api/v1/auth/verify/',json.dumps({}),
+        response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
             REMOTE_ADDR=ip,
             HTTP_APIKEY=None,
@@ -684,7 +684,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_apikey_not_found(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=None,
             HTTP_TOKEN=None)
@@ -695,7 +695,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_token_not_found(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY='0',
             HTTP_TOKEN=None)
@@ -706,7 +706,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_apikey_not_authorized(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY='0',
             HTTP_TOKEN='0')
@@ -717,7 +717,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_root_token_not_authorized(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN='0')
@@ -728,7 +728,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_director_token_not_authorized(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN='0')
@@ -739,7 +739,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_client_token_not_authorized(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN='0')
@@ -753,7 +753,7 @@ class TestControllerAuth(TransactionTestCase):
 
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN=self.model_token_root.token)
@@ -767,7 +767,7 @@ class TestControllerAuth(TransactionTestCase):
 
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN=self.model_token_director.token)
@@ -781,7 +781,7 @@ class TestControllerAuth(TransactionTestCase):
 
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN=self.model_token_client.token)
@@ -795,7 +795,7 @@ class TestControllerAuth(TransactionTestCase):
 
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN=self.model_token_root.token)
@@ -809,7 +809,7 @@ class TestControllerAuth(TransactionTestCase):
 
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN=self.model_token_director.token)
@@ -823,7 +823,7 @@ class TestControllerAuth(TransactionTestCase):
 
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN=self.model_token_client.token)
@@ -834,7 +834,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_root_ip_origin_error(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN=self.model_token_root.token)
@@ -845,7 +845,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_director_ip_origin_error(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN=self.model_token_director.token)
@@ -856,7 +856,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_client_ip_origin_error(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR='127',
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN=self.model_token_client.token)
@@ -867,7 +867,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_client_profile_id_not_authorized(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR=self.model_token_client.ip,
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN=self.model_token_client.token)
@@ -881,7 +881,7 @@ class TestControllerAuth(TransactionTestCase):
 
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR=self.model_token_root.ip,
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN=self.model_token_root.token)
@@ -895,7 +895,7 @@ class TestControllerAuth(TransactionTestCase):
 
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR=self.model_token_director.ip,
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN=self.model_token_director.token)
@@ -906,7 +906,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_root_ok(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR=self.model_token_root.ip,
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN=self.model_token_root.token)
@@ -916,7 +916,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_director_ok(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR=self.model_token_director.ip,
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN=self.model_token_director.token)
@@ -926,7 +926,7 @@ class TestControllerAuth(TransactionTestCase):
     def test_authorize_client_in_root_or_director_route(self):
         data_get = {}
 
-        response = self.client.get('/api/v1/person/',data_get,
+        response = self.client.get('/api/v1/director/person/',data_get,
             REMOTE_ADDR=self.model_token_client.ip,
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN=self.model_token_client.token)

@@ -15,10 +15,57 @@ from api.Model.Token import Token as ModelToken
 from api.Model.Person import Person as ModelPerson
 from api.Model.Address import Address as ModelAddress
 
-class EndPoint(View):
+class EndPointClient(View):
+    @csrf_exempt
+    @method_decorator(BusinessDecoratorAuth(profile=('client',)))
+    def get(self,request,model_login,*args,**kwargs):
+        person_id = request.GET.get('person_id',None)
+
+        if not person_id:
+            # TODO
+            # nova mensagem de erro
+            pass
+
+        try:
+            try:
+                model_person = ModelPerson.objects.get(person_id=person_id)
+
+            except Exception as error:
+                raise ExceptionApi('Nenhum registro de pessoa encontrado com este ID[xx]',error)
+
+            model_address = ModelAddress.objects.filter(person_id=model_person.person_id)
+
+        except ExceptionApi as error:
+            ApiConfig.loggerWarning(error)
+
+            return JsonResponse({'message': str(error)},status=400)
+
+        except Exception as error:
+            ApiConfig.loggerCritical(error)
+
+            return JsonResponse({'message': 'Erro interno![xx]'},status=400)
+
+        result = {
+            'person_id': model_person.person_id,
+            'parent_id': model_person.parent_id,
+            'name': model_person.name,
+            'cpf': model_person.cpf,
+            'cnpj': model_person.cnpj,
+            'email': model_person.email,
+            'phone1': model_person.phone1,
+            'phone2': model_person.phone2,
+            'username': model_person.username,
+            'address': list(model_address.values(
+                'address_id','state','city','number','complement',
+                'invoice','delivery','date_create')),
+        }
+
+        return JsonResponse(result,status=200)
+
+class EndPointDirector(View):
     @csrf_exempt
     @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
-    def get(self,request,model_login,*args,**kwargs):
+    def get(self,request,model_token,*args,**kwargs):
         page = request.GET.get('page',None)
         limit = request.GET.get('limit',None)
         person_id = request.GET.get('person_id',None)
@@ -74,11 +121,8 @@ class EndPoint(View):
             limit = ApiConfig.query_row_limit
 
         try:
-            # TODO
-            # buscar somente perfil client 3
-            # model_token = ModelToken.objects.filter()
-
-            model_person = ModelPerson.objects.filter(verified=True).order_by('-person_id')
+            model_person = ModelPerson.objects.filter(
+                verified=True).order_by('-person_id')
 
             if name:
                 model_person = model_person.filter(name__icontains=name)
@@ -120,7 +164,7 @@ class EndPoint(View):
     # @csrf_exempt
     # @transaction.atomic
     # @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
-    # def post(self,request,model_login,*args,**kwargs):
+    # def post(self,request,model_token,*args,**kwargs):
     #     try:
     #         model_person = ModelPerson.objects.create(request,model_login)
 

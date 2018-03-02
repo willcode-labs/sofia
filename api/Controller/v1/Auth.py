@@ -8,7 +8,7 @@ from api.apps import ApiConfig
 from api.Exception.Api import Api as ExceptionApi
 from api.Business.Auth import Auth as BusinessAuth
 
-class Verify(View):
+class VerifyClient(View):
     @csrf_exempt
     @transaction.atomic
     def post(self,request,*args,**kwargs):
