@@ -14,6 +14,7 @@ class TestControllerAuth(TransactionTestCase):
 
         # Person ROOT
         self.model_person_root = ModelPerson(
+            profile_id=ModelApp.PROFILE_ROOT,
             name='William Borba ROOT',
             cpf='00000000001',
             cnpj='00000000001',
@@ -46,6 +47,7 @@ class TestControllerAuth(TransactionTestCase):
 
         # Person DIRECTOR
         self.model_person_director = ModelPerson(
+            profile_id=ModelApp.PROFILE_DIRECTOR,
             name='William Borba DIRECTOR',
             cpf='00000000002',
             cnpj='00000000002',
@@ -78,6 +80,7 @@ class TestControllerAuth(TransactionTestCase):
 
         # Person CLIENT
         self.model_person_client = ModelPerson(
+            profile_id=ModelPerson.PROFILE_CLIENT,
             name='William Borba CLIENT',
             cpf='00000000003',
             cnpj='00000000003',
@@ -545,6 +548,138 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.status_code,200)
         self.assertIsNotNone(response.json()['token'])
         self.assertIsNotNone(response.json()['date_expire'])
+
+    def test_auth_root_restricted_access_1(self):
+        self.model_person_root.username = 'wborba_root'
+        self.model_person_root.password = '12345678'
+        self.model_person_root.profile_id = ModelApp.PROFILE_ROOT
+        self.model_person_root.save()
+
+        ip = '127';
+
+        data = {
+            'username':'wborba_root',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Acesso restrito![179]')
+
+    def test_auth_root_restricted_access_2(self):
+        self.model_person_root.username = 'wborba_root'
+        self.model_person_root.password = '12345678'
+        self.model_person_root.profile_id = ModelApp.PROFILE_ROOT
+        self.model_person_root.save()
+
+        ip = '127';
+
+        data = {
+            'username':'wborba_root',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Acesso restrito![179]')
+
+    def test_auth_director_restricted_access_3(self):
+        self.model_person_director.username = 'wborba_director'
+        self.model_person_director.password = '12345678'
+        self.model_person_director.profile_id = ModelApp.PROFILE_DIRECTOR
+        self.model_person_director.save()
+
+        ip = '127';
+
+        data = {
+            'username':'wborba_director',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Acesso restrito![179]')
+
+    def test_auth_director_restricted_access_4(self):
+        self.model_person_director.username = 'wborba_director'
+        self.model_person_director.password = '12345678'
+        self.model_person_director.profile_id = ModelApp.PROFILE_DIRECTOR
+        self.model_person_director.save()
+
+        ip = '127';
+
+        data = {
+            'username':'wborba_director',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_client.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Acesso restrito![179]')
+
+    def test_auth_root_restricted_access_5(self):
+        self.model_person_client.username = 'wborba_client'
+        self.model_person_client.password = '12345678'
+        self.model_person_client.profile_id = ModelPerson.PROFILE_CLIENT
+        self.model_person_client.save()
+
+        ip = '127';
+
+        data = {
+            'username':'wborba_client',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_root.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Acesso restrito![179]')
+
+    def test_auth_root_restricted_access_6(self):
+        self.model_person_client.username = 'wborba_client'
+        self.model_person_client.password = '12345678'
+        self.model_person_client.profile_id = ModelPerson.PROFILE_CLIENT
+        self.model_person_client.save()
+
+        ip = '127';
+
+        data = {
+            'username':'wborba_client',
+            'password':'12345678'
+        }
+
+        response = self.client.post('/api/v1/auth/login/',json.dumps(data),
+            content_type='application/json',
+            REMOTE_ADDR=ip,
+            HTTP_APIKEY=self.model_app_director.apikey,
+            HTTP_TOKEN=None)
+
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.json()['message'],'Acesso restrito![179]')
     
     def test_authorize_apikey_not_found(self):
         data_get = {}

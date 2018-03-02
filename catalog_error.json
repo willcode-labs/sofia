@@ -778,5 +778,10 @@
         "code": 178,
         "message": "Erro interno![178]",
         "description": "",
+    },
+    {
+        "code": 179,
+        "message": "Acesso restrito![179]",
+        "description": "",
     }
 ]

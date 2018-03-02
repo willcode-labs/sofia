@@ -75,6 +75,7 @@ class PersonManager(models.Manager):
 
             model_person = Person(
                 parent=model_login.person,
+                profile_id=Person.PROFILE_CLIENT,
                 name=self.name,
                 cpf=self.cpf,
                 cnpj=self.cnpj,
@@ -105,7 +106,10 @@ class PersonManager(models.Manager):
         return model_person
 
 class Person(models.Model):
+    PROFILE_CLIENT = ModelApp.PROFILE_CLIENT
+
     person_id = models.AutoField(primary_key=True)
+    profile_id = models.IntegerField(db_index=True,choices=ModelApp.PROFILE_TUPLE)
     name = models.CharField(unique=True,max_length=50)
     cpf = models.CharField(unique=True,max_length=11,null=True)
     cnpj = models.CharField(unique=True,max_length=14,null=True)

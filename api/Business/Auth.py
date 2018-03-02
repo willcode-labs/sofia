@@ -105,6 +105,9 @@ class Auth():
         if model_person.verified != True:
             raise ExceptionApi('Usuário não verificado![21]')
 
+        if model_person.profile_id != model_app.profile_id:
+            raise ExceptionApi('Acesso restrito![179]')
+
         try:
             model_token = ModelToken.objects.get(
                 person=model_person,
