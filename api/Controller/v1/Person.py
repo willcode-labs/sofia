@@ -22,18 +22,19 @@ class EndPointClient(View):
         person_id = request.GET.get('person_id',None)
 
         if not person_id:
-            # TODO
-            # nova mensagem de erro
-            pass
+            raise ExceptionApi('ID de pessoa não encontrado[181]')
 
         try:
             try:
-                model_person = ModelPerson.objects.get(person_id=person_id)
+                model_person = ModelPerson.objects.get(
+                    profile_id=ModelPerson.PROFILE_CLIENT,
+                    person_id=person_id)
 
             except Exception as error:
-                raise ExceptionApi('Nenhum registro de pessoa encontrado com este ID[xx]',error)
+                raise ExceptionApi('Registro de pessoa não encontrado[182]',error)
 
-            model_address = ModelAddress.objects.filter(person_id=model_person.person_id)
+            model_address = ModelAddress.objects.filter(
+                person_id=model_person.person_id)
 
         except ExceptionApi as error:
             ApiConfig.loggerWarning(error)
@@ -43,11 +44,11 @@ class EndPointClient(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro interno![xx]'},status=400)
+            return JsonResponse({'message': 'Erro interno![183]'},status=400)
 
         result = {
             'person_id': model_person.person_id,
-            'parent_id': model_person.parent_id,
+            'profile_id': model_person.profile_id,
             'name': model_person.name,
             'cpf': model_person.cpf,
             'cnpj': model_person.cnpj,
@@ -55,6 +56,7 @@ class EndPointClient(View):
             'phone1': model_person.phone1,
             'phone2': model_person.phone2,
             'username': model_person.username,
+            'verified': model_person.verified,
             'address': list(model_address.values(
                 'address_id','state','city','number','complement',
                 'invoice','delivery','date_create')),
@@ -74,12 +76,18 @@ class EndPointDirector(View):
         if person_id:
             try:
                 try:
-                    model_person = ModelPerson.objects.get(person_id=person_id)
+                    model_person = ModelPerson.objects.get(
+                        profile_id__in=[
+                            ModelApp.PROFILE_ROOT,
+                            ModelApp.PROFILE_DIRECTOR,
+                            ModelApp.PROFILE_CLIENT],
+                        person_id=person_id)
 
                 except Exception as error:
                     raise ExceptionApi('Nenhum registro de pessoa encontrado com este ID[76]',error)
 
-                model_address = ModelAddress.objects.filter(person_id=model_person.person_id)
+                model_address = ModelAddress.objects.filter(
+                    person_id=model_person.person_id)
 
             except ExceptionApi as error:
                 ApiConfig.loggerWarning(error)
@@ -93,7 +101,7 @@ class EndPointDirector(View):
 
             result = {
                 'person_id': model_person.person_id,
-                'parent_id': model_person.parent_id,
+                'profile_id': model_person.profile_id,
                 'name': model_person.name,
                 'cpf': model_person.cpf,
                 'cnpj': model_person.cnpj,
@@ -101,6 +109,7 @@ class EndPointDirector(View):
                 'phone1': model_person.phone1,
                 'phone2': model_person.phone2,
                 'username': model_person.username,
+                'verified': model_person.verified,
                 'address': list(model_address.values(
                     'address_id','state','city','number','complement',
                     'invoice','delivery','date_create')),
@@ -130,7 +139,7 @@ class EndPointDirector(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro interno![177]'}, status=400)
+            return JsonResponse({'message': 'Erro interno![177]'},status=400)
 
         paginator = Paginator(model_person, limit)
 
@@ -142,12 +151,13 @@ class EndPointDirector(View):
 
             person_data = person.object_list
             person_data = list(person_data.values(
-                'person_id','name','cpf','cnpj','email','phone1','phone2'))
+                'person_id','profile_id','name','cpf','cnpj','email','phone1',
+                'phone2','username','verified'))
 
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro na consulta de pessoa![25]'}, status=400)
+            return JsonResponse({'message':'Erro na consulta de pessoa![25]'},status=400)
 
         result = {
             'total': person_total,

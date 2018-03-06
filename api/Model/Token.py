@@ -20,8 +20,12 @@ class TokenManager(models.Manager):
         return token
 
     def verify(self,request,model_token):
-        # if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
-        #     raise Exception('Perfil inválido para esta operação![168]')
+        """
+        Método: Bussines.Auth.Auth.verify
+        Atualiza o(s) dado(s): token,ip e date_expire.
+        """
+        if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
+            raise Exception('Perfil inválido para esta operação![168]')
 
         # TODO
         # backup register
@@ -35,8 +39,12 @@ class TokenManager(models.Manager):
         return model_token
 
     def auth(self,request,model_token):
-        # if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
-        #     raise Exception('Perfil inválido para esta operação![168]')
+        """
+        Método: Bussines.Auth.Auth.auth
+        Atualiza o(s) dado(s): date_expire.
+        """
+        if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
+            raise Exception('Perfil inválido para esta operação![180]')
 
         # TODO
         # backup register

@@ -783,5 +783,25 @@
         "code": 179,
         "message": "Acesso restrito![179]",
         "description": "",
+    },
+    {
+        "code": 180,
+        "message": "Perfil inválido para esta operação![180]",
+        "description": "",
+    },
+    {
+        "code": 181,
+        "message": "ID de pessoa não encontrado[181]",
+        "description": "",
+    },
+    {
+        "code": 182,
+        "message": "Registro de pessoa não encontrado[182]",
+        "description": "",
+    },
+    {
+        "code": 183,
+        "message": "Erro interno![183]",
+        "description": "",
     }
 ]

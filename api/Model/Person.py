@@ -3,6 +3,9 @@ from django.core.validators import MinLengthValidator
 from api.Model.App import App as ModelApp
 
 class PersonManager(models.Manager):
+    def createSimpleClient:
+        pass
+
     def create(self,request,model_login,**kwargs):
         self.profile_id = request.POST.get('profile_id',None)
         self.name = request.POST.get('name',None)
@@ -91,6 +94,10 @@ class PersonManager(models.Manager):
         return model_person
 
     def verify(self,request,model_token,model_person):
+        """
+        Método: Bussines.Auth.Auth.verify
+        Atualiza o(s) dado(s): verified.
+        """
         if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
             raise Exception('Perfil inválido para esta operação![169]')
 
