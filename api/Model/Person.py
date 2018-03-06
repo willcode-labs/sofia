@@ -14,11 +14,14 @@ class PersonManager(models.Manager):
         self.email = request.POST.get('email',None)
         self.phone1 = request.POST.get('phone1',None)
         self.phone2 = request.POST.get('phone2',None)
+        self.username = request.POST.get('username',None)
+        self.password = request.POST.get('password',None)
 
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if not self.profile_id or not self.name or not self.email or not self.phone1:
+        if not self.profile_id or not self.name or not self.email or not self.phone1 \
+        or not self.username or not self.password:
             raise Exception('Dados insuficientes para criação de pessoa![30]')
 
         if self.profile_id and not re.match(r'^[0-9]+$',str(self.profile_id)):
@@ -54,6 +57,11 @@ class PersonManager(models.Manager):
 
         if self.phone2 and not re.match(r'^[0-9]{10,15}$',str(self.phone2)):
             raise Exception('Telefone 2 incorreto![117]')
+
+        if self.username.__len__() < 6 or self.username.__len__() > 40:
+            pass
+            # TODO
+            # criar nova exception
 
         try:
             if self.cpf:
@@ -117,7 +125,7 @@ class Person(models.Model):
 
     person_id = models.AutoField(primary_key=True)
     profile_id = models.IntegerField(db_index=True,choices=ModelApp.PROFILE_TUPLE)
-    name = models.CharField(unique=True,max_length=50)
+    name = models.CharField(unique=True,max_length=150)
     cpf = models.CharField(unique=True,max_length=11,null=True)
     cnpj = models.CharField(unique=True,max_length=14,null=True)
     email = models.EmailField(unique=True,max_length=150)
