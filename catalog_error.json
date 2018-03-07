@@ -245,11 +245,6 @@
         "description": "",
     },
     {
-        "code": 71,
-        "message": "Perfil não pode criar este tipo de pessoa![71]",
-        "description": "",
-    },
-    {
         "code": 72,
         "message": "Perfil não pode criar este tipo de pessoa![72]",
         "description": "",
@@ -802,6 +797,36 @@
     {
         "code": 183,
         "message": "Erro interno![183]",
+        "description": "",
+    },
+    {
+        "code": 184,
+        "message": "Username deve estar entre 6 e 150 caracteres![184]",
+        "description": "",
+    },
+    {
+        "code": 185,
+        "message": "Password deve ter 8 caracteres![185]",
+        "description": "",
+    },
+    {
+        "code": 186,
+        "message": "Valor do parâmetro verified incorreto![186]",
+        "description": "",
+    },
+    {
+        "code": 187,
+        "message": "Já existe uma pessoa cadastrada com este mesmo username![187]",
+        "description": "",
+    },
+    {
+        "code": 188,
+        "message": "Tipo de perfil não permitido![188]",
+        "description": "",
+    },
+    {
+        "code": 189,
+        "message": "Dados insuficientes para criação de pessoa![189]",
         "description": "",
     }
 ]

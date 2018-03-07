@@ -22,7 +22,11 @@ class EndPointClient(View):
         person_id = request.GET.get('person_id',None)
 
         if not person_id:
-            raise ExceptionApi('ID de pessoa não encontrado[181]')
+            error = Exception('ID de pessoa não encontrado[181]')
+
+            ApiConfig.loggerWarning(error)
+
+            return JsonResponse({'message': str(error)},status=400)
 
         try:
             try:

@@ -22,18 +22,10 @@ class ProductManager(models.Manager):
         if not self.name or not self.description or not self.code or not self.unit_weight or not self.origin or not self.quantity:
             raise Exception('Dados insuficientes para criação de produto![58]')
 
-        self.compound = None if self.compound == '' else self.compound
-        self.weight = None if self.weight == '' else self.weight
-        self.width = None if self.width == '' else self.width
-        self.length = None if self.length == '' else self.length
-        self.height = None if self.height == '' else self.height
-        self.gtin = None if self.gtin == '' else self.gtin
-
-        if self.compound and not self.compound in ('0','1'):
+        if not self.compound in ('0','1'):
             raise Exception('Valor do parâmetro composto incorreto![63]')
 
-        self.compound = False if self.compound == '0' else self.compound
-        self.compound = True if self.compound == '1' else self.compound
+        self.compound = False if self.compound == '0' else True
 
         if self.weight and not re.match(r'^[0-9]+([.]{1}[0-9]{1,2})?$',str(self.weight)):
             raise Exception('Valor do parâmetro peso incorreto![64]')
