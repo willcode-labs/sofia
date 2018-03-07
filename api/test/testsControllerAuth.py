@@ -875,20 +875,6 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Perfil não autorizado![7]')
 
-    def test_authorize_root_token_expired(self):
-        self.model_token_root.date_expire = datetime.datetime.now() - datetime.timedelta(seconds=1)
-        self.model_token_root.save()
-
-        data_get = {}
-
-        response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR=self.model_token_root.ip,
-            HTTP_APIKEY=self.model_app_root.apikey,
-            HTTP_TOKEN=self.model_token_root.token)
-
-        self.assertEqual(response.status_code,400)
-        self.assertEqual(response.json()['message'],'Token expirado![9]')
-
     def test_authorize_director_token_expired(self):
         self.model_token_director.date_expire = datetime.datetime.now() - datetime.timedelta(seconds=1)
         self.model_token_director.save()
@@ -903,16 +889,6 @@ class TestControllerAuth(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Token expirado![9]')
 
-    def test_authorize_root_ok(self):
-        data_get = {}
-
-        response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR=self.model_token_root.ip,
-            HTTP_APIKEY=self.model_app_root.apikey,
-            HTTP_TOKEN=self.model_token_root.token)
-
-        self.assertEqual(response.status_code,200)
-
     def test_authorize_director_ok(self):
         data_get = {}
 
@@ -922,15 +898,3 @@ class TestControllerAuth(TransactionTestCase):
             HTTP_TOKEN=self.model_token_director.token)
 
         self.assertEqual(response.status_code,200)
-
-    def test_authorize_client_in_root_or_director_route(self):
-        data_get = {}
-
-        response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR=self.model_token_client.ip,
-            HTTP_APIKEY=self.model_app_client.apikey,
-            HTTP_TOKEN=self.model_token_client.token)
-
-        print(response.json())
-
-        self.assertEqual(response.status_code,400)

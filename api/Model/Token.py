@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from api.Exception.Api import Api as ExceptionApi
 from api.Model.Person import Person as ModelPerson
 from api.Model.App import App as ModelApp
 
@@ -7,12 +8,8 @@ class TokenManager(models.Manager):
     def tokenRecursive(self):
         token = str(uuid.uuid4())
 
-        try:
-            model_token_total = Token.objects.filter(
-                token=token)
-
-        except Exception as error:
-            raise error
+        model_token_total = Token.objects.filter(
+            token=token)
 
         if model_token_total.count() > 0:
             return self.tokenRecursive(self)
@@ -25,16 +22,12 @@ class TokenManager(models.Manager):
         Atualiza o(s) dado(s): token,ip e date_expire.
         """
         if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
-            raise Exception('Perfil inválido para esta operação![168]')
+            raise ExceptionApi('Perfil inválido para esta operação![168]')
 
         # TODO
         # backup register
 
-        try:
-            model_token.save()
-
-        except Exception as error:
-            raise error
+        model_token.save()
 
         return model_token
 
@@ -43,17 +36,13 @@ class TokenManager(models.Manager):
         Método: Bussines.Auth.Auth.auth
         Atualiza o(s) dado(s): date_expire.
         """
-        if model_token.app.profile_id not in(ModelApp.PROFILE_CLIENT,):
-            raise Exception('Perfil inválido para esta operação![180]')
+        if model_token.app.profile_id not in(ModelApp.PROFILE_ROOT,ModelApp.PROFILE_DIRECTOR,ModelApp.PROFILE_CLIENT):
+            raise ExceptionApi('Perfil inválido para esta operação![180]')
 
         # TODO
         # backup register
 
-        try:
-            model_token.save()
-
-        except Exception as error:
-            raise error
+        model_token.save()
 
         return model_token
 

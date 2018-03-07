@@ -4,7 +4,7 @@ from api.Model.App import App as ModelApp
 from api.Exception.Api import Api as ExceptionApi
 
 class PersonManager(models.Manager):
-    def createSimple:
+    def createSimple(self,request,model_token,**kwargs):
         if model_token.profile_id not in (ModelApp.PROFILE_ROOT,ModelApp.PROFILE_DIRECTOR,ModelApp.PROFILE_CLIENT,):
             raise ExceptionApi('Tipo de perfil não permitido![188]')
 
@@ -25,28 +25,73 @@ class PersonManager(models.Manager):
         if self.name or not self.email or not self.password:
             raise ExceptionApi('Dados insuficientes para criação de pessoa![189]')
 
-        # if not self.cpf and not self.cnpj:
-        #     raise ExceptionApi('Um dos campos deve estar preenchido, CPF ou CNPJ![74]')
+        if not self.cpf and not self.cnpj:
+            raise ExceptionApi('Um dos campos deve estar preenchido, CPF ou CNPJ![190]')
 
-        # if self.cpf and not re.match(r'^[0-9]{11}$',str(self.cpf)):
-        #     raise ExceptionApi('CPF incorreto![114]')
+        if self.cpf and not re.match(r'^[0-9]{11}$',str(self.cpf)):
+            raise ExceptionApi('CPF incorreto![191]')
 
-        # if self.cnpj and not re.match(r'^[0-9]{14}$',str(self.cnpj)):
-        #     raise ExceptionApi('CNPJ incorreto![115]')
+        if self.cnpj and not re.match(r'^[0-9]{14}$',str(self.cnpj)):
+            raise ExceptionApi('CNPJ incorreto![192]')
 
-        # if self.phone1 and not re.match(r'^[0-9]{10,15}$',str(self.phone1)):
-        #     raise ExceptionApi('Telefone 1 incorreto![116]')
+        if self.phone1 and not re.match(r'^[0-9]{10,15}$',str(self.phone1)):
+            raise ExceptionApi('Telefone 1 incorreto![193]')
 
-        # self.phone2 = None if self.phone2 == '' else self.phone2
+        if self.phone2 and not re.match(r'^[0-9]{10,15}$',str(self.phone2)):
+            raise ExceptionApi('Telefone 2 incorreto![194]')
 
-        # if self.phone2 and not re.match(r'^[0-9]{10,15}$',str(self.phone2)):
-        #     raise ExceptionApi('Telefone 2 incorreto![117]')
+        if self.username.__len__() < 6 or self.username.__len__() > 150:
+            raise ExceptionApi('Username deve estar entre 6 e 150 caracteres![195]')
 
-        # if self.username.__len__() < 6 or self.username.__len__() > 150:
-        #     raise ExceptionApi('Username deve estar entre 6 e 150 caracteres![184]')
+        if self.password.__len__() != 8:
+            raise ExceptionApi('Password deve ter 8 caracteres![196]')
 
-        # if self.password.__len__() != 8:
-        #     raise ExceptionApi('Password deve ter 8 caracteres![185]')
+        if self.cpf:
+            model_person_cpf = Person.objects.filter(
+                cpf=self.cpf)
+
+            if model_person_cpf.count() > 0:
+                raise ExceptionApi('Existe uma pessoa cadastrada com este mesmo CPF![197]')
+
+        if self.cnpj:
+            model_person_cnpj = Person.objects.filter(
+                cnpj=self.cnpj)
+
+            if model_person_cnpj.count() > 0:
+                raise ExceptionApi('Existe uma pessoa cadastrada com este mesmo CNPJ![198]')
+
+        model_person_email = Person.objects.filter(
+            email=self.email)
+
+        if model_person_email.count() > 0:
+            raise ExceptionApi('Existe uma pessoa cadastrada com este mesmo E-mail![199]')
+
+        model_person_username = Person.objects.filter(
+            username=self.username)
+
+        if model_person_username.count() > 0:
+            raise ExceptionApi('Existe uma pessoa cadastrada com este mesmo username![200]')
+
+        model_person = Person(
+            profile_id=self.profile_id,
+            name=self.name,
+            cpf=self.cpf,
+            cnpj=self.cnpj,
+            email=self.email,
+            phone1=self.phone1,
+            phone2=self.phone2,
+            username=self.username,
+            password=self.password,
+            verified=self.verified)
+
+        model_person.save()
+
+        # TODO
+        # servico de email
+        # notifica o usuario pelo email de cadastro
+        # no email deve estar o link de verificacao
+
+        return model_person
 
     def create(self,request,model_token,**kwargs):
         if model_token.profile_id not in (ModelApp.PROFILE_ROOT,ModelApp.PROFILE_DIRECTOR,):
@@ -136,7 +181,7 @@ class PersonManager(models.Manager):
             raise ExceptionApi('Já existe uma pessoa cadastrada com este mesmo username![187]')
 
         model_person = Person(
-            profile_id=Person.PROFILE_CLIENT,
+            profile_id=self.profile_id,
             name=self.name,
             cpf=self.cpf,
             cnpj=self.cnpj,

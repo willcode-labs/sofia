@@ -5,8 +5,6 @@ from api.Controller.v1 import PersonAddress as v1ControllerPersonAddress
 from api.Controller.v1 import Product as v1ControllerProduct
 from api.Controller.v1 import Delivery as v1ControllerDelivery
 from api.Controller.v1 import Order as v1ControllerOrder
-# from web.Controller import Home as ControllerHome
-
 # app api route
 # login
 urlpatterns = [

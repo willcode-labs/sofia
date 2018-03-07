@@ -17,8 +17,8 @@ from api.Model.Address import Address as ModelAddress
 
 class EndPointClient(View):
     @csrf_exempt
-    @method_decorator(BusinessDecoratorAuth(profile=('client',)))
-    def get(self,request,model_login,*args,**kwargs):
+    @method_decorator(BusinessDecoratorAuth(profile=(ModelApp.PROFILE_CLIENT,)))
+    def get(self,request,model_token,*args,**kwargs):
         person_id = request.GET.get('person_id',None)
 
         if not person_id:
@@ -35,7 +35,7 @@ class EndPointClient(View):
                     person_id=person_id)
 
             except Exception as error:
-                raise ExceptionApi('Registro de pessoa não encontrado[182]',error)
+                raise ExceptionApi('Registro de pessoa nÃ£o encontrado[182]',error)
 
             model_address = ModelAddress.objects.filter(
                 person_id=model_person.person_id)
@@ -68,9 +68,43 @@ class EndPointClient(View):
 
         return JsonResponse(result,status=200)
 
+    @csrf_exempt
+    @transaction.atomic
+    @method_decorator(BusinessDecoratorAuth(profile=(ModelApp.PROFILE_CLIENT,)))
+    def post(self,request,model_token,*args,**kwargs):
+        try:
+            model_person = ModelPerson.objects.createSimple(
+                request,
+                model_token)
+
+        except ExceptionApi as error:
+            ApiConfig.loggerWarning(error)
+
+            return JsonResponse({'message': str(error)},status=400)
+
+        except Exception as error:
+            ApiConfig.loggerCritical(error)
+
+            return JsonResponse({'message': 'Erro interno![202]'},status=400)
+
+        result = {
+            'person_id': model_person.person_id,
+            'profile_id': model_person.profile_id,
+            'name': model_person.name,
+            'cpf': model_person.cpf,
+            'cnpj': model_person.cnpj,
+            'email': model_person.email,
+            'phone1': model_person.phone1,
+            'phone2': model_person.phone2,
+            'username': model_person.username,
+            'verified': model_person.verified,
+        }
+
+        return JsonResponse(result,status=200)
+
 class EndPointDirector(View):
     @csrf_exempt
-    @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
+    @method_decorator(BusinessDecoratorAuth(profile=(ModelApp.PROFILE_DIRECTOR,)))
     def get(self,request,model_token,*args,**kwargs):
         page = request.GET.get('page',None)
         limit = request.GET.get('limit',None)
@@ -82,7 +116,6 @@ class EndPointDirector(View):
                 try:
                     model_person = ModelPerson.objects.get(
                         profile_id__in=[
-                            ModelApp.PROFILE_ROOT,
                             ModelApp.PROFILE_DIRECTOR,
                             ModelApp.PROFILE_CLIENT],
                         person_id=person_id)
@@ -175,31 +208,36 @@ class EndPointDirector(View):
 
         return JsonResponse(result,status=200)
 
-    # @csrf_exempt
-    # @transaction.atomic
-    # @method_decorator(BusinessDecoratorAuth(profile=('root','director',)))
-    # def post(self,request,model_token,*args,**kwargs):
-    #     try:
-    #         model_person = ModelPerson.objects.create(request,model_login)
+    @csrf_exempt
+    @transaction.atomic
+    @method_decorator(BusinessDecoratorAuth(profile=(ModelApp.PROFILE_DIRECTOR,)))
+    def post(self,request,model_token,*args,**kwargs):
+        try:
+            model_person = ModelPerson.objects.create(
+                request,
+                model_token)
 
-    #         model_login = ModelLogin.objects.create(request,model_login,model_person)
+        except ExceptionApi as error:
+            ApiConfig.loggerWarning(error)
 
-    #     except Exception as error:
-    #         return JsonResponse({'message': str(error)}, status=400)
+            return JsonResponse({'message': str(error)},status=400)
 
-    #     result = {
-    #         'person_id': model_person.person_id,
-    #         'parent_id': model_person.parent_id,
-    #         'name': model_person.name,
-    #         'cpf': model_person.cpf,
-    #         'cnpj': model_person.cnpj,
-    #         'email': model_person.email,
-    #         'phone1': model_person.phone1,
-    #         'phone2': model_person.phone2,
-    #         'login': {
-    #             'username': model_login.username,
-    #             'verified': model_login.verified,
-    #         }
-    #     }
+        except Exception as error:
+            ApiConfig.loggerCritical(error)
 
-    #     return JsonResponse(result,status=200)
+            return JsonResponse({'message': 'Erro interno![201]'},status=400)
+
+        result = {
+            'person_id': model_person.person_id,
+            'profile_id': model_person.profile_id,
+            'name': model_person.name,
+            'cpf': model_person.cpf,
+            'cnpj': model_person.cnpj,
+            'email': model_person.email,
+            'phone1': model_person.phone1,
+            'phone2': model_person.phone2,
+            'username': model_person.username,
+            'verified': model_person.verified,
+        }
+
+        return JsonResponse(result,status=200)

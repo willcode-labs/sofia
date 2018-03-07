@@ -56,7 +56,7 @@ class Auth():
         if model_token.ip != self.ip:
             raise ExceptionApi('Ip de acesso difere de seu ip de origem![4]')
 
-        if dict(ModelApp.PROFILE_TUPLE)[model_app.profile_id] not in self.profile_tuple:
+        if model_app.profile_id not in self.profile_tuple:
             raise ExceptionApi('Perfil não autorizado![7]')
 
         if model_token.date_expire.replace(tzinfo=None) < datetime.datetime.now().replace(tzinfo=None):
@@ -200,7 +200,7 @@ class DecoratorAuth(object):
                     status=400)
 
             for item in self.profile:
-                if item not in dict(ModelApp.PROFILE_TUPLE).values():
+                if item not in dict(ModelApp.PROFILE_TUPLE).keys():
                     error = 'Perfil não identificado![16]'
 
                     ApiConfig.loggerWarning(error)

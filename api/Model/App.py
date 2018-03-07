@@ -5,12 +5,8 @@ class AppManager(models.Manager):
     def hashRecursive(self):
         hash_code = str(uuid.uuid4())
 
-        try:
-            model_app_apikey = App.objects.filter(
-                apikey=apikey)
-
-        except Exception as error:
-            raise error
+        model_app_apikey = App.objects.filter(
+            apikey=apikey)
 
         if model_app_apikey.count() > 0:
             return self.hashRecursive(self)

@@ -828,5 +828,80 @@
         "code": 189,
         "message": "Dados insuficientes para criação de pessoa![189]",
         "description": "",
+    },
+    {
+        "code": 190,
+        "message": "Um dos campos deve estar preenchido, CPF ou CNPJ![190]",
+        "description": "",
+    },
+    {
+        "code": 191,
+        "message": "CPF incorreto![191]",
+        "description": "",
+    },
+    {
+        "code": 192,
+        "message": "CNPJ incorreto![192]",
+        "description": "",
+    },
+    {
+        "code": 193,
+        "message": "Telefone 1 incorreto![193]",
+        "description": "",
+    },
+    {
+        "code": 194,
+        "message": "Telefone 2 incorreto![194]",
+        "description": "",
+    },
+    {
+        "code": 195,
+        "message": "Username deve estar entre 6 e 150 caracteres![195]",
+        "description": "",
+    },
+    {
+        "code": 196,
+        "message": "Password deve ter 8 caracteres![196]",
+        "description": "",
+    },
+    {
+        "code": 197,
+        "message": "Existe uma pessoa cadastrada com este mesmo CPF![197]",
+        "description": "",
+    },
+    {
+        "code": 198,
+        "message": "Existe uma pessoa cadastrada com este mesmo CNPJ![198]",
+        "description": "",
+    },
+    {
+        "code": 199,
+        "message": "Existe uma pessoa cadastrada com este mesmo E-mail![199]",
+        "description": "",
+    },
+    {
+        "code": 200,
+        "message": "Existe uma pessoa cadastrada com este mesmo username![200]",
+        "description": "",
+    },
+    {
+        "code": 201,
+        "message": "Erro interno![201]",
+        "description": "",
+    },
+    {
+        "code": 202,
+        "message": "Erro interno![202]",
+        "description": "",
+    },
+    {
+        "code": 203,
+        "message": "Tipo de request requer formato JSON[203]",
+        "description": "",
+    },
+    {
+        "code": 204,
+        "message": "Erro em parsear dados de request[204]",
+        "description": "",
     }
 ]
