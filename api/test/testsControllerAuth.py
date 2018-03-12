@@ -204,7 +204,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_client.verified = False
         self.model_person_client.save()
 
-        ip = '0';
+        ip = '127.0.0.3';
 
         response = self.client.post('/api/v1/client/auth/verify/',json.dumps({}),
             content_type='application/json',
@@ -362,7 +362,7 @@ class TestControllerAuth(TransactionTestCase):
 
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Usuário não verificado![21]')
-    
+
     def test_auth_root_auth_token_ip_duplicate(self):
         model_token_root = ModelToken(
             person=self.model_person_root,
@@ -496,7 +496,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertIsNotNone(response.json()['date_expire'])
 
     def test_auth_root_auth_ok_other_ip(self):
-        ip = '127';
+        ip = '127.0.0.1';
 
         data = {
             'username':'wborba_root',
@@ -514,7 +514,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertIsNotNone(response.json()['date_expire'])
 
     def test_auth_director_auth_ok_other_ip(self):
-        ip = '127';
+        ip = '127.0.0.2';
 
         data = {
             'username':'wborba_director',
@@ -532,7 +532,7 @@ class TestControllerAuth(TransactionTestCase):
         self.assertIsNotNone(response.json()['date_expire'])
 
     def test_auth_client_auth_ok_other_ip(self):
-        ip = '127';
+        ip = '127.0.0.3';
 
         data = {
             'username':'wborba_client',
@@ -555,7 +555,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_root.profile_id = ModelApp.PROFILE_ROOT
         self.model_person_root.save()
 
-        ip = '127';
+        ip = '127.0.0.1';
 
         data = {
             'username':'wborba_root',
@@ -577,7 +577,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_root.profile_id = ModelApp.PROFILE_ROOT
         self.model_person_root.save()
 
-        ip = '127';
+        ip = '127.0.0.1';
 
         data = {
             'username':'wborba_root',
@@ -599,7 +599,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_director.profile_id = ModelApp.PROFILE_DIRECTOR
         self.model_person_director.save()
 
-        ip = '127';
+        ip = '127.0.0.2';
 
         data = {
             'username':'wborba_director',
@@ -621,7 +621,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_director.profile_id = ModelApp.PROFILE_DIRECTOR
         self.model_person_director.save()
 
-        ip = '127';
+        ip = '127.0.0.2';
 
         data = {
             'username':'wborba_director',
@@ -643,7 +643,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_client.profile_id = ModelPerson.PROFILE_CLIENT
         self.model_person_client.save()
 
-        ip = '127';
+        ip = '127.0.0.1';
 
         data = {
             'username':'wborba_client',
@@ -665,7 +665,7 @@ class TestControllerAuth(TransactionTestCase):
         self.model_person_client.profile_id = ModelPerson.PROFILE_CLIENT
         self.model_person_client.save()
 
-        ip = '127';
+        ip = '127.0.0.1';
 
         data = {
             'username':'wborba_client',
@@ -680,12 +680,12 @@ class TestControllerAuth(TransactionTestCase):
 
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Acesso restrito![179]')
-    
+
     def test_authorize_apikey_not_found(self):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.0',
             HTTP_APIKEY=None,
             HTTP_TOKEN=None)
 
@@ -696,7 +696,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.0',
             HTTP_APIKEY='0',
             HTTP_TOKEN=None)
 
@@ -707,7 +707,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.0',
             HTTP_APIKEY='0',
             HTTP_TOKEN='0')
 
@@ -718,7 +718,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.1',
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN='0')
 
@@ -729,7 +729,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.2',
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN='0')
 
@@ -740,13 +740,13 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.3',
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN='0')
 
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Token não autorizado![3]')
-    
+
     def test_authorize_root_user_not_authorized(self):
         self.model_person_root.verified = False
         self.model_person_root.save()
@@ -754,7 +754,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.1',
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN=self.model_token_root.token)
 
@@ -768,7 +768,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.2',
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN=self.model_token_director.token)
 
@@ -782,7 +782,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.3',
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN=self.model_token_client.token)
 
@@ -796,7 +796,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.1',
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN=self.model_token_root.token)
 
@@ -810,7 +810,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.2',
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN=self.model_token_director.token)
 
@@ -824,7 +824,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.3',
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN=self.model_token_client.token)
 
@@ -835,7 +835,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.11',
             HTTP_APIKEY=self.model_app_root.apikey,
             HTTP_TOKEN=self.model_token_root.token)
 
@@ -846,7 +846,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.22',
             HTTP_APIKEY=self.model_app_director.apikey,
             HTTP_TOKEN=self.model_token_director.token)
 
@@ -857,7 +857,7 @@ class TestControllerAuth(TransactionTestCase):
         data_get = {}
 
         response = self.client.get('/api/v1/director/person/',data_get,
-            REMOTE_ADDR='127',
+            REMOTE_ADDR='127.0.0.33',
             HTTP_APIKEY=self.model_app_client.apikey,
             HTTP_TOKEN=self.model_token_client.token)
 

@@ -1,4 +1,5 @@
 from django.urls import path
+from django.conf.urls import handler400,handler403,handler404,handler500
 from api.Controller.v1 import Auth as v1ControllerAuth
 from api.Controller.v1 import Person as v1ControllerPerson
 from api.Controller.v1 import PersonAddress as v1ControllerPersonAddress
@@ -38,3 +39,8 @@ urlpatterns += [
 # urlpatterns += [
 #     path('api/v1/order/', v1ControllerOrder.EndPoint.as_view(), name='api_v1_order_endpoint'),
 # ]
+# error handler
+handler400 = 'api.Controller.v1.HandlerError.bad_request'
+handler403 = 'api.Controller.v1.HandlerError.permission_denied'
+handler404 = 'api.Controller.v1.HandlerError.page_not_found'
+handler500 = 'api.Controller.v1.HandlerError.server_error'

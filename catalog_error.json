@@ -903,5 +903,30 @@
         "code": 204,
         "message": "Erro em parsear dados de request[204]",
         "description": "",
+    },
+    {
+        "code": 205,
+        "message": "Página não encontrada HTTP 404![205]",
+        "description": "",
+    },
+    {
+        "code": 206,
+        "message": "Permissão negada HTTP 403![206]",
+        "description": "",
+    },
+    {
+        "code": 207,
+        "message": "Erro interno HTTP 500![207]",
+        "description": "",
+    },
+    {
+        "code": 208,
+        "message": "Acesso negado HTTP 400![208]",
+        "description": "",
+    },
+    {
+        "code": 209,
+        "message": "Método de requisição incorreto![209]",
+        "description": "",
     }
 ]

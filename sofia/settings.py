@@ -10,54 +10,28 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '27r3kq0e4qbr7kks!h&cqt^t5)9$oudecl6dr4!h_(_#)73^g+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    # 'django.contrib.admin',
-    # 'django.contrib.auth',
-    # 'django.contrib.contenttypes',
-    # 'django.contrib.sessions',
-    # 'django.contrib.messages',
-    # 'django.contrib.staticfiles',
     'api.apps.ApiConfig',
-    # 'web',
 ]
 
 MIDDLEWARE = [
     # 'django.middleware.security.SecurityMiddleware',
     # 'django.contrib.sessions.middleware.SessionMiddleware',
     # 'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api.Middleware.RestMiddleware.RestMiddleware',
+    'api.Middleware.MethodNotAllowed.MethodNotAllowed',
+    'api.Middleware.Rest.Rest',
 ]
 
 ROOT_URLCONF = 'sofia.urls'
 
 TEMPLATES = []
-# TEMPLATES = [
-#     {
-#         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-#         'DIRS': [
-#             BASE_DIR],
-#         'APP_DIRS': True,
-#         'OPTIONS': {
-#             'context_processors': [
-#                 'django.template.context_processors.debug',
-#                 'django.template.context_processors.request',
-#                 # 'django.contrib.auth.context_processors.auth',
-#                 # 'django.contrib.messages.context_processors.messages',
-#             ],
-#         },
-#     },
-# ]
 
 WSGI_APPLICATION = 'sofia.wsgi.application'
 
@@ -65,31 +39,28 @@ WSGI_APPLICATION = 'sofia.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.dev.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'sofia_core_development',
+        'USER': 'postgres',
+        'PASSWORD': '123456',
+        'HOST': '127.0.0.1',
+        'PORT': '8092',
         'TEST' : {
-            'NAME': 'db.test.sqlite3',
+            'NAME': 'sofia_core_test',
         }
-    }
+    },
+    # 'test': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.dev.sqlite3'),
+    #     'TEST' : {
+    #         'NAME': 'db.test.sqlite3',
+    #     }
+    # },
 }
 
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = []
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-#     },
-# ]
 
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -103,7 +74,6 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = None
-# STATIC_URL = '/static/'
 
 # https://docs.djangoproject.com/en/1.11/topics/logging/
 
@@ -112,7 +82,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s | %(asctime)s | %(module)s | %(process)d | %(thread)d | %(message)s'
+            'format': '%(name)s|%(levelname)s|%(asctime)s|%(module)s|%(pathname)s|%(filename)s LINE(%(lineno)d)|%(funcName)s|%(message)s'
         }
     },
     'handlers': {
@@ -122,27 +92,34 @@ LOGGING = {
             'stream': sys.stdout,
             'formatter': 'verbose'
         },
-        'file': {
+        'file_warning': {
             'level': 'WARNING',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR,'log/debug.log'),
+            'filename': os.path.join(BASE_DIR,'log/WARNING.log'),
+            'when': 'midnight',
+            'formatter': 'verbose'
+        },
+        'file_critical': {
+            'level': 'CRITICAL',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR,'log/CRITICAL.log'),
             'when': 'midnight',
             'formatter': 'verbose'
         },
     },
     'loggers': {
         'sofia.api.debug': {
-            'handlers': ['file','console'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'sofia.api.warning': {
-            'handlers': ['file','console'],
+            'handlers': ['file_warning','console'],
             'level': 'WARNING',
             'propagate': True,
         },
         'sofia.api.critical': {
-            'handlers': ['file','console'],
+            'handlers': ['file_critical','console'],
             'level': 'CRITICAL',
             'propagate': True,
         }

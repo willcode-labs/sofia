@@ -1,10 +1,9 @@
 import json
-from django.http import QueryDict
-from django.http import HttpResponseBadRequest
+from django.http import JsonResponse
 from api.apps import ApiConfig
 from api.Exception.Api import Api as ExceptionApi
 
-class RestMiddleware:
+class Rest:
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -14,7 +13,7 @@ class RestMiddleware:
 
             ApiConfig.loggerWarning(error)
 
-            return HttpResponseBadRequest(str(error))
+            return JsonResponse({'message': str(error)},status=400)
 
         else:
             try:
@@ -28,9 +27,11 @@ class RestMiddleware:
                     request.DELETE = json.loads(request.body.decode('utf-8'))
 
             except Exception as error:
+                error = ExceptionApi('Erro em parsear dados de request[204]',error)
+
                 ApiConfig.loggerCritical(error)
 
-                return HttpResponseBadRequest('Erro em parsear dados de request[204]')
+                return JsonResponse({'message': str(error)},status=500)
 
         response = self.get_response(request)
 
