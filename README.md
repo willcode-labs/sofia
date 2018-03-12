@@ -6,38 +6,26 @@ Core para o projeto de sistema integrado de comércio digital.
 
 ## Instalação
 
-Instalar GIT.
-https://git-scm.com/download/linux
+Na maquina hospedeira, estarão instalados os containers especificos para cada projeto.
 
-Efetuar o clone do projeto.
-
-1. `$ git clone {{REPO-URL}}`
-
-### Dependencias
+### Ambiente
 
 Instalar docker.
 https://docs.docker.com/install/linux/docker-ce/debian/
 
-Dependencias da aplicação ou do framework.
+Na pasta container estão disponiveis os ambientes de aplicação(app) e base de dados(database).
 
-1. `$ pip3 install -r requirements.txt`
+#### Base de dados.
 
-Dependencias da base de dados.
+Subir container.
 
-1. `$ docker image pull postgres:latest`
-2. `$ docker run --name SOFIA-CORE-{{ENVIRONMENT}} -p {{DB-POST}}:5432 -e POSTGRES_PASSWORD={{PASSWORD}} -d postgres`
-3. `$ mkdir /data && chmod -R 777 /data`
-4. `$ chown postgres /data`
-5. `$ su postgres`
-6. `$ psql`
-7. `$ CREATE TABLESPACE sofia_core_{{ENVIRONMENT}} OWNER postgres LOCATION '/data';`
-8. `$ CREATE DATABASE sofia_core_development OWNER postgres TABLESPACE sofia_core_development;`
-9. `$ \q`
+1. `$ docker run --name SOFIA-CORE-DB-DEV -p 9001:5432 -e POSTGRES_PASSWORD={{PASSWORD}} -d postgres`
 
-Roda os comandos para migração das tabelas e dados.
+#### Aplicação ou framework.
 
-1. `$ python3 makemigrations api --check`
-2. `$ python3 migrate api`
+Subir container.
+
+1. `$ docker run --name SOFIA-CORE-DEV --link SOFIA-CORE-DB-DEV -p 9002:80 -d`
 
 ### Testes
 
