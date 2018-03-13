@@ -1,19 +1,9 @@
 FROM postgres:10.3
 
-RUN mkdir /data && chmod -R 777 /data && chown postgres /data
+ADD config.sh /docker-entrypoint-initdb.d/
+RUN mkdir /data && chmod -R 777 /data && chown postgres:postgres /data
+RUN localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8
+ENV LANG pt_BR.utf8
 USER postgres
-RUN /etc/init.d/postgresql start && \
-    psql --command "CREATE TABLESPACE sofia_core_dev OWNER postgres LOCATION '/data';" && \
-    psql --command "CREATE DATABASE sofia_core_dev OWNER postgres TABLESPACE sofia_core_dev;"
-
-RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/10.3/main/pg_hba.conf && \
-    echo "listen_addresses='*'" >> /etc/postgresql/10.3/main/postgresql.conf
-
+RUN /usr/lib/postgresql/10/bin/initdb
 EXPOSE 5432
-
-CMD [
-    "/usr/lib/postgresql/10.3/bin/postgres",
-    "-D",
-    "/var/lib/postgresql/10.3/main",
-    "-c",
-    "config_file=/etc/postgresql/10.3/main/postgresql.conf"]

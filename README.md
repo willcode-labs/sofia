@@ -19,15 +19,25 @@ Na pasta container estão disponiveis os ambientes de aplicação(app) e base de
 
 Subir container.
 
-1. `$ docker run --name SOFIA-CORE-DB-DEV -p 9001:5432 -e POSTGRES_PASSWORD={{PASSWORD}} -d postgres`
+1. `docker build --force-rm -t db-sofia-core-dev .`
+2. `docker run --name SOFIA-CORE-DEV-DB -p 9001:5432 -e POSTGRES_PASSWORD={{password}} -d {{image}}"`
 
 #### Aplicação ou framework.
 
 Subir container.
 
-1. `$ docker run --name SOFIA-CORE-DEV --link SOFIA-CORE-DB-DEV -p 9002:80 -d`
+1. `docker build --force-rm -t sofia-core-dev .`
+2. `docker run --name SOFIA-CORE-DEV --link SOFIA-CORE-DB-DEV -p 9002:80 -d {{image}}`
+
+### Pôs-instalação
+
+No container da aplicação SOFIA-CORE-DEV executar os comandos para migração da
+base de dados.
+
+1. `python3 makemigrations api --check`
+2. `python3 migrate api`
 
 ### Testes
 
-* `$ python3 -Wall manage.py test api.test --failfast --keepdb --settings api.test.testsSettings -v 3`
-* `$ coverage run --source='.' manage.py test api.test --failfast --keepdb --settings api.test.testsSettings -v 3`
+* `python3 -Wall manage.py test api.test --failfast --keepdb --settings api.test.testsSettings -v 3`
+* `coverage run --source='.' manage.py test api.test --failfast --keepdb --settings api.test.testsSettings -v 3`
