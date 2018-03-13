@@ -14,5 +14,3 @@ WORKDIR /srv/sofia
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN python3 makemigrations api --check
 RUN python3 migrate api
-
-CMD ["python3"]

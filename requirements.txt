@@ -2,4 +2,4 @@ Django==2.0.3
 coverage==4.4.1
 psycopg2==2.7.4
 psycopg2-binary==2.7.4
-gunicorn==19.7.1
+uwsgi==2.0.17
