@@ -19,10 +19,10 @@ Na pasta container estão disponiveis os ambientes de aplicação(app) e base de
 
 Subir container.
 
-1. `docker build --force-rm -t db-sofia-core-dev .`
+1. `docker build --force-rm -t sofia-core-dev-db .`
 2. `docker run --name SOFIA-CORE-DEV-DB -p 9001:5432 -e POSTGRES_PASSWORD={{password}} -d {{image}}"`
 
-#### Aplicação ou framework.
+#### Aplicação.
 
 Subir container.
 
