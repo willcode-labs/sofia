@@ -10,4 +10,4 @@ WORKDIR /srv/sofia
 
 VOLUME ["/srv/sofia"]
 
-CMD ["/etc/init.d/nginx","restart","&&","uwsgi","--socket","sofia.sock","--module","sofia.wsgi","--chmod-socket=666"]
+CMD /etc/init.d/nginx restart && uwsgi --socket sofia.sock --module sofia.wsgi --chmod-socket=666

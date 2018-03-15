@@ -36,15 +36,21 @@ TEMPLATES = []
 WSGI_APPLICATION = 'sofia.wsgi.application'
 
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+env_db_engine = os.environ.get('DB_ENGINE',None)
+env_db_name = os.environ.get('DB_NAME',None)
+env_db_user = os.environ.get('DB_USER',None)
+env_db_password = os.environ.get('DB_PASSWORD',None)
+env_db_host = os.environ.get('DB_HOST',None)
+env_db_port = os.environ.get('DB_PORT',None)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sofia_core_development',
-        'USER': 'postgres',
-        'PASSWORD': '123456',
-        'HOST': '127.0.0.1',
-        'PORT': '8092',
+        'ENGINE': 'django.db.backends.%s' % (env_db_engine,),
+        'NAME': env_db_name,
+        'USER': env_db_user,
+        'PASSWORD': env_db_password,
+        'HOST': env_db_host,
+        'PORT': env_db_port,
         'TEST' : {
             'NAME': 'sofia_core_test',
         }

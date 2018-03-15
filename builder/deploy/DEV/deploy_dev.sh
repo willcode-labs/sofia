@@ -1,28 +1,34 @@
 #!/bin/bash 
 directory="$(dirname "$(realpath "$BASH_SOURCE")")"
 
+source ${directory}/environment_variable.conf
+
 builder_container()
 {
-    database_password=$1
     echo '------------------------------------------------'
     echo 'Install database'
     echo '------------------------------------------------'
-    cd ${directory}/../container/database/DEV
-    docker build --force-rm -t sofia-core-db-dev .
-    docker run --name SOFIA-CORE-DB-DEV -p 9001:5432 -e POSTGRES_PASSWORD=${database_password} -d sofia-core-db-dev
+    cd ${directory}/../../container/database/DEV
+    docker image build --force-rm -t sofia-core-db-dev .
+    docker container run --name SOFIA-CORE-DB-DEV -p 9001:5432 \
+        -e POSTGRES_PASSWORD=${DB_PASSWORD} -d sofia-core-db-dev
 
     echo '------------------------------------------------'
     echo 'Install App'
     echo '------------------------------------------------'
-    cd ${directory}/../container/app/DEV
-    docker build --force-rm -t sofia-core-dev .
-    docker run --name SOFIA-CORE-DEV --link SOFIA-CORE-DB-DEV -p 9002:80 -d sofia-core-dev
+    cd ${directory}/../../container/app/DEV
+    docker image build --force-rm -t sofia-core-dev .
+    docker container run --name SOFIA-CORE-DEV --link SOFIA-CORE-DB-DEV \
+        -e DB_ENGINE=${DB_ENGINE} -e DB_NAME=${DB_NAME} \
+        -e DB_USER=${DB_USER} -e DB_PASSWORD=${DB_PASSWORD} \
+        -e DB_HOST=${DB_HOST} -e DB_PORT=${DB_PORT} \
+        -p 9002:80 -d sofia-core-dev
 
     echo '------------------------------------------------'
     echo 'Run Migrations App'
     echo '------------------------------------------------'
-    docker exec -it SOFIA-CORE-DEV /bin/bash -c 'python3 makemigrations api --check'
-    docker exec -it SOFIA-CORE-DEV /bin/bash -c 'python3 migrate api'
+    docker container exec -it SOFIA-CORE-DEV /bin/bash -c 'python3 manage.py makemigrations api --check'
+    docker container exec -it SOFIA-CORE-DEV /bin/bash -c 'python3 manage.py migrate api'
 }
 
 echo '================================================'
@@ -57,9 +63,9 @@ do
                 echo '------------------------------------------------'
                 echo 'System already created!'
                 echo '------------------------------------------------'
-                docker container ls -a
+                docker container list -a
             else
-                builder_container 1234567890
+                builder_container
             fi
             echo '================================================'
             ;;
@@ -74,6 +80,12 @@ do
         "[5]Quit")
             break
             ;;
-        *) echo 'Invalid option';;
+        *)
+            echo '================================================'
+            echo '------------------------------------------------'
+            echo 'Invalid option'
+            echo '------------------------------------------------'
+            echo '================================================'
+            ;;
     esac
 done
