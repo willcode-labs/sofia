@@ -34,7 +34,7 @@ builder_container()
 echo '================================================'
 echo 'Option select:'
 echo '================================================'
-option_list=("[1]Status" "[2]Build" "[3]Restart Database" "[4]Restart App" "[5]Quit")
+option_list=("[1]Status" "[2]Build" "[3]Restart Database" "[4]Backup Database" "[5]Restore Database" "[6]Restart App" "[7]Quit")
 select option in "${option_list[@]}"
 do
     case $option in
@@ -70,14 +70,44 @@ do
             echo '================================================'
             ;;
         "[3]Restart Database")
+            echo '------------------------------------------------'
             echo 'Container database restart'
-            # TODO
+            echo '------------------------------------------------'
+            total=$(docker container list --filter 'name=SOFIA-CORE-DB' -a | wc -l)
+            if [ "$total" -le 1 ]
+            then
+                echo '------------------------------------------------'
+                echo 'Database dont exist!'
+                echo '------------------------------------------------'
+            else
+                docker container restart SOFIA-CORE-DB-DEV
+            fi
+            echo '================================================'
             ;;
-        "[4]Restart App")
+        "[4]Backup Database")
+            echo '------------------------------------------------'
+            echo 'Backup database from "'${DB_NAME}'"'
+            echo '------------------------------------------------'
+            docker container exec -it SOFIA-CORE-DB-DEV /usr/bin/pg_dumpall --host localhost --username "${DB_USER}" -W --verbose --quote-all-identifiers > $(date +"%d-%m-%Y_%H-%M-%S")_db.dump
+            ;;
+        "[5]Restore Database")
+            # # Restore
+            # cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root DATABASE
+            ;;
+        "[6]Restart App")
             echo 'Container app restart'
-            # TODO
+            total=$(docker container list --filter 'name=SOFIA-CORE' -a | wc -l)
+            if [ "$total" -le 1 ]
+            then
+                echo '------------------------------------------------'
+                echo 'App dont exist!'
+                echo '------------------------------------------------'
+            else
+                docker container restart SOFIA-CORE-DEV
+            fi
+            echo '================================================'
             ;;
-        "[5]Quit")
+        "[7]Quit")
             break
             ;;
         *)
