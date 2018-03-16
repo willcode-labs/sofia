@@ -3,6 +3,11 @@ directory="$(dirname "$(realpath "$BASH_SOURCE")")"
 
 source ${directory}/environment_variable.conf
 
+# TODO
+# install docker
+# install nginx in host
+# configure nginx
+
 builder_container()
 {
     echo '------------------------------------------------'
@@ -11,7 +16,7 @@ builder_container()
     cd ${directory}/../../container/database/DEV
     docker image build --force-rm -t sofia-core-db-dev .
     docker container run --name SOFIA-CORE-DB-DEV -p 9001:5432 \
-        -e POSTGRES_PASSWORD=${DB_PASSWORD} -d sofia-core-db-dev
+        -e POSTGRES_PASSWORD=$DB_PASSWORD -d sofia-core-db-dev
 
     echo '------------------------------------------------'
     echo 'Install App'
@@ -19,9 +24,9 @@ builder_container()
     cd ${directory}/../../container/app/DEV
     docker image build --force-rm -t sofia-core-dev .
     docker container run --name SOFIA-CORE-DEV --link SOFIA-CORE-DB-DEV \
-        -e DB_ENGINE=${DB_ENGINE} -e DB_NAME=${DB_NAME} \
-        -e DB_USER=${DB_USER} -e DB_PASSWORD=${DB_PASSWORD} \
-        -e DB_HOST=${DB_HOST} -e DB_PORT=${DB_PORT} \
+        -e DB_ENGINE=$DB_ENGINE -e DB_NAME=$DB_NAME \
+        -e DB_USER=$DB_USER -e DB_PASSWORD=$DB_PASSWORD \
+        -e DB_HOST=$DB_HOST -e DB_PORT=$DB_PORT \
         -p 9002:80 -d sofia-core-dev
 
     echo '------------------------------------------------'
@@ -88,7 +93,9 @@ do
             echo '------------------------------------------------'
             echo 'Backup database from "'${DB_NAME}'"'
             echo '------------------------------------------------'
-            docker container exec -it SOFIA-CORE-DB-DEV /usr/bin/pg_dumpall --host localhost --username "${DB_USER}" -W --verbose --quote-all-identifiers > $(date +"%d-%m-%Y_%H-%M-%S")_db.dump
+            docker container exec -it SOFIA-CORE-DB-DEV /usr/bin/pg_dumpall \
+                --host localhost --username "$DB_USER" -W --verbose \
+                --quote-all-identifiers > $(date +"%d-%m-%Y_%H-%M-%S")_db.dump
             ;;
         "[5]Restore Database")
             # # Restore
