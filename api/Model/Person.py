@@ -1,11 +1,12 @@
+import re
 from django.db import models
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator,EmailValidator,validate_email
 from api.Model.App import App as ModelApp
 from api.Exception.Api import Api as ExceptionApi
 
 class PersonManager(models.Manager):
     def createSimple(self,request,model_token,**kwargs):
-        if model_token.profile_id not in (ModelApp.PROFILE_ROOT,ModelApp.PROFILE_DIRECTOR,ModelApp.PROFILE_CLIENT,):
+        if model_token.person.profile_id not in (ModelApp.PROFILE_ROOT,ModelApp.PROFILE_DIRECTOR,):
             raise ExceptionApi('Tipo de perfil não permitido![188]')
 
         self.profile_id = ModelApp.PROFILE_CLIENT
@@ -22,8 +23,14 @@ class PersonManager(models.Manager):
         for key in kwargs:
             setattr(self,key,kwargs[key])
 
-        if self.name or not self.email or not self.password:
+        if not self.name or not self.email or not self.password:
             raise ExceptionApi('Dados insuficientes para criação de pessoa![189]')
+
+        try:
+            validate_email(self.email)
+
+        except Exception as error:
+            raise ExceptionApi('Formato do email incorreto![210]')
 
         if not self.cpf and not self.cnpj:
             raise ExceptionApi('Um dos campos deve estar preenchido, CPF ou CNPJ![190]')
@@ -221,11 +228,11 @@ class Person(models.Model):
     person_id = models.AutoField(primary_key=True)
     profile_id = models.IntegerField(db_index=True,choices=ModelApp.PROFILE_TUPLE)
     name = models.CharField(unique=True,max_length=150)
-    cpf = models.CharField(unique=True,max_length=11,null=True)
-    cnpj = models.CharField(unique=True,max_length=14,null=True)
-    email = models.EmailField(unique=True,max_length=150)
-    phone1 = models.CharField(max_length=15)
-    phone2 = models.CharField(max_length=15,null=True)
+    cpf = models.CharField(unique=True,max_length=11,null=True,validators=[MinLengthValidator(11,message='Min 11 caracteres')])
+    cnpj = models.CharField(unique=True,max_length=14,null=True,validators=[MinLengthValidator(14,message='Min 14 caracteres')])
+    email = models.EmailField(unique=True,max_length=150,validators=[EmailValidator(message='Formato de email incorreto!')])
+    phone1 = models.CharField(max_length=15,null=True,validators=[MinLengthValidator(10,message='Min 10 caracteres')])
+    phone2 = models.CharField(max_length=15,null=True,validators=[MinLengthValidator(10,message='Min 10 caracteres')])
     username = models.CharField(unique=True,max_length=150,validators=[MinLengthValidator(6,message='Min 6 caracteres')])
     password = models.CharField(db_index=True,max_length=8,validators=[MinLengthValidator(8,message='Min 8 caracteres')])
     verified = models.BooleanField()

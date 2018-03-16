@@ -35,7 +35,7 @@ class EndPointClient(View):
                     person_id=person_id)
 
             except Exception as error:
-                raise ExceptionApi('Registro de pessoa nÃ£o encontrado[182]',error)
+                raise ExceptionApi('Registro de pessoa não encontrado[182]',error)
 
             model_address = ModelAddress.objects.filter(
                 person_id=model_person.person_id)
@@ -64,40 +64,6 @@ class EndPointClient(View):
             'address': list(model_address.values(
                 'address_id','state','city','number','complement',
                 'invoice','delivery','date_create')),
-        }
-
-        return JsonResponse(result,status=200)
-
-    @csrf_exempt
-    @transaction.atomic
-    @method_decorator(BusinessDecoratorAuth(profile=(ModelApp.PROFILE_CLIENT,)))
-    def post(self,request,model_token,*args,**kwargs):
-        try:
-            model_person = ModelPerson.objects.createSimple(
-                request,
-                model_token)
-
-        except ExceptionApi as error:
-            ApiConfig.loggerWarning(error)
-
-            return JsonResponse({'message': str(error)},status=400)
-
-        except Exception as error:
-            ApiConfig.loggerCritical(error)
-
-            return JsonResponse({'message': 'Erro interno![202]'},status=500)
-
-        result = {
-            'person_id': model_person.person_id,
-            'profile_id': model_person.profile_id,
-            'name': model_person.name,
-            'cpf': model_person.cpf,
-            'cnpj': model_person.cnpj,
-            'email': model_person.email,
-            'phone1': model_person.phone1,
-            'phone2': model_person.phone2,
-            'username': model_person.username,
-            'verified': model_person.verified,
         }
 
         return JsonResponse(result,status=200)

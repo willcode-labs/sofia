@@ -890,11 +890,6 @@
         "description": "",
     },
     {
-        "code": 202,
-        "message": "Erro interno![202]",
-        "description": "",
-    },
-    {
         "code": 203,
         "message": "Tipo de request requer formato JSON[203]",
         "description": "",
@@ -927,6 +922,11 @@
     {
         "code": 209,
         "message": "Método de requisição incorreto![209]",
+        "description": "",
+    },
+    {
+        "code": 210,
+        "message": "Formato do email incorreto![210]",
         "description": "",
     }
 ]
