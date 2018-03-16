@@ -22,7 +22,7 @@ class EndPointClient(View):
         person_id = request.GET.get('person_id',None)
 
         if not person_id:
-            error = Exception('ID de pessoa não encontrado[181]')
+            error = ExceptionApi('ID de pessoa não encontrado[181]')
 
             ApiConfig.loggerWarning(error)
 
@@ -48,7 +48,7 @@ class EndPointClient(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro interno![183]'},status=400)
+            return JsonResponse({'message': 'Erro interno![183]'},status=500)
 
         result = {
             'person_id': model_person.person_id,
@@ -85,7 +85,7 @@ class EndPointClient(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro interno![202]'},status=400)
+            return JsonResponse({'message': 'Erro interno![202]'},status=500)
 
         result = {
             'person_id': model_person.person_id,
@@ -134,7 +134,7 @@ class EndPointDirector(View):
             except Exception as error:
                 ApiConfig.loggerCritical(error)
 
-                return JsonResponse({'message': 'Erro interno![176]'},status=400)
+                return JsonResponse({'message': 'Erro interno![176]'},status=500)
 
             result = {
                 'person_id': model_person.person_id,
@@ -176,7 +176,7 @@ class EndPointDirector(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro interno![177]'},status=400)
+            return JsonResponse({'message': 'Erro interno![177]'},status=500)
 
         paginator = Paginator(model_person, limit)
 
@@ -194,7 +194,7 @@ class EndPointDirector(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message':'Erro na consulta de pessoa![25]'},status=400)
+            return JsonResponse({'message':'Erro na consulta de pessoa![25]'},status=500)
 
         result = {
             'total': person_total,
@@ -225,7 +225,7 @@ class EndPointDirector(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro interno![201]'},status=400)
+            return JsonResponse({'message': 'Erro interno![201]'},status=500)
 
         result = {
             'person_id': model_person.person_id,

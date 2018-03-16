@@ -224,7 +224,7 @@ class DecoratorAuth(object):
             except Exception as error:
                 ApiConfig.loggerCritical(error)
 
-                return JsonResponse({'message': 'Erro interno![178]'},status=400)
+                return JsonResponse({'message': 'Erro interno![178]'},status=500)
 
             return function(request,model_token,*args,**kwargs)
 

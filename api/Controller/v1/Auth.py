@@ -25,7 +25,7 @@ class VerifyClient(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro interno![170]'},status=400)
+            return JsonResponse({'message': 'Erro interno![170]'},status=500)
 
         result = {
             'token': model_token.token,
@@ -51,7 +51,7 @@ class Auth(View):
         except Exception as error:
             ApiConfig.loggerCritical(error)
 
-            return JsonResponse({'message': 'Erro interno![171]'},status=400)
+            return JsonResponse({'message': 'Erro interno![171]'},status=500)
 
         result = {
             'token': model_token.token,

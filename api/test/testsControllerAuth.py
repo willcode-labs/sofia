@@ -1,10 +1,9 @@
-import uuid,datetime,json
+import datetime,json
 from django.test import Client,TestCase,TransactionTestCase
-from django.http import HttpResponseNotAllowed
 from api.apps import ApiConfig
-from api.Model.Person import Person as ModelPerson
 from api.Model.App import App as ModelApp
 from api.Model.Token import Token as ModelToken
+from api.Model.Person import Person as ModelPerson
 
 class TestControllerAuth(TransactionTestCase):
     reset_sequences = True

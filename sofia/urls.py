@@ -26,14 +26,14 @@ urlpatterns += [
 #     path('api/v1/product/', v1ControllerProduct.EndPoint.as_view(), name='api_v1_product_endpoint'),
 #     path('api/v1/product/published/', v1ControllerProduct.Publish.as_view(), name='api_v1_product_publish'),
 # ]
+# # delivery package
+# urlpatterns += [
+#     path('api/v1/delivery-package/', v1ControllerDeliveryPackage.EndPoint.as_view(), name='api_v1_delivery_package_endpoint'),
+# ]
 # # delivery
 # urlpatterns += [
 #     path('api/v1/delivery/', v1ControllerDelivery.EndPoint.as_view(), name='api_v1_delivery_endpoint'),
 #     path('api/v1/delivery/price/', v1ControllerDelivery.Price.as_view(), name='api_v1_delivery_price'),
-# ]
-# # delivery package
-# urlpatterns += [
-#     path('api/v1/delivery-package/', v1ControllerDeliveryPackage.EndPoint.as_view(), name='api_v1_delivery_package_endpoint'),
 # ]
 # # order
 # urlpatterns += [
