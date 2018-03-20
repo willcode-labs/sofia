@@ -160,15 +160,17 @@ class TestControllerPerson(TransactionTestCase):
             'address': [],
         })
 
-    def test_person_client_post_param_missing(self):
+    def test_person_director_post_param_missing(self):
         data_post = {
+            'profile_id':'',
             'name':'',
             'cpf':'',
             'cnpj':'',
             'email':'',
             'phone1':'',
             'phone2':'',
-            'password':''
+            'password':'',
+            'verified':''
         }
 
         response = self.client.post('/api/v1/client/person/',json.dumps(data_post),
@@ -180,7 +182,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Dados insuficientes para criação de pessoa![189]')
 
-    def test_person_client_post_email_incorrect(self):
+    def test_person_director_post_email_incorrect(self):
         data_post = {
             'name':'User*1',
             'cpf':'',
@@ -200,7 +202,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Formato do email incorreto![210]')
 
-    def test_person_client_post_cpf_and_cnpj_missing(self):
+    def test_person_director_post_cpf_and_cnpj_missing(self):
         data_post = {
             'name':'User*1',
             'cpf':'',
@@ -220,7 +222,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Um dos campos deve estar preenchido, CPF ou CNPJ![190]')
 
-    def test_person_client_post_cpf_incorrect(self):
+    def test_person_director_post_cpf_incorrect(self):
         data_post = {
             'name':'User*1',
             'cpf':'incorrect',
@@ -240,7 +242,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'CPF incorreto![191]')
 
-    def test_person_client_post_cnpj_incorrect(self):
+    def test_person_director_post_cnpj_incorrect(self):
         data_post = {
             'name':'User*1',
             'cpf':'',
@@ -260,7 +262,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'CNPJ incorreto![192]')
 
-    def test_person_client_post_phone1_incorrect(self):
+    def test_person_director_post_phone1_incorrect(self):
         data_post = {
             'name':'User*1',
             'cpf':'00000000000',
@@ -280,7 +282,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Telefone 1 incorreto![193]')
 
-    def test_person_client_post_phone2_incorrect(self):
+    def test_person_director_post_phone2_incorrect(self):
         data_post = {
             'name':'User*1',
             'cpf':'00000000000',
@@ -300,7 +302,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Telefone 2 incorreto![194]')
 
-    def test_person_client_post_username_incorrect(self):
+    def test_person_director_post_username_incorrect(self):
         data_post = {
             'name':'User*1',
             'cpf':'00000000000',
@@ -320,7 +322,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Username deve estar entre 6 e 150 caracteres![195]')
 
-    def test_person_client_post_password_incorrect(self):
+    def test_person_director_post_password_incorrect(self):
         data_post = {
             'name':'User*1',
             'cpf':'00000000003',
@@ -340,7 +342,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Password deve ter 8 caracteres![196]')
 
-    def test_person_client_post_cpf_duplicate(self):
+    def test_person_director_post_cpf_duplicate(self):
         data_post = {
             'name':'User*1',
             'cpf':'00000000003',
@@ -360,7 +362,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Existe uma pessoa cadastrada com este mesmo CPF![197]')
 
-    def test_person_client_post_cnpj_duplicate(self):
+    def test_person_director_post_cnpj_duplicate(self):
         data_post = {
             'name':'User*1',
             'cpf':'',
@@ -380,7 +382,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Existe uma pessoa cadastrada com este mesmo CNPJ![198]')
 
-    def test_person_client_post_email_duplicate(self):
+    def test_person_director_post_email_duplicate(self):
         data_post = {
             'name':'User*1',
             'cpf':'',
@@ -400,7 +402,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Existe uma pessoa cadastrada com este mesmo E-mail![199]')
 
-    def test_person_client_post_username_duplicate(self):
+    def test_person_director_post_username_duplicate(self):
         client = ModelPerson(
             profile_id=ModelPerson.PROFILE_CLIENT,
             name='XXXX',
@@ -433,7 +435,7 @@ class TestControllerPerson(TransactionTestCase):
         self.assertEqual(response.status_code,400)
         self.assertEqual(response.json()['message'],'Existe uma pessoa cadastrada com este mesmo username![200]')
 
-    def test_person_client_post_ok(self):
+    def test_person_director_post_ok(self):
         data_post = {
             'name':'User*1',
             'cpf':'',

@@ -85,26 +85,6 @@
         "description": "",
     },
     {
-        "code": 30,
-        "message": "Dados insuficientes para criação de pessoa![30]",
-        "description": "",
-    },
-    {
-        "code": 31,
-        "message": "Tipo de perfil não permitido![31]",
-        "description": "",
-    },
-    {
-        "code": 32,
-        "message": "Já existe uma pessoa cadastrada com este mesmo CPF![32]",
-        "description": "",
-    },
-    {
-        "code": 33,
-        "message": "Já existe uma pessoa cadastrada com este mesmo E-mail![33]",
-        "description": "",
-    },
-    {
         "code": 34,
         "message": "Relacionamento entre tipo de pessoas incorreto![34]",
         "description": "",
@@ -250,11 +230,6 @@
         "description": "",
     },
     {
-        "code": 74,
-        "message": "Um dos campos deve estar preenchido, CPF ou CNPJ![74]",
-        "description": "",
-    },
-    {
         "code": 75,
         "message": "Perfil inválido para esta operação![75]",
         "description": "",
@@ -262,11 +237,6 @@
     {
         "code": 76,
         "message": "Nenhum registro de pessoa encontrado com este ID[76]",
-        "description": "",
-    },
-    {
-        "code": 77,
-        "message": "Já existe uma pessoa cadastrada com este mesmo CNPJ![77]",
         "description": "",
     },
     {
@@ -447,26 +417,6 @@
     {
         "code": 113,
         "message": "ID de perfil incorreto![113]",
-        "description": "",
-    },
-    {
-        "code": 114,
-        "message": "CPF incorreto![114]",
-        "description": "",
-    },
-    {
-        "code": 115,
-        "message": "CNPJ incorreto![115]",
-        "description": "",
-    },
-    {
-        "code": 116,
-        "message": "Telefone 1 incorreto![116]",
-        "description": "",
-    },
-    {
-        "code": 117,
-        "message": "Telefone 2 incorreto![117]",
         "description": "",
     },
     {
@@ -800,23 +750,8 @@
         "description": "",
     },
     {
-        "code": 184,
-        "message": "Username deve estar entre 6 e 150 caracteres![184]",
-        "description": "",
-    },
-    {
-        "code": 185,
-        "message": "Password deve ter 8 caracteres![185]",
-        "description": "",
-    },
-    {
         "code": 186,
         "message": "Valor do parâmetro verified incorreto![186]",
-        "description": "",
-    },
-    {
-        "code": 187,
-        "message": "Já existe uma pessoa cadastrada com este mesmo username![187]",
         "description": "",
     },
     {
@@ -927,6 +862,11 @@
     {
         "code": 210,
         "message": "Formato do email incorreto![210]",
+        "description": "",
+    },
+    {
+        "code": 211,
+        "message": "Perfil não pode criar este tipo de pessoa![211]",
         "description": "",
     }
 ]
